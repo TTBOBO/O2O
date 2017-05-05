@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="../../../js/mui.min.js"></script>
+    <link href="../../../css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" src="../../../js/Config/Config.js" ></script>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js" ></script>
+    <script type="text/javascript" src="../../../js/Config/WebService.js" ></script>
+    <script type="text/javascript" src="../../../js/Api/AskDal.js" ></script>
+    <script type="text/javascript" src="../../../js/Itool/itool.js"></script>
+    <script type="text/javascript" src="../../../js/Itool/common.js"></script>
+    <script type="text/javascript" src="../../../js/mui.pullToRefresh.js" ></script>
+    <script type="text/javascript" src="../../../js/mui.pullToRefresh.material.js" ></script>
+    <script type="text/javascript" charset="UTF-8">
+    	var page = 1;
+      	mui.init({
+				pullRefresh: {
+					container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+					down: {
+						contentdown: "下拉立即刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: downCallBack //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					},
+					up: { 
+						contentinit: '',
+						contentdown: '',//可选，请求完毕若没有更多数据时显示的提醒内容；
+						contentrefresh: '正在加载...',//可选，正在加载状态时，上拉加载控件上显示的标题内容
+						callback: upCallBack
+					}
+				}
+			});
+      	
+      	function downCallBack(){
+      		var userData=common.myStorage.getItem("userData");
+			setTimeout(function(){
+				new AskDAL().get_answered_ask_list_by_mid(userData.mid,1,10, function(data) {
+      				document.getElementById("myanswer").innerHTML = "";
+      				if(data==""||data.length==0){										
+						mui("#refreshContainer").pullRefresh().endPulldownToRefresh();
+						return;
+					}
+					for (var i in data) {
+						addList(data[i]);
+					}
+				}, function(e) {});
+				mui("#refreshContainer").pullRefresh().endPulldownToRefresh(); 
+			},1500)
+      		
+      	}
+      	
+      	function upCallBack(){
+      		var userData=common.myStorage.getItem("userData");
+      		page++;									
+      		new AskDAL().get_answered_ask_list_by_mid(userData.mid,page,10, function(data) {
+      			if(data==""||data.length==0){				
+      				mui.toast("没有数据了")
+					mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+					return;
+				}
+				for (var i in data) {
+					addList(data[i]);
+				}
+			}, function(e) {});
+      		mui('#refreshContainer').pullRefresh().endPullupToRefresh(); 
+      	}
+      	
+      	mui.plusReady(function(){
+      	
+      		get_answerlist();
+      		plus.webview.currentWebview().setStyle({
+				scrollIndicator:"none"
+			})
+      	});
+      	
+      	//====================获取未解决问题列表数据====================
+			function get_answerlist() {
+				var userData=common.myStorage.getItem("userData");
+				new AskDAL().get_answered_ask_list_by_mid(userData.mid,1,10, function(data) {
+					for (var i in data) {
+						addList(data[i]);
+					}
+				}, function(e) {});
+			}
+			//====================将获取的数据添加到页面中========================
+			function addList(o) {
+				var ListContent = document.getElementById("askMode").content;
+				var div = ListContent.querySelector('div.listdata');
+				//获取问题id
+				div.id = o.id;
+				//获取问题标题
+				div.querySelector('.title').innerHTML = o.title;
+				//获取问题标签
+				div.querySelector('.lebel').innerHTML = o.tidname;
+				//获取问题发布时间
+				var dateline = new Date(parseInt(o.dateline) * 1000);
+				div.querySelector('.ask-time').innerHTML = TimeDifference(dateline);
+				//获取问题发布者的用户ID
+				div.userid = o.userid;
+				//将这些获得的数据添加到列表中 
+				document.getElementById("myanswer").appendChild(ListContent.cloneNode(true));
+				//为列表添加点击事件，进入问答详情页
+				var oid = document.getElementById(o.id);
+				oid.addEventListener('tap', function() {
+					common.myStorage.setItem("oid", o.id);
+					mui.openWindow({
+						url: "../../ask/detailsRoom.html",
+						id: "detailsRoom",
+						styles: {},
+						extras: { 
+							ask_id: o.id,
+							ask_userid: o.userid,
+							ask_title: o.title
+						},
+					});
+				});
+			}
+    </script>
+    <style>
+    	.title {
+				margin-top: 15px;  
+				font-size: 1rem;
+				color: #000000;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+			
+			.mui-table-view-cell {
+				background-color: #FFFFFF;
+			}
+			
+			.ask-time {
+				margin-left: 5px;
+				font-size: 0.7em;
+			}
+			
+			.mui-table-view {
+				background-color: #F7F7F7;
+				margin-top: -11px;
+			}
+    </style>
+</head>
+<body>
+	<!--<header class="mui-bar">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 class="mui-title">我的回答</h1>
+	</header>-->
+	<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+  		<div class="mui-scroll">
+    	<!--数据列表-->
+    		<ul class="mui-table-view mui-table-view-chevron">
+      			<li id="myanswer" style="margin-bottom: 30px;">
+					
+				</li>
+   			</ul>
+  		
+	
+	
+	<template id="askMode">
+			<div class="listdata" style="border: 1px solid #F1F1F1; background-color:white ;">
+				<div class="mui-table" >
+					<p class="title">问题标题</p>
+					<span class="mui-icon iconfont icon-menpaihao01" style="font-size: 8px;"></span>
+					<span class="lebel" style="font-size: 0.7em;">标签</span> |
+					<span class="ask-time">2015-05-12</span>
+				</div>
+			</div>
+		</template>
+	</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/UserDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Itool/OpenW.js" ></script>
+		<script type="text/javascript" src="../../js/jQuery.md5.js" ></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/regist.css" />
+
+		<style>
+			body {
+				background: #fff;
+			}
+			
+			.mui-content {
+				background-color: white;
+				margin-top: 80px;
+			}
+			
+			#nextBtn {
+				background-color: #6495ED !important;
+				color: white;
+				border: 0px solid #000;
+				height: 50px;
+				line-height: 12px;
+				transition: .3s linear;
+				margin-top: 20px;
+				width: 95%;
+				margin-left: 2.5%;
+			}
+			
+			#nextBtn:active {
+				-webkit-filter: brightness(80%);
+			}
+			.test1{
+				height: 50px;
+				width: 80px;
+				/*margin: 20px auto;*/
+				float: right;
+				padding-top: 5px;
+				margin-right:20px ;
+			}
+			#code{
+				width: 60%;
+			}
+		</style>
+		<script type="text/javascript"> 
+			var uname = null;
+			var tel = null;
+			mui.init();
+			mui.plusReady(function(){
+				pageInit();
+				//加载验证码
+				get_code();
+			});
+			
+			//获取验证码
+			function get_code(){
+				new UserDAL().get_img_code(function(data){
+					document.querySelector(".code").src =data.imgUrl;
+					word = data.word;
+					sessionStorage.setItem("code_word",word);
+				})
+			}
+			
+			function pageInit(){	
+				
+				//切换验证码
+				document.querySelector(".code").addEventListener("tap",function(){
+					get_code();
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+				})
+				
+				var ws = plus.webview.currentWebview();
+				var uname = ws.uname;
+				var tel = ws.tel;
+				document.getElementById("nextBtn").addEventListener("tap",function(){
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+					var pwd = document.getElementById("password").value.trim() ;
+					var pwd1 = document.getElementById("password1").value.trim();
+					var code = document.querySelector("#code").value;
+					if(pwd == "" || pwd1 == "") {
+						mui.toast("密码不能为空");
+						return;
+					}else if( code == ""){
+						mui.toast("验证码不能为空");
+						return;
+					}
+					
+					if (!pwd.checkPwd() && !pwd1.checkPwd()) {
+						mui.toast("密码输入格式错误");
+						return false;
+					}
+					if(pwd != pwd1){
+						mui.toast("两次输入密码不同！");
+						return false;
+					}
+					if(code_word != code){
+						get_code();
+						mui.toast("验证码输入错误");
+						return;
+					}else if(code_word == code){
+						pwd = $.md5(pwd);
+					
+						new UserDAL().set_new_password(uname,pwd,function(data){
+							console.log(JSON.stringify(data));
+							switch (data.msg){
+								case 'failed':
+									mui.toast("修改失败，请稍后再试！");
+									break;
+								case 'noHad':
+									mui.toast("数据出错，请重新再试！");
+									break;
+								case 'PwdEqually':
+									mui.toast("密码不能跟旧密码相同！");
+									break;
+								case 'success':
+									mui.toast("修改成功！");
+									closepage();
+									break;
+								default:
+									break;
+							}
+						})
+					}
+				})
+				
+				function closepage(){
+					var forgetPw = plus.webview.getWebviewById("forgetPw");
+					var getNewpws = plus.webview.currentWebview();
+					forgetPw && (forgetPw.close());
+					getNewpws && (getNewpws.close());
+				}
+			}
+
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">修改密码</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<input id="password" type="password" value="tab521" class="mui-input-password"  placeholder="请输入密码">
+				</div>
+				<div class="mui-input-row">
+					<input id="password1" type="password" value="tab521" class="mui-input-password"  placeholder="请再次输入密码">
+				</div>
+				<div class="mui-input-row">
+					<input id="code" maxlength="4" type="text"   placeholder="请输入验证码">
+					<div class="test1">
+						<img class="code" src="" style="width: 80px; height: 30px;">
+					</div>
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<button id="nextBtn" type="button" class="mui-btn mui-btn-success mui-btn-block">确认</button>
+			</div>
+		</div>
+
+	</body>
+
+</html>

@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/ios.js" ></script>
+		<script type="text/javascript" src="../../../js/Itool/android.js" ></script>
+		<script type="text/javascript" src="../../../js/Config/Config.js" ></script>
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js" ></script>
+		<script type="text/javascript" src="../../../js/Config/WebService.js" ></script>
+		<script type="text/javascript" src="../../../js/Api/UserDal.js" ></script>
+		<script type="text/javascript" src="../../../js/Itool/OpenW.js" ></script>
+		<script type="text/javascript" src="../../../js/Itool/common.js" ></script>
+		<script type="text/javascript" src="../../../js/Itool/itool.js" ></script>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/newCss/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/app.css" />
+		<style>
+			.mui-card-header:after {
+				height: 0px !important;
+			}
+			
+			.mui-card {
+				width: 100%;
+				/*left: 2.5%;*/
+				border-radius: 0px;
+				margin: 10px auto;
+				border-style: solid none solid none;
+				/*border: none !important;*/
+				box-shadow: none !important;
+			}
+			
+			.mui-card-footer {
+				position: relative;
+				color: #000000 !important;
+			}
+			.mui-card-link{
+				color: #d74b28;
+			}
+			.mui-card-content{
+				height: 80px;
+				background: #FAFAFA;
+				padding:10px 10px 10px 10px;
+			}
+			.order_shop_pic{
+				width: 60px;
+				height: 60px;
+				border-radius: 2px;
+				margin-left: 10px;
+				object-fit: cover;
+				overflow: hidden;
+				float: left;
+			}
+			.order_shop_right_box{
+				width: 60px;
+				height: 60px;
+				margin-left: 10px;
+				overflow: hidden;
+				border-radius: 2px;
+				float: left;
+			}
+			.order_shop_right_box .price{
+			    font-weight: 500;
+			    text-overflow: ellipsis;
+			    white-space: nowrap;
+			    line-height: 30px !important;
+			    overflow: hidden;
+			   	color: #000;
+			   	text-align: right;
+			}
+			.order_shop_right_box .nums{
+				color: #999;
+				text-align: right;
+			}
+			.order_info_box{
+				width: 57%;
+				height: 60px;
+				margin:auto 10px;
+				margin-right: 0px !important;
+				float: left;
+			}
+			.order_info_box .title{
+				font-weight: 500;
+				line-height: 15px;
+				font-size: 12px;
+				color: #999;
+			}
+			.order_price_box{
+				width: 5%;
+				height: 60px;
+				border: 1px solid #d74b28;
+				float: left;
+			}
+			.pinglun{
+				border: 1px solid #d74b28;
+				padding: 0px 20px;
+				height: 30px !important;
+				border-radius: 2px;
+				color: #d74b28;
+				/*transition: .2s linear;*/
+			}
+			.pinglun:active{
+				border: 1px solid #fff;
+				background: #d74b28;
+				color: #fff !important;
+			}
+			.cont{
+				text-align: right;
+				width: 100%;
+				padding: 10px auto !important;
+				position: relative;
+			}
+			.cont span{
+				margin-right: 20px;
+				line-height: 30px;
+				width: 80px;
+				height: 30px;
+			}
+			.cont b{
+				font-weight: 700;
+			}
+			.mtime{
+				width: 200px !important;
+				font-size: 12px;
+				text-align: left;
+				font-weight: 300 !important;
+				position: absolute !important;
+				left: 10px !important;
+			}
+			.mtimeTex{font-weight: 300 !important;}
+			.mui-table-view:after,.mui-table-view:before{
+				height: 0px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="pullrefresh">
+				<ul class="mui-table-view" id="order_list_room">
+
+				</ul>
+				<template id="order_list">
+					<div class="mui-card">
+						<div class="mui-card-content" >
+							<img class="order_shop_pic" src="../../../img/logo.png" />
+							<div class="order_info_box">
+								<h3 class="title">江西移动 手机 话费充值 100元 快充直充 24小时自动充值即时到账  </h3>
+							</div>
+							<div class="order_shop_right_box">
+								<p class="price">￥99.9</p>
+								<p class="nums">x1</p>
+							</div>
+						</div>
+						<div class="cont">
+							<span class="mtime">下单时间：<b class="mtimeTex"></b></span>
+							<span>共<b class="buyCount">1</b>件商品</span>
+							<span>合计：<b class="price_count">￥99.9</b></span>
+						</div>
+						<div class="mui-card-footer">
+							<a class="mui-card-link car_state">交易成功</a>
+							<a class="mui-card-link"></a>
+							<a class="mui-card-link pinglun">评论</a>
+						</div>
+					</div>
+				</template>
+				<!--<div class="mui-card">
+					<div class="mui-card-content" >
+						<img class="order_shop_pic" src="../../../img/logo.png" />
+						<div class="order_info_box">
+							<h3 class="title">江西移动 手机 话费充值 100元 快充直充 24小时自动充值即时到账  </h3>
+						</div>
+						<div class="order_shop_right_box">
+							<p class="price">￥99.9</p>
+							<p class="nums">x1</p>
+						</div>
+					</div>
+					<div class="cont">
+						<span class="mtime">下单时间：<b class="mtimeTex">2017-03-29</b></span>
+						<span>共<b class="buyCount">1</b>件商品</span>
+						<span>合计：<b class="price_count">￥99.9</b></span>
+					</div>
+					<div class="mui-card-footer">
+						<a class="mui-card-link">交易成功</a>
+						<a class="mui-card-link"></a>
+						<a class="mui-card-link pinglun">评论</a>
+					</div>
+				</div>-->
+			</div>
+		</div>
+		<script type="text/javascript">
+			var page = 1
+			mui.init({
+				pullRefresh: {
+					container: "#pullrefresh", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+					up: {
+						//						contentrefresh:  '' + "正在刷新" + '' + "上次刷新：" + OldData,
+						contentrefresh: "正在刷新",
+						callback: pullupRefresh
+					}
+				}
+			});
+			
+			function pullupRefresh(){
+				setTimeout(function() {
+					//get_img_article(isDown); //获取图集文章内容
+					get_user_order();
+					mui('#pullrefresh').pullRefresh().endPullupToRefresh();
+				}, 1000);
+			}
+			mui.plusReady(function(){
+				getNetData();
+			});
+			
+			
+			function getNetData() {
+				//获取网络数据
+				setTimeout(function() {
+					mui('#pullrefresh').pullRefresh().pullupLoading();
+				}, 200);
+			}
+			
+			function get_user_order(){
+				var userInfo = new UserDAL().getUserInfo();
+				var mid = userInfo.mid;
+				new UserDAL().get_user_order(mid,page,10,function(data){
+					console.log(JSON.stringify(data));
+					if(data.length == ""){
+						mui.toast("没有更多了！");
+					}
+					for (var i in data) {
+						addOrderList(data[i]);
+					}
+					page++;
+				})
+			}
+			
+			
+			function addOrderList(o){
+				var model = document.getElementById("order_list_room");
+				//打开评论页面
+				var arr = {
+					path: "../../commodity/",
+					id: "set_feed_back",
+					styles: {},
+					extras: {
+						shopId: o.pid,
+						buyid : o.buyid
+					}
+				}
+				
+				
+				
+				var content = document.getElementById("order_list").content;
+				var li = content.querySelector(".mui-card");
+				li.querySelector(".title").innerHTML = o.pname;
+				li.id = o.buyid;
+				li.querySelector(".nums").innerHTML = "x"+o.cartcount;
+				li.querySelector(".price").innerHTML = o.price;
+				li.querySelector(".buyCount").innerHTML = o.cartcount;
+				li.querySelector(".price_count").innerHTML = "￥"+o.priceCount;
+				li.querySelector(".order_shop_pic").src = o.litpic;
+				li.querySelector(".mtimeTex").innerHTML = new Date(parseInt(o.mtime) * 1000).toFormatString("yyyy-MM-dd hh:mm:ss");
+				//new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+				/**
+				 * 0 购物车
+				 * 1 付款了 发货中 待收货 确认收货
+				 * 2  评论
+				 * 3 已评论
+				 */
+				if(o.sta == 1){
+//					car_state
+					li.querySelector(".car_state").innerHTML = "正在发货"
+					li.querySelector(".pinglun").innerHTML = "确认收货"
+				}else if(o.sta == 2){
+					li.querySelector(".car_state").innerHTML = "交易成功"
+					li.querySelector(".pinglun").innerHTML = "评论"
+				}else if(o.sta == 3){
+					li.querySelector(".car_state").innerHTML = "交易成功"
+					li.querySelector(".pinglun").innerHTML = "已评论"
+				}
+				var child = content.cloneNode(true);
+				model.appendChild(child);
+				var oli = document.getElementById(li.id);
+				if(oli.querySelector(".pinglun").innerHTML == "评论"){
+					oli.querySelector(".pinglun").addEventListener("tap",function(){
+						openWebViews(arr.path, arr.id, arr.styles, 1, arr.extras);
+					})
+				}else if(oli.querySelector(".pinglun").innerHTML == "确认收货"){
+					oli.querySelector(".pinglun").addEventListener("tap",function(){
+						//点击确认收货改变订单状态
+						new UserDAL().comment_state(o.buyid,function(data){
+//							console.log(JSON.stringify(data));
+							plus.webview.currentWebview().reload();
+						})
+					})
+					
+				}else if(oli.querySelector(".pinglun").innerHTML == "已评论"){
+					oli.querySelector(".pinglun").addEventListener("tap",function(){
+						mui.toast("你已经评论过了！");
+					})
+				}
+				//点击图片跳转到商品店铺去
+				oli.querySelector(".order_shop_pic").addEventListener("tap",function(){
+					console.log("1");
+					var arr = {
+						path: "../../commodity/",
+						id: "comm_room",
+						styles: {},
+						extras: {
+							shopId :o.pid
+						}
+					}
+					openWebViews(arr.path, arr.id, arr.styles, 1, arr.extras);
+				});
+				//点击跳转到订单详情去
+				oli.querySelector(".order_info_box").addEventListener("tap",function(){
+					mui.toast("开发中，请等待！")
+				})
+			}
+			
+		</script>
+		<script type="text/javascript" src="../../../js/immersed.js" ></script>
+	</body>
+
+</html>

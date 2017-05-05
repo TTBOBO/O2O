@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../../js/Api/UserDal.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/common.js"></script>
+
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/iconfont.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/app.css" />
+		<link rel="stylesheet" href="../../../css/main.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 12%;
+			}
+			
+			.article-title {
+				font-size: 1rem;
+				color: #000000;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+		</style>
+
+		<script type="text/javascript" charset="UTF-8">
+			var m_id = 0;
+			var page = 1;
+			var pagesize = 10;
+			var listRoom = null;
+			var updata = null; //更新函数
+			var isLeft = null;
+			mui.init({
+				pullRefresh: {
+					container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+					down: {
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: downCallBack //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					}
+//					,
+//					up: {
+//						contentinit: '',
+//						contentdown: '',
+//						contentrefresh: '正在加载...',
+//						callback: upCallBack
+//					}
+				}
+			});
+			//下拉刷新回调函数
+			function downCallBack() {
+				setTimeout(function(){
+					get_user_fav_list();
+					mui("#refreshContainer").pullRefresh().endPulldownToRefresh();
+				},1000);
+			}
+			function upCallBack() {
+				
+			}
+			mui.plusReady(function() {
+				//页面初始化
+				pageInit();
+				downCallBack();
+			});
+			
+			
+			function get_user_fav_list(){
+				new ArticleDAL().get_user_fav_list(m_id, page, pagesize, function(data) {
+					//w.close();\
+					if (!data || data.length == 0) {
+						mui.toast("没有更多啦.");
+						//mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+						return;
+					}
+					for (var i in data) {
+						addList(data[i]);
+					}
+					page++;
+					mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+				});
+			}
+
+			function set_category_id(mid) {
+				m_id = mid;
+			}
+			function pageInit() {
+				//获取容器 
+				listRoom = document.getElementById("listRoom");
+				var w = plus.webview.currentWebview();
+				set_category_id(w.m_id);
+				//获取网络数据
+				
+			}
+
+			function addList(s) {
+				console.log(JSON.stringify(s));
+				var content = document.getElementById("listMode").content;
+				var li = content.querySelector('li');
+				//设置收藏id
+				li.id = s.id;
+				//设置文章图片
+				var img = li.querySelector('img.mui-media-object');
+				//设置默认图片
+				img.src = "../../img/header.jpg";
+				if (s.litpic) {
+					img.src = s.litpic;
+				}
+				//设置标题
+				li.querySelector('.article-title').innerHTML = s.title;
+				//设置作者
+				li.querySelector('.writer').innerHTML = s.writer;
+				//设置收藏时间
+				li.querySelector('.pubdate').innerHTML = new Date(parseInt(s.addtime) * 1000).toFormatString("yyyy-MM-dd");
+		  		//点赞
+				li.querySelector('.goodpost').innerHTML = s.goodpost;
+				//踩/	li.querySelector('.badpost').innerHTML = o.badpost;
+				//添加到页面
+				listRoom.appendChild(content.cloneNode(true));
+				var eli = document.getElementById(s.id);
+				eli.addEventListener('slideleft', function() {
+						if (isLeft && isLeft.id != this.id) {
+							mui.swipeoutClose(isLeft);
+						}
+						isLeft = this;
+					})
+					//添加点击事件
+				eli.addEventListener('tap', function() {
+					//触摸就让按钮缩回去
+					if (isLeft) {
+						mui.swipeoutClose(isLeft);
+						isLeft = null;
+						return;
+					}
+					mui.openWindow({
+						url: "../../article/articleAbout.html",
+						id: "personalArticleCollectionRoom",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							acticle_id: s.aid,
+							acticle_title: s.title,
+							acticle_goodpost: s.goodpost
+						}
+					});
+				});
+				eli.querySelector('.mui-btn-red').addEventListener('tap', function(e) {
+					e.stopPropagation();
+					var btnArray = ['确认', '取消'];
+					var elem = this;
+					var li = elem.parentNode.parentNode;
+					mui.confirm('确定不再收藏这篇文章？', '智慧心', btnArray, function(e) {
+						if (e.index == 0) {
+							new ArticleDAL().set_article_fav_cancle(li.id, function(date) {
+								if (date.result != "success") {
+									console.log(JSON.stringify(data));
+									mui.toast('取消收藏失败');
+									return;
+								}
+								var scList = common.myStorage.getItem("scList");
+								for (var i in scList) {
+									if (scList[i] == s.aid) {
+										scList.splice(i, 1);
+										break;
+									}
+								}
+								common.myStorage.setItem("scList", scList);
+								mui.toast('取消收藏成功');
+								li.parentNode.removeChild(li);
+							}, function(e) {})
+						} else {
+							setTimeout(function() {
+								mui.swipeoutClose(li);
+							}, 0);
+						}
+					});
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="refreshContainer" class="mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<ul class="mui-table-view" id="listRoom" style="margin-bottom: 25px;">
+				</ul>
+			</div>
+		</div>
+		<!--收藏文章三张图模板-->
+		<template id="AtlasArticle">
+			<li class="mui-table-view-cell threeimg">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-10 ">
+						<div id="topBox"></div>
+						<div class="mui-ellipsis" id="mui-ellipsis">
+							<div id="threeImg"></div>
+						</div>
+						<div class="e_info">
+							<span class=" e_date">2016-10-29</span>
+							<span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+						</div>
+					</div>
+				</div>
+			</li>
+		</template>
+		<!--收藏文章一张图模板-->
+		<template id="oneAtlasArticle">
+			<li class="mui-table-view-cell imgOne">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-10">
+						<div class="left_box">
+							<div class="leftTitle">
+								<span class="mui-ellipsis_left_title">标题</span>
+							</div>
+							<div class="e_info_left">
+								<span class=" e_date">2016-10-29</span>
+								<span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+							</div>
+						</div>
+						<div class="right_box"><img src="../img/4.jpg" class="oneimg" style="width: 100%; height: 100%;" /> </div>
+					</div>
+				</div>
+			</li>
+		</template>
+		<!--收藏文章无图模板-->
+		<template id="noPicture">
+			<li class="mui-table-view-cell noImg">
+				<div class="mui-table">
+					<div class="mui-table-cell mui-col-xs-10">
+						<div id="noimgDiv"><span class="mui-ellipsis" id="mui-ellipsisnoImg">信息化推进办12313213131公室张彦合同付款信1231息化</span></div>
+						<div class="e_info">
+							<span class=" e_date">2016-10-29</span>
+							<span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+						</div>
+					</div>
+				</div>
+			</li>
+		</template>
+		<template id="listMode">
+			<ul class="mui-table-view" >
+				<li  class="mui-table-view-cell">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red">取消收藏</a>
+					</div>
+					<img class="mui-media-object mui-pull-left" src="">
+					<div class="mui-media-body mui-slider-handle">
+						<div class="mui-table">
+						<p class="article-title">标题</p>
+						<div class="info">
+							<span class="pubdate">发布时间</span>
+							<span class="writer">收藏</span>
+							<span class="mui-pull-right cz">
+						        <span  style="font-size: 10px;" class="goodpost mui-icon iconfont icon-dianzan">赞数</span>
+							</span>
+						</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</template>
+		<ul class="mui-table-view" >
+				<li  class="mui-table-view-cell">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red">取消收藏</a>
+					</div>
+					<img class="mui-media-object mui-pull-left" src="../../../img/01.jpg">
+					<div class="mui-media-body mui-slider-handle">
+						<div class="mui-table">
+						<p class="article-title">标题</p>
+						<div class="info">
+							<span class="pubdate">发布时间</span>
+							<span class="writer">收藏</span>
+							<span class="mui-pull-right cz">
+						        <span  style="font-size: 10px;" class="goodpost mui-icon iconfont icon-dianzan">赞数</span>
+							</span>
+						</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</body>
+
+</html>

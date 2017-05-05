@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<style>
+			.mui-bar-nav {
+				box-shadow: 0 0px 0px #ccc;
+				/*background:rgba(255,255,255,0) !important;*/
+			}
+			
+			.mui-bar {
+				box-shadow: none;
+			}
+		</style>
+		<script>
+			mui.init({
+				subpages: [{
+					url: "demo.html",
+//					url: "../community/communityinfo.html",
+//					url: "../mainInterface.html",
+					id: "demo1",
+					styles: {
+						top: "45px",
+						bottom: "0px"
+					}
+				}]
+
+			});
+
+//			document.addEventListener("plusready", onPlusReady, false);
+//
+//			function onPlusReady() {
+//				
+//			}
+			mui.plusReady(function(){
+				pageInfo();
+			})
+//			mui.plusReady(function(){
+//				var e = {
+//					url: "../community/communityinfo.html", //下拉刷新内容页面地址
+//					id: "mainInterface", //内容页面标志
+//					styles: {
+//						top: 45+(window.immersed||0)+'px',
+//						bottom:"0px"
+//					}
+//				};
+//				var ws = plus.webview.currentWebview();
+//				ws.append(plus.webview.open(e.url,e.id,e.styles));
+//			})
+//			mui.plusReady(function() {});
+
+			function pageInfo() {
+				document.querySelector(".mui-icon-plusempty").addEventListener("tap", function() {
+					var userData = common.myStorage.getItem("userData");
+					if(!userData || userData.length == 0) {
+						mui.toast("您是游客身份，请先登陆");
+						mui.openWindow({
+							url: "../other/login.html",
+							id: "login",
+							style: {},
+							show: {
+								aniShow: 'zoom-fade-out',
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+						return;
+					}
+					mui.openWindow({
+						url: "../imgArticle/release.html",
+						id: "release",
+						waiting: {
+							autoShow: false
+						}
+					});
+				})
+			}
+		</script>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar" id="header">
+			<span class="mui-pull-right mui-icon mui-icon mui-icon-plusempty" style="font-weight: 900; transform: scale(1.3); color: #fff;"></span>
+			<h1 class="mui-title " style="color: white;">聚实惠</h1>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../js/immersed.js"></script>
+
+</html>

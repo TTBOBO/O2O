@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script src="js/Itool/common.js"></script>
+	</head>
+
+	<body>
+		
+		<script type="text/javascript">
+			mui.init();
+			document.addEventListener("plusready",OnPlusready,false);
+			mui.plusReady(function(){
+				//设置成禁支持竖屏
+				plus.screen.lockOrientation("portrait-primary");
+			});
+			
+			function OnPlusready(){
+				pageInit();
+			}
+			
+			function pageInit(){
+				var tagetWebView = mui.preload({
+					url:"protal/welcome.html",
+					id:'welcome'
+				});
+				var version = plus.runtime.version;
+				var storageVersion = plus.myStorage.getItem("FirstTimeFlag");
+				console.log(storageVersion);
+				if(version == storageVersion){
+					//关闭全屏
+					plus.navigator.setFullscreen(false);
+					mui.openWindow({
+						url:'protal/main.html',
+						id:'page_main',
+						show:{
+							aniShow:'pop-in',
+							duration:'300'
+						},
+						waiting:{
+							autoShow:false
+						}
+					});
+					//关闭动画启动页面
+					plus.navigator.closeSplashscreen();
+					return;
+				}
+				
+				//延长时间以便于页面加载好了再关闭页面
+				setTimeout(function(){
+					plus.webview.getWebviewById("page_welcome").show("none",600,function(){
+						setTimeout(function(){
+							plus.navigator.closeSplashscreen();
+						},1000);
+					})
+				},1400);
+			}
+		</script>
+	</body>
+
+</html>

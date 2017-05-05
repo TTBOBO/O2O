@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>欢迎</title>
+		<script src="../js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/scroll/UIOp.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../js/scroll/auto.js"></script>
+		<script type="text/javascript" src="../js/scroll/iscroll.js"></script>
+
+		<style>
+			body,
+			div,
+			dl,
+			dt,
+			dd,
+			ul,
+			ol,
+			li,
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			pre,
+			code,
+			form,
+			fieldset,
+			legend,
+			input,
+			textarea,
+			p,
+			blockquote,
+			th,
+			td {
+				margin: 0;
+				padding: 0;
+			}
+			
+			body {
+				width: 100%;
+				margin: 0 auto;
+				padding-bottom: 2rem;
+			}
+			
+			img {
+				border: 0;
+			}
+			
+			ol,
+			ul,
+			li {
+				list-style: none outside none;
+				margin: 0;
+				padding: 0;
+			}
+			
+			b,
+			em,
+			i {
+				font-style: normal;
+			}
+			
+			a {
+				color: #A39370;
+				text-decoration: none;
+			}
+			
+			#wsq_index {
+				background: #f9f9f9;
+			}
+			/*J-album样式*/
+			
+			#J-album {
+				margin: 0 auto;
+				/*background-color: #FFFFFF;*/
+				width: 100%;
+				overflow: hidden;
+			}
+			
+			#J-album-wp {
+				width: 100%;
+				margin: 0 auto;
+				height: auto;
+				overflow: hidden;
+				z-index: 1;
+			}
+			
+			.scroller {
+				height: auto;
+				overflow: hidden;
+			}
+			
+			.scroller ul {
+				display: block;
+				overflow: hidden;
+				height: auto;
+				margin: auto;
+				padding: 0;
+				text-align: center;
+			}
+			
+			.scroller li {
+				width: auto;
+				height: auto;
+				display: block;
+				float: left;
+				text-align: center;
+			}
+			
+			#J-album-nav {
+				float: right;
+				right: 35%;
+				margin-top: -1rem;
+				padding: 0;
+				position: relative;
+				width: auto;
+				z-index: 3;
+			}
+			
+			#indicator > li {
+				display: block;
+				float: left;
+				list-style: none;
+			}
+			
+			#indicator {
+				display: block;
+				margin: 0 0.3rem;
+				padding: 0;
+				width: auto;
+			}
+			
+			#indicator > li {
+				text-indent: -9999em;
+				width: 0.2rem;
+				height: 0.2rem;
+				-webkit-border-radius: 0.1rem;
+				-moz-border-radius: 0.1rem;
+				border-radius: 0.1rem;
+				background: #888;
+				overflow: hidden;
+				margin-right: 1rem;
+			}
+			
+			#indicator > li.active {
+				background: #DDDDDD;
+			}
+			
+			#indicator > li:last-child {
+				margin: 0;
+			}
+			
+			#thelist {
+				height: 100%;
+				overflow: hidden;
+			}
+		</style>
+
+		<style>
+			#close {
+				position: absolute;
+				top: 3%;
+				left: 82%;
+				width: 2rem;
+				height: 2rem;
+				line-height: 2rem;
+				text-align: center;
+				font-size: 0.75em;
+				background: transparent;
+				border: 1px solid #CCCCCC;
+				border-radius: 50px;
+				color: #CCCCCC;
+			}
+			.animate {
+				position: absolute;
+				left: 75%;
+				bottom: 15%;
+				color: #fff;
+				display: -moz-box;
+			}
+			
+			#close2 {
+				position: absolute;
+				width: 50%;
+				left: 25%;
+				bottom: 15%;
+				padding: 10px;
+				color: #fff;
+				border-color: #fff;
+			}
+		</style>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			// 扩展API加载完毕后调用onPlusReady回调函数 
+			document.addEventListener("plusready", onPlusReady, false);
+			// 扩展API加载
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+				//去除滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+			// 扩展API加载完毕，现在可以正常调用扩展API 
+			function onPlusReady() {
+				/*页面初始化，加载页面元素*/
+				pageInit();
+				/*页面加载完成发生*/
+				pageOnload();
+				/*页面渲染*/
+				PageRender();
+				//请求网络数据以便判断一致性并渲染文字资料
+				getNetData();
+			};
+
+			function pageInit() {
+				//返回键重构
+				SetBackEvent();
+				//按钮的初始化包含事件
+				MenuInit();
+			};
+
+			function pageOnload() {};
+
+			function PageRender() {};
+
+			function getNetData() {};
+
+			function MenuInit() {
+				//立即体验按钮点击事件
+				document.getElementById("close").addEventListener('tap', function(event) {
+					plus.storage.setItem("FirstTimeFlag", plus.runtime.version);
+					mui.openWindow({
+						url: 'protal/main.html',
+						id: 'page-main',
+						show: {
+							aniShow: 'pop-in',
+							duration: 300,
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					plus.navigator.setFullscreen(false);
+				});
+				//立即体验按钮点击事件
+				document.getElementById("close2").addEventListener('tap', function(event) {
+					plus.storage.setItem("FirstTimeFlag", plus.runtime.version);
+					mui.openWindow({
+						url: 'protal/main.html',
+						id: 'page-main',
+						show: {
+							aniShow: 'pop-in',
+							duration: 300,
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					plus.navigator.setFullscreen(false);
+				});
+			};
+		</script>
+
+	</head>
+
+	<body>
+		<div id="wsq_index">
+			<!--封面图集-->
+			<div id="J-album">
+				<div id="J-album-wp" style="overflow: hidden;">
+					<!-- 轮播s -->
+					<div class="scroller" id="scroller" style="width: 918px; -webkit-transition: -webkit-transform 0ms; transition: -webkit-transform 0ms; -webkit-transform-origin: 0px 0px; -webkit-transform: translate3d(-459px, 0px, 0px) scale(1);">
+						<div id="animate" class="animate">
+							<button id='close2' class="mui-btn mui-btn-warning mui-btn-outlined">立即体验</button>
+						</div>
+						<ul id="thelist">
+							<li>
+								<img _src="../img/Welcome1.jpg" src="../img/Welcome1.jpg" onerror="this.src='../img/Welcome1.jpg'" width="100%">
+							</li>
+							<li>
+								<img _src="../img/Welcome2.jpg" src="../img/Welcome2.jpg" onerror="this.src='../img/Welcome2.jpg'" width="100%">
+							</li>
+							<li>
+								<img _src="../img/Welcome3.jpg" src="../img/Welcome3.jpg" onerror="this.src='../img/Welcome3.jpg'" width="100%">
+							</li>
+							<li>
+								<img _src="../img/Welcome4.jpg" src="../img/Welcome4.jpg" onerror="this.src='../img/Welcome4.jpg'" width="100%">
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div id="close">跳过 </div>
+				<div id="J-album-nav">
+					<ul id="indicator">
+						<li class="active">1</li>
+						<li>2</li>
+						<li>3</li>
+						<li>4</li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			var myScroll;
+			var currState = 0;
+
+			function loaded() {
+				myScroll = new iScroll('J-album-wp', {
+					snap: true,
+					momentum: false,
+					hScrollbar: false,
+					onScrollEnd: function() {
+						document.querySelector('#indicator > li.active').className = '';
+						document.querySelector('#indicator > li:nth-child(' + (this.currPageX + 1) + ')').className = 'active';
+					}
+				});
+			}
+			document.addEventListener('DOMContentLoaded', loaded, false);
+		</script>
+		<script type="text/javascript">
+			document.getElementById("animate").style.width = document.body.clientWidth + "px";
+			var count = document.getElementById("thelist").getElementsByTagName("img").length;
+			for (i = 0; i < count; i++) {
+				document.getElementById("thelist").getElementsByTagName("img").item(i).style.cssText = " width:" + document.body.clientWidth + "px";
+			}
+			document.getElementById("scroller").style.cssText = " width:" + document.body.clientWidth * count + "px";
+			window.onresize = function() {
+				for (i = 0; i < count; i++) {
+					document.getElementById("thelist").getElementsByTagName("img").item(i).style.cssText = " width:" + document.body.clientWidth + "px";
+				}
+				document.getElementById("scroller").style.cssText = " width:" + document.body.clientWidth * count + "px";
+			}
+		</script>
+	</body>
+
+</html>

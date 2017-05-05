@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../../js/mui.min.js"></script>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../../js/Api/AskDal.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/common.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/app.css" />
+		<script type="text/javascript" charset="UTF-8">
+			var statusnum = 0;
+			var page = 1;
+			var page1 = 1;
+			var page2 = 1;
+			var isLeft = null;
+			var istap = null;
+			mui.init({
+				pullRefresh: {
+					container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+					down: {
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: downCallBack //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					},
+					up: {
+						contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+						contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: upCallBack
+					}
+				}
+			});
+		//=============下拉刷新加载最新数据==============
+			function downCallBack() {
+				var userData=common.myStorage.getItem("userData");
+				setTimeout(function() {
+					switch (statusnum) {
+						case 0:
+							page = 1;
+							new AskDAL().get_ask_list_by_status(statusnum, userData.mid , page, 8, function(data) {
+								document.getElementById("unsolved").innerHTML = "";
+								for (var i in data) {
+									addList(data[i]);
+								}
+							}, function(e) {});
+							break;
+						case 1:
+							page1 = 1;
+							new AskDAL().get_ask_list_by_status(statusnum, userData.mid, page1, 8, function(data) {
+								document.getElementById("resolved").innerHTML = "";
+								for (var i in data) {
+									addList1(data[i]);
+								}
+							}, function(e) {});
+							break;
+						case 2:
+							page2 = 1;
+							new AskDAL().get_ask_list_by_status(statusnum, userData.mid, page2, 8, function(data) {
+								document.getElementById("closed").innerHTML = "";
+								for (var i in data) {
+									addList2(data[i]);
+								}
+							}, function(e) {});
+							break;
+					}
+					mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+				}, 1500)
+			}
+		//================上拉加载获取更多数据==============
+			function upCallBack() {
+				var userData=common.myStorage.getItem("userData");
+				switch (statusnum) {
+					case 0:
+						page++;
+						new AskDAL().get_ask_list_by_status(statusnum, userData.mid, page, 8, function(data) {
+							if (!data || data.length == 0) {
+								mui.toast("没有数据了");
+								mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+							}
+							for (var i in data) {
+								addList(data[i]);
+							}  
+						}, function(e) {});
+						break;
+					case 1:
+						
+						new AskDAL().get_ask_list_by_status(statusnum, userData.mid, page1, 8, function(data) {
+							page1++;
+							if (!data || data.length == 0) {
+								mui.toast("没有数据了");
+								mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+							}
+							for (var i in data) {
+								addList1(data[i]); 
+							}
+						}, function(e) {});
+						break;
+					case 2:
+						new AskDAL().get_ask_list_by_status(statusnum, userData.mid, page2, 8, function(data) {
+							page2++;
+							if (!data || data.length == 0) {
+								mui.toast("没有数据了");
+								mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+							}
+							for (var i in data) {
+								addList2(data[i]);
+							}
+						}, function(e) {});
+						break;
+				}
+				mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			}
+			
+			mui.plusReady(function() {
+				get_unsolved_asklist();
+				get_resolved_asklist();
+				get_close_asklist();
+				get_data_by_onlickbutton();
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: "none"
+				});
+			});
+		//=============当点击上面的已解决和已关闭按钮时重新请求服务器
+			function get_data_by_onlickbutton() {
+				document.getElementById("waiting_button").addEventListener('tap', function() {
+					statusnum = 0;
+				});
+				document.getElementById("solve_button").addEventListener('tap', function() {
+					page1 = 2;
+					statusnum = 1;
+					document.getElementById("resolved").innerHTML = "";
+					get_resolved_asklist(statusnum);
+					//隐藏滑块
+					if(!istap){
+						mui.swipeoutClose(isLeft.querySelector('li'));
+					}
+					istap = null;
+				});
+				document.getElementById("close_button").addEventListener('tap', function() {
+					page2 = 2;
+					statusnum = 2;
+					document.getElementById("closed").innerHTML = "";
+					get_close_asklist(statusnum);
+					//隐藏滑块
+					if(!istap){
+						mui.swipeoutClose(isLeft.querySelector('li'));
+					}
+					istap = null;
+				})
+			}
+		//====================获取未解决问题列表数据====================
+			function get_unsolved_asklist() {
+				var userData=common.myStorage.getItem("userData");
+				new AskDAL().get_ask_list_by_status(statusnum,userData.mid, 1, 8, function(data) {
+					for (var i in data) {
+						  addList(data[i]);
+					}
+				}, function(e) {});
+			}
+		//====================将获取的数据添加到页面中========================
+			function addList(o) {
+				var ListContent = document.getElementById("askMode").content;
+				var div = ListContent.querySelector('div.listdata');
+				//获取问题id
+				div.id = o.id;
+				//获取问题标题
+				div.querySelector('.title').innerHTML = o.title;
+				//获取问题标签
+				div.querySelector('.lebel').innerHTML = o.tidname;
+				//获取问题发布时间
+				var dateline = new Date(parseInt(o.dateline) * 1000);
+				div.querySelector('.ask-time').innerHTML = TimeDifference(dateline);
+				//获取问题发布者的用户ID
+				div.userid = o.userid;
+				//将这些获得的数据添加到列表中 
+				document.getElementById("unsolved").appendChild(ListContent.cloneNode(true));
+				//为列表添加点击事件，进入问答详情页
+				var oid = document.getElementById(o.id);
+				oid.addEventListener('slideleft',function(){
+					if(isLeft && isLeft.id!=this.id){
+						mui.swipeoutClose(isLeft.querySelector('li'));
+					}
+					isLeft = this;
+				});
+				oid.addEventListener('tap', function() {
+					//触摸就让按钮缩回去
+					if(isLeft){
+						mui.swipeoutClose(isLeft.querySelector('li'));
+						isLeft = null;
+						return false;
+					}
+					common.myStorage.setItem("oid", o.id);
+					mui.openWindow({
+						url: "../../ask/detailsRoom.html",
+						id: "detailsRoom",
+						styles: {},
+						extras: { 
+							ask_id: o.id,
+							ask_userid: o.userid,
+							ask_title: o.title
+						},
+					});
+				});
+				//我的问题关闭
+				oid.querySelector(".close").addEventListener('tap', function(e) {
+					e.stopPropagation();
+					var btnArray = ['确认', '取消'];
+					var status = 2;
+					var elem = this;
+					var li = elem.parentNode.parentNode.parentNode;
+					var lii = elem.parentNode.parentNode;
+					mui.confirm('确定关闭这个问答？', '智慧心', btnArray, function(e) {
+						if (e.index == 0) {
+							new AskDAL().set_ask_status(o.id, status, function(data) {
+								if (data.result != "success") {
+									console.log(JSON.stringify(data));
+									mui.toast('关闭失败');
+									return;
+								}
+								mui.toast('关闭成功');
+								li.parentNode.removeChild(li);
+							}, function(e) {})
+						} else {
+							setTimeout(function() {
+								mui.swipeoutClose(lii);
+							}, 0);
+						}
+					});
+					return false;
+				});
+				//我的问题标注解决
+				oid.querySelector(".solve").addEventListener('tap', function(e) {
+					e.stopPropagation();
+					var btnArray = ['确认', '取消'];
+					var status = 1;
+					var elem = this;
+					var li = elem.parentNode.parentNode.parentNode;
+					var lii = elem.parentNode.parentNode;
+					if (o.replies == 0) {
+						mui.toast("该问题还没人回答哦!");
+						return;
+					}
+					mui.confirm('是否标注已解决', '智慧心', btnArray, function(e) {
+						if (e.index == 0) {
+							new AskDAL().set_ask_status(o.id, status, function(data) {
+								if (data.result != "success") {
+									console.log(JSON.stringify(data));
+									mui.toast('标注失败');
+									return;
+								}
+								mui.toast('标注成功');
+								li.parentNode.removeChild(li);
+							}, function(e) {})
+						} else {
+							setTimeout(function() {
+								mui.swipeoutClose(lii);
+							}, 0);
+						}
+					});
+					return false;
+				});
+			}
+		//====================获取已关闭问题列表数据====================
+			function get_close_asklist(statusnum2) {
+				var userData=common.myStorage.getItem("userData");
+				new AskDAL().get_ask_list_by_status(statusnum2, userData.mid, 1, 8, function(data) {
+					for (var i in data) {
+						addList2(data[i]);
+					}
+				}, function(e) {});
+			}
+			//将获取的数据添加到页面中
+			function addList2(o) {
+				var ListContent2 = document.getElementById("closeaskMode").content;
+				var div2 = ListContent2.querySelector('div.listdata');
+				//获取问题id
+				div2.id = o.id;
+				//获取问题标题
+				div2.querySelector('.title').innerHTML = o.title;
+				//获取问题标签
+				div2.querySelector('.lebel').innerHTML = o.tidname;
+				//获取问题发布时间
+				var dateline = new Date(parseInt(o.dateline) * 1000);
+				div2.querySelector('.ask-time').innerHTML = TimeDifference(dateline);
+				//获取问题发布者的用户ID
+				div2.userid = o.userid;
+				//将这些获得的数据添加到列表中 
+				document.getElementById("closed").appendChild(ListContent2.cloneNode(true));
+				//为列表添加点击事件，进入问答详情页
+				var oid2 = document.getElementById(o.id);
+				oid2.addEventListener('tap', function() {
+					common.myStorage.setItem("oid", o.id);
+					mui.openWindow({
+						url: "../../ask/detailsRoom.html",
+						id: "detailsRoom",
+						styles: {},
+						extras: {
+							ask_id: o.id,
+							ask_userid: o.userid,
+							ask_title: o.title
+						},
+					});
+				});
+			}
+		//====================获取已解决问题列表数据====================
+			function get_resolved_asklist(statusnum1) {
+				var userData=common.myStorage.getItem("userData");
+				new AskDAL().get_ask_list_by_status(statusnum1, userData.mid, 1, 8, function(data) {
+					for (var i in data) {
+						addList1(data[i]);
+					}
+				}, function(e) {});
+			}
+
+			function addList1(o) {
+				var ListContent1 = document.getElementById("resolvedaskMode").content;
+				var div1 = ListContent1.querySelector('div.listdata');
+				//获取问题id
+				div1.id = o.id;
+				//获取问题标题
+				div1.querySelector('.title').innerHTML = o.title;
+				//获取问题标签
+				div1.querySelector('.lebel').innerHTML = o.tidname;
+				//获取问题发布时间
+				var dateline = new Date(parseInt(o.dateline) * 1000);
+				div1.querySelector('.ask-time').innerHTML = TimeDifference(dateline);
+				//获取问题发布者的用户ID
+				div1.userid = o.userid;
+				//将这些获得的数据添加到列表中 
+				document.getElementById("resolved").appendChild(ListContent1.cloneNode(true));
+				//为列表添加点击事件，进入问答详情页
+				var oid1 = document.getElementById(o.id);
+				oid1.addEventListener('tap', function() {
+					common.myStorage.setItem("oid", o.id);
+					mui.openWindow({
+						url: "../../ask/detailsRoom.html",
+						id: "detailsRoom",
+						styles: {},
+						extras: {
+							ask_id: o.id,
+							ask_userid: o.userid,
+							ask_title: o.title
+						},
+					});
+				});
+			}
+		</script>
+
+		<style>
+			.mui-card .mui-control-content {
+				padding: 10px;
+			}
+			
+			.mui-control-content {
+				height: 520px;
+			}
+			
+			.title {
+				margin-top: 10px;
+				font-size: 1rem;
+				color: #000000;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+			
+			.mui-table-view-cell {
+				background-color: #FFFFFF;
+			}
+			
+			.ask-time {
+				margin-left: 5px;
+				font-size: 0.7em;
+			}
+			
+			.mui-table-view {
+				background-color: #F7F7F7;
+				margin-top: -11px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div style="padding: 10px 10px;border-bottom: 1px solid #CCCCCC;">
+				<div id="segmentedControl" class="mui-segmented-control">
+					<a id="waiting_button" class="mui-control-item mui-active" href="#item1">
+				待解决
+			</a>
+
+					<a id="solve_button" class="mui-control-item" href="#item2">
+				已解决
+			</a>
+					<a id="close_button" class="mui-control-item" href="#item3">
+				已关闭
+			</a>
+				</div>
+			</div>
+
+			<div>
+				<div id="item1" class="mui-control-content mui-active">
+					<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<!--数据列表-->
+							<ul class="mui-table-view">
+								<li id="unsolved">
+
+								</li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+				<div id="item2" class="mui-control-content">
+					<div id="refreshContainer" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view">
+								<li id="resolved">
+
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="item3" class="mui-control-content">
+					<div id="refreshContainer" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view">
+								<li id="closed">
+
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		<template id="askMode">
+			<div class="listdata" style="border: 1px solid #F1F1F1; background-color:white ;">
+						<li class="mui-table-view-cell">
+							<div class="mui-slider-right mui-disabled">
+								<a class="mui-btn mui-btn-red close">关闭</a>
+								<a class="mui-btn mui-btn-blue solve">解决</a>
+							</div>
+							<div class="mui-slider-handle">
+								<div class="mui-table" >
+									<p class="title"></p>
+									<span class="lebel" style="font-size: 0.7em;"></span> |
+									<span class="ask-time"></span>
+								</div>
+							</div>
+						</li> 
+			</div>
+		</template>
+			<template id="resolvedaskMode">
+			<div class="listdata" style="border: 1px solid #F1F1F1; background-color:white ;">
+				<li class="mui-table-view-cell">
+				<div class="mui-table" >
+					<p class="title"></p>
+					<span class="lebel" style="font-size: 0.7em;"></span> |
+					<span class="ask-time"></span>
+				</div>
+				</li>
+			</div>
+		</template>
+			<template id="closeaskMode">
+			<div class="listdata" style="border: 1px solid #F1F1F1; background-color:white ;">
+				<li class="mui-table-view-cell">
+				<div class="mui-table" >
+					<p class="title"></p>
+					<span class="lebel" style="font-size: 0.7em;"></span> |
+					<span class="ask-time"></span>
+				</div>
+				</li>
+			</div>
+		</template>
+	</body>
+
+</html>

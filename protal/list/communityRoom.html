@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<script src="../../js/Api/UserDal.js"></script>
+		<style>
+			.icon-jiahao1 {
+				font-size: 30px;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<a class="mui-action-menu mui-icon iconfont icon-roundadd mui-pull-right" style="color: #fff; font-size: 30px;"></a>
+			<h1 class="mui-title">高安社区</h1>
+		</header>
+		<script type="text/javascript">
+			var userData = null;
+			mui.init({
+				gestureConfig: {
+					doubletap: true,
+				},
+				subpages: [{
+					url: '../community/communityinfo.html',
+					id: 'communityinfo',
+					styles: {
+						top: '65px',
+						bottom: '1px',
+						hardwareAccelerated: true
+					}
+				}]
+
+			});
+			mui('.mui-scroll-wrapper').scroll();
+			mui.plusReady(function() {
+				pageInfo();
+			});
+
+			function pageInfo() {
+				document.querySelector(".icon-roundadd").addEventListener("tap", function() {
+					var userData = LoadUserInfo();
+					if(!userData) {
+						new UserDAL().openLogin();
+					} else {
+						mui.openWindow({
+							url: "../imgArticle/release2.html",
+							id: "release2",
+							waiting: {
+								autoShow: false
+							}
+						});
+					}
+				})
+
+			}
+
+			function LoadUserInfo(userData) {
+				userData = new UserDAL().getUserInfo();
+				return userData;
+			}
+		</script>
+		<script type="text/javascript" src="../../js/immersed.js"></script>
+	</body>
+
+</html>

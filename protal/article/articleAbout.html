@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../../js/Api/AtlasArticle.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Api/UserDal.js"></script>
+		<script src="../../js/Itool/OpenW.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script type="text/javascript" src="../../js/Itool/Itool2.js"></script>
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 45px;
+			}
+			
+			#img1 {
+				width: 95%;
+				height: auto;
+				overflow: hidden;
+				margin-left: 2.5%;
+			}
+			
+			p {
+				text-indent: 2em;
+			}
+			
+			a {
+				text-decoration: none;
+			}
+		</style>
+
+		<script type="text/javascript" charset="UTF-8">
+			var acticle_id = null; //文章id
+			var acticle_title = null; //文章标题
+			var acticle_goodpost = 0; //赞数
+			var typeid = 0; //推荐栏目
+			var w = null;
+			var mask_share = null;
+			var mid = null;
+			var userInfo = null;
+			mui.init({
+				swipeBack: true //开启右滑关闭功能
+			});
+			mui.plusReady(function() {
+//				common.myStorage.setItem("scList", "");
+				//页面初始化
+				pageInit();
+				//加载文章详情数据 
+				getNetData();
+				//加载文章列表
+				//getNetData_tuijian();
+			});
+			//页面初始化
+			function pageInit() {
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: "none"
+				})
+				getPageInfo();
+//				setPageInfo();
+				//先在本地查找是否點讚過
+				isDz();
+				isSC();
+				LoadUserInfo();
+			}
+
+			function isDz() {
+				var dzList = common.myStorage.getItem("dzList") || [];
+				if(dzList.length == 0 || acticle_goodpost == 0) {
+					return;
+				} //
+				if(dzList.isHas(acticle_id)) {
+					var that = document.getElementById("dzbtn");
+					var up = document.getElementById("up");
+					that.className = "mui-icon iconfont icon-zantongfill";
+					that.style.color = "red";
+					up.style.display = "block";
+					up.innerHTML = acticle_goodpost;
+				}
+			}
+
+			function isSC() {
+				var scList = common.myStorage.getItem("scList") || [];
+				if(scList.length == 0) {
+					return;
+				}
+				if(scList.isHas(acticle_id)) {
+					var that = document.getElementById("shoucang");
+					that.className = " mui-icon iconfont icon-aixin";
+					that.style.color = "red";
+				}
+			}
+
+			function LoadUserInfo() {
+				userInfo = new UserDAL().getUserInfo();
+				
+			}
+
+			//获取传参
+			function getPageInfo() {
+				var w = plus.webview.currentWebview();
+				acticle_id = w.acticle_id;
+				acticle_title = w.acticle_title;
+				acticle_goodpost = w.acticle_goodpost;
+				console.log(acticle_id);
+				console.log(acticle_title);
+				console.log(acticle_goodpost);
+				mask_share = mui.createMask(function() {
+					//关闭遮罩时的事件
+					var shareView = plus.webview.getWebviewById('share');
+					//点击遮罩关闭当前页面
+					shareView && shareView.close();
+				});
+				setPageInfo(w);
+			}
+			//设置页面信息
+			function setPageInfo(ws) {
+
+				//document.querySelector("header>h1").innerHTML = acticle_title;
+				document.getElementById("dzbtn").addEventListener('tap', function() {
+					if(this.classList.contains('icon-zantongfill')) {
+						mui.toast("你已经表达过态度了");
+						//如果 已经点赞过 就不能点赞了
+						return;
+					}
+					var that = this;
+					var up = document.getElementById("up");
+					var jia = document.getElementById("jia");
+					new ArticleDAL().set_article_isgood(acticle_id, function(data) {
+						if(data.result != "success") {
+							mui.toast('点赞失败');
+							console.log(JSON.stringify(data));
+							return;
+						}
+						jia.setAttribute("class", "jia");
+						mui.toast('点赞成功');
+						that.className = "mui-icon iconfont icon-zantongfill";
+						that.style.color = "red";
+						up.style.display = "block";
+						up.innerHTML = data.goodpost;
+						var dzList = common.myStorage.getItem("dzList") || [];
+						if(!dzList.isHas(acticle_id)) {
+							dzList.push(acticle_id);
+							common.myStorage.setItem("dzList", dzList);
+						}
+					}, function(e) {})
+				});
+				document.getElementById("shoucang").addEventListener('tap', function() {
+					var that = this;
+					if(that.style.color == "red") {
+						mui.toast('请到个人中心我的收藏取消');
+						return;
+					} else {
+						//收藏
+						if(!userInfo){
+							openLogin();
+						}else{
+							mid = userInfo.mid;
+							new ArticleDAL().set_article_fav(acticle_id, mid, function(data) {
+								if(data.result != "success") {
+									mui.toast('收藏失败');
+									console.log(JSON.stringify(data));
+									return;
+								}
+								mui.toast('收藏成功');
+								that.className = "mui-icon iconfont icon-aixin";
+								that.style.color = "red";
+								var scList = common.myStorage.getItem("scList") || [];
+								if(!scList.IsShouCang(acticle_id)) {
+									scList.push(acticle_id);
+									common.myStorage.setItem("scList", scList);
+								}
+							}, function(e) {});
+						}
+					}
+				});
+
+				//分享点击事件
+				document.getElementById("share").addEventListener('tap', function() {
+					if(!userInfo){
+						openLogin();
+						return;
+					}else{
+						ws.setStyle({
+							mask: "rgba(0,0,0,0.2)"
+						});
+//						var arr = {
+//							path :"../article/",
+//							styles:{
+//								bottom: "0",
+//								height: "20%"
+//							},
+//							show:2,
+//							id : "share",
+//							extras: {
+//								acticle_id: acticle_id,
+//								artcle_title: acticle_title
+//							}
+//						}
+//						openWebViews(arr.path,arr.id,arr.styles,arr.show,arr.extras);
+												mui.openWindow({
+							url: "../article/share.html",
+							id: "share",
+							styles: {
+								bottom: "0",
+								height: "20%",
+								backgroung:"transparent"
+							},
+							show: {
+								aniShow: 'slide-in-bottom',
+								duration: 500,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: acticle_id,
+								artcle_title: acticle_title
+							}
+						});
+					}
+				});
+				ws.addEventListener('maskClick', function() {
+					var menuPage = plus.webview.getWebviewById("share");
+					menuPage && menuPage.close();
+					ws.setStyle({
+						mask: "none"
+					});
+				});
+				//分享点击事件
+				document.getElementById("comment").addEventListener('tap', function() {
+					if(!userInfo){
+						openLogin();
+					}else{
+						ws.setStyle({
+							mask: "rgba(0,0,0,0.2)"
+						});
+						mui.openWindow({
+							url: "../article/share.html",
+							id: "share",
+							styles: {
+								bottom: "0",
+								height: "20%",
+								backgroung:"transparent"
+							},
+							show: {
+								aniShow: 'slide-in-bottom',
+								duration: 500,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: acticle_id,
+								artcle_title: acticle_title
+							}
+						});
+					}
+				});
+				//评论列表点击事件
+				document.getElementById("Directory").addEventListener('tap', function() {
+					if(!userInfo){
+						openLogin();
+					}else{
+						var arr = {
+							path :"../article/",
+							styles:"",
+							id : "articleCommentDirectory",
+							extras: {
+								acticle_id: acticle_id,
+								acticle_title: acticle_title
+							}
+						}
+						openWebViews(arr.path,arr.id,arr.styles,1,arr.extras);
+						
+					}
+				});
+			}
+
+			//加载文章详情数据 
+			function getNetData() {
+				console.log(acticle_id);
+				new ArticleDAL().get_article_contents(acticle_id, function(data) {
+					console.log(JSON.stringify(data));
+					if(!data) {
+						mui.toast("数据为空!");
+						plus.webview.currentWebview().close();
+						return;
+					}
+					typeid = data.typeid;
+
+					getNetData_tuijian();
+
+					//设置标题
+					document.getElementById("title").innerHTML = data.title;
+					//设置正文
+					document.getElementById("textsud").innerHTML = data.body;
+					//设置作者
+					document.getElementById("writer1").innerHTML = data.writer;
+					//设置发表时间
+					document.getElementById("hour1").innerHTML = new Date(parseInt(data.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					//点赞
+					//				    document.getElementById("dzbtn").innerHTML=data.
+				}, function(e) {});
+			};
+
+			function getNetData_tuijian() {
+				new AtlasArticle().get_img_article(2, 1, 3, function(data) {
+					console.log(JSON.stringify(data));
+					//document.getElementById("farame").innerHTML = "";
+					for(var i = 0; i < data.length; i++) {
+						addList('tuji', data[i]);
+					}
+				}, function(e) {});
+			}
+
+			function addList(rollRom, o) {
+				if(o.imgurls.length == 3) {
+					var content = document.getElementById("AtlasArticle").content;
+					var li = content.querySelector(".mui-table-view-cell");
+					li.id = rollRom + o.id;
+					var a = li.querySelector(".mui-ellipsis").innerHTML = o.title;
+					var a = li.querySelector(".mui-ellipsis");
+					for(var j = 0; j < o.imgurls.length; j++) {
+						var img = document.createElement("img");
+						img.setAttribute("datasrc", o.imgurls[j]);
+						img.src = "";
+						img.setAttribute("id", "e_picture")
+						a.appendChild(img);
+					}
+					//				li.querySelector(".e_date").innerHTML =  new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					//				li.querySelector('.fabulous_num').innerHTML = o.goodpost;
+					document.getElementById(rollRom).appendChild(content.cloneNode(true));
+					var oli = document.getElementById(rollRom + o.id);
+					oli.addEventListener("tap", function() {
+						mui.openWindow({
+							url: "imgArticleAbout.html",
+							id: "imgArticleAbout" + Math.random(),
+							style: {},
+							show: {
+								aniShow: 'slide-in-right',
+								//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: o.id,
+								acticle_title: o.title,
+								acticle_goodpost: o.goodpost
+							}
+						});
+					});
+				} else if(o.imgurls.length == 1) {
+					var content = document.getElementById("oneAtlasArticle").content;
+					var li = content.querySelector(".imgOne");
+					li.id = rollRom + o.id;
+					var a = li.querySelector(".mui-ellipsis_left_title").innerHTML = o.title;
+					//					li.querySelector(".fabulous_num").innerHTML = o.goodpost;
+					//					li.querySelector(".e_date").innerHTML = new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					li.querySelector(".oneimg").src = "";
+					li.querySelector(".oneimg").setAttribute("datasrc", o.imgurls);
+					document.getElementById(rollRom).appendChild(content.cloneNode(true));
+					var oli = document.getElementById(rollRom + o.id);
+					oli.addEventListener("tap", function() {
+						mui.openWindow({
+							url: "imgArticleAbout.html",
+							id: "imgArticleAbout" + Math.random(),
+							style: {},
+							show: {
+								aniShow: 'slide-in-right',
+								//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: o.id,
+								acticle_title: o.title,
+								acticle_goodpost: o.goodpost
+							}
+						});
+					});
+				} else if(o.imgurls.length == 0) {
+					var content = document.getElementById("noImg").content;
+					var li = content.querySelector(".noImg");
+					li.id = rollRom + o.id;
+					var a = li.querySelector(".mui-ellipsis").innerHTML = o.title;
+					var a = li.querySelector(".mui-ellipsis");
+					//					li.querySelector(".e_date").innerHTML =  new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					//					li.querySelector('.fabulous_num').innerHTML = o.goodpost;
+					document.getElementById(rollRom).appendChild(content.cloneNode(true));
+					var oli = document.getElementById(rollRom + o.id);
+					oli.addEventListener("tap", function() {
+						mui.openWindow({
+							url: "imgArticleAbout.html",
+							id: "imgArticleAbout" + Math.random(),
+							style: {},
+							show: {
+								aniShow: 'slide-in-right',
+								//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: o.id,
+								acticle_title: o.title,
+								acticle_goodpost: o.goodpost
+							}
+						});
+					});
+				}
+			}
+
+			function openLogin() {
+				mui.toast("您是游客身份，请先登陆");
+				mui.openWindow({
+					url: "../other/login.html",
+					id: "login",
+					style: {},
+					show: {
+						aniShow: 'zoom-fade-out',
+						duration: 200,
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+			}
+		</script>
+		<style>
+			body {
+				background: white;
+			}
+			
+			.titsud {
+				width: 95%;
+				margin-left: 2.5%;
+				margin-top: 5px;
+				font-family: "黑体";
+				font-size: 20px;
+			}
+			
+			.imgsud {
+				margin: auto;
+				width: 95%;
+				padding-top: 10px;
+				padding-bottom: 10px;
+			}
+			
+			#writer1 {
+				font-size: 12px;
+			}
+			
+			.writerTitle,
+			.releseTime {
+				font-size: 12px;
+			}
+			
+			#hour1 {
+				padding-left: 10px;
+				font-size: 12px;
+			}
+			
+			#textsud {
+				margin-bottom: 35px;
+			}
+			
+			#farame {
+				padding-top: 10px;
+				margin-bottom: 20px;
+				margin: auto;
+				width: 100%;
+				height: 208px;
+				border: none;
+				border-radius: 0px;
+			}
+			
+			#cont {
+				padding-top: 30px;
+				margin-bottom: 40px;
+			}
+			
+			#text2 {
+				color: #000000;
+				font-size: 18px;
+			}
+			
+			h4 {
+				position: absolute;
+				margin-left: 20px;
+			}
+			
+			#red1 {
+				margin-bottom: 25px;
+				margin-left: 5px;
+				height: 25px;
+				width: 13px;
+				background-color: #DD524D;
+			}
+			
+			nav>span {
+				margin-left: 8%;
+			}
+			
+			.article_content {
+				width: 100%;
+				height: 100px;
+			}
+			
+			.title {
+				font-size: 20px;
+				font-weight: bolder;
+			}
+			
+			.article_time {
+				height: 30px;
+				width: 100%;
+				color: #B6B6B6;
+				margin-top: 20px;
+			}
+			
+			.recommend {
+				color: #464646;
+				font-size: 14px;
+				position: relative;
+				height: 30px;
+				border: 1px none #DDDDDD;
+				border-bottom-style: solid;
+				margin-bottom: 10px;
+			}
+			
+			.recommend span:before {
+				width: 57px;
+				content: '';
+				height: 1px;
+				background: #DC143C;
+				position: absolute;
+				bottom: -1px;
+			}
+			
+			#e_picture {
+				margin-right: 0.112em;
+			}
+			
+			img {
+				opacity: 1;
+				transition: opacity 2s ease-in-out;
+			}
+			
+			.img {
+				animation: zhuan .3s ease-in-out;
+			}
+			
+			@-webkit-keyframes zhuan {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 0.7;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			.jia {
+				transition: .6s ease-in-out;
+				animation: shang .3s ease-in-out;
+			}
+			
+			#jia {
+				color: red;
+				width: 20%;
+				text-align: right;
+				opacity: 0;
+				top: 25%;
+				position: absolute;
+			}
+			
+			@keyframes shang {
+				50% {
+					transform: translateY(-5px);
+					opacity: 1;
+				}
+				100% {
+					transform: translateY(-10px);
+					opacity: 0;
+					display: none;
+				}
+			}
+			
+			.mui-bar {
+				box-shadow: none !important;
+			}
+			
+			.mui-content {
+				background: #f7f7f7 !important;
+			}
+			
+			#up {
+				margin-top: 2px;
+			}
+			.mui-table-view:before,.mui-table-view:after{
+				height: 0px ;
+			}
+		</style>
+		<link rel="stylesheet" href="../../css/imgViewer.css" />
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">文章详情</h1>
+			<span id="share" class="mui-icon  mui-pull-right  iconfont icon-fenxiang" style="color: white;"></span>
+		</header>
+
+		<div class="mui-content" id="cont">
+			<div class="titsud">
+				<div class="article_content">
+					<span id="title" class="title"></span>
+					<div class="article_time">
+						<span class="writerTitle">作者：</span><span id="writer1"></span>
+						<!--<span class="releseTime">发布时间：</span>--><span id="hour1"></span>
+					</div>
+				</div>
+			</div>
+			<!--<div id="clock_null"></div>-->
+			<div class="imgsud">
+				<!--<img src="../../img/01.jpg" data-preview-src="" data-preview-group="1" />
+				<img src="../../img/01.jpg" data-preview-src="" data-preview-group="1" />-->
+				<div id="textsud">
+
+				</div>
+				<div class="recommend">
+					<span>相关推荐</span>
+				</div>
+				<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="tuji">
+
+				</ul>
+				<template id="AtlasArticle">
+					<li class="mui-table-view-cell">
+						<div class="mui-table">
+							<div class="mui-table-cell mui-col-xs-10">
+								<span class="mui-ellipsis" id="mui-ellipsis">信息化推进办公室张彦合同付款信息化</span>
+								<div class="e_info">
+									<!--<span class=" e_date">2016-10-29</span>
+					                    <span class="fabulous_num">1</span><span class=" mui-icon mui-icon-chatbubble e_fabulous"></span>-->
+								</div>
+							</div>
+						</div>
+					</li>
+				</template>
+				<template id="oneAtlasArticle">
+					<li class="mui-table-view-cell imgOne">
+						<div class="mui-table">
+							<div class="mui-table-cell mui-col-xs-10">
+								<div class="left_box">
+									<div class="leftTitle">
+										<span class="mui-ellipsis_left_title">信息化推进办公室张彦合同付款信息化信息化推进办公室张彦合同付款信息化</span>
+									</div>
+									<div class="e_info_left">
+										<!--<span class=" e_date">2016-10-29</span>
+							                <span class="fabulous_num">1</span><span class=" mui-icon mui-icon-compose e_fabulous"></span>-->
+									</div>
+								</div>
+								<div class="right_box"><img src="../img/4.jpg" class="oneimg" style="width: 100%; height: 100%;" /> </div>
+							</div>
+						</div>
+					</li>
+				</template>
+				<template id="noImg">
+					<li class="mui-table-view-cell noImg">
+						<div class="mui-table">
+							<div class="mui-table-cell mui-col-xs-10">
+								<div id="noimgDiv"><span class="mui-ellipsis" id="mui-ellipsisnoImg">信息化推进办12313213131公室张彦合同付款信1231息化</span></div>
+								<div class="e_info">
+									<!--<span class=" e_date">2016-10-29</span>
+					                    <span class="fabulous_num">1</span><span class=" mui-icon mui-icon-chatbubble e_fabulous"></span>-->
+								</div>
+							</div>
+						</div>
+					</li>
+				</template>
+			</div>
+
+		</div>
+
+		<nav id="bar" class="mui-bar mui-bar-tab">
+			<div id="jia">+1</div>
+			<span id='dzbtn' class="mui-icon iconfont icon-zantong">
+				<span id="up" style="display: none;" class="mui-badge"></span>
+			</span>
+			<span id="shoucang" class="mui-icon iconfont  icon-heart " style="padding-left: 12%;width: 1px; height: 1px;"></span>
+			<span id="Directory" class="mui-icon iconfont icon-liuyan" style="font-size: 24px; font-weight: 100; padding-left: 18%;width: 1px; height: 1px;"></span>
+			<span id="comment" class="mui-icon iconfont icon-fenxiang" style="padding-left: 18%;width: 1px; height: 1px;"></span>
+			<!--<span id="comment" class="mui-icon mui-icon mui-icon-redo" style="padding-left: 18%;width: 1px; height: 1px;"></span>-->
+
+		</nav>
+	</body>
+	<script>
+		function throttle(fun, delay, time) {
+			var timeout, startTime = new Date();
+			return function() {
+				var context = this,
+					args = arguments,
+					curTime = new Date();
+				clearTimeout(timeout);
+				// 如果达到了规定的触发时间间隔，触发 handler
+				if(curTime - startTime >= time) {
+					fun.apply(context, args);
+					startTime = curTime;
+					// 没达到触发间隔，重新设定定时器
+				} else {
+					timeout = setTimeout(fun, delay);
+				}
+			};
+		};
+		// 实际想绑定在 scroll 事件上的 handler
+		function lazyload(event) {
+			var num = document.getElementsByTagName('img').length;
+
+			var img = document.getElementsByTagName("img");
+			var n = 0; //存储图片加载到的位置，避免每次都从第一张图片开始遍历
+			var seeHeight = document.documentElement.clientHeight; //可见区域高度
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; //滚动条距离顶部高度
+			for(var i = n; i < num; i++) {
+				if(img[i].offsetTop < seeHeight + scrollTop) {
+					if(img[i].getAttribute("src") == "") {
+						img[i].src = img[i].getAttribute("datasrc");
+						img[i].className = "img";
+					}
+					n = i + 1;
+				}
+			}
+		}
+		// 采用了节流函数
+		window.addEventListener('scroll', throttle(lazyload, 2000, 2000));
+	</script>
+	<script src="../../js/mui.zoom.js"></script>
+	<script src="../../js/mui.previewimage.js"></script>
+	<script>
+		mui.previewImage();
+	</script>
+	<script type="text/javascript" src="../../js/immersed.js"></script>
+
+</html>

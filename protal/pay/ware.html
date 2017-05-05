@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<!--<script src="../../js/Api/pay.js"></script>-->
+		<script src="../../js/Itool/pay.js"></script>
+		<script src="../../js/Api/publicDal.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script type="text/javascript">
+			var pay_mode = null;
+			var payMode = null;
+			var kid = null;
+			var mid = null;
+			var price = null;
+			var cartcount = null;
+			var o = {};
+			mui.init();
+			document.addEventListener("plusready",onPlusReady,false);
+			function onPlusReady(){
+				pageInit();
+				pageMent();
+			}
+			
+			function pageMent(){
+				
+			}
+			
+			function pageInit(){
+				var userData = common.myStorage.getItem("userData");
+				var mid = userData.mid;
+				document.querySelector(".pay").addEventListener("tap",function(){
+					var btnArray = [{
+						title : "支付宝支付"
+					},{
+						title : "微信支付"
+					}];
+					plus.nativeUI.actionSheet({
+						cancel: "取消",
+						buttons: btnArray
+					},function(e){
+						var index = e.index;
+						switch(index){
+							case 0 : 
+								break;
+							case 1 : 
+								var o = { 
+									productID:"1",
+									count:"1",
+									user_id:mid,
+									plat:"alipay"
+								};
+//								id = "1";
+//								price = "1";
+//								mid = mid;
+//								cartcount = "1";
+//								payMode="alipay";
+								new Pay().GetPayInfo(o);
+//								new Pay().getPayInfo(payMode,id,mid,price,cartcount);
+								break;
+							case 2 : 
+								var o = { 
+									productID:"1",
+									count:"1",
+									user_id:mid,
+									plat:"wxpay"
+								}
+								new Pay().GetPayInfo(o);
+								
+								/*id = "1";
+								price = "1";
+								mid = mid;
+								cartcount = "1";
+								payMode="wxpay";*/
+//								new Pay().getPayInfo(payMode,id,mid,price,cartcount,function(data){
+//									console.log(JSON.stringify(data));
+//								});
+								break;
+							};
+					});
+				});
+			}
+		</script>
+		<style>
+			.pay{
+				width: 60%;
+				margin: 100px auto;
+				height: 50px;
+				background: #6495ED;
+				border: 2px solid #fff;
+				border-radius: 10px;
+				color: #fff;
+				text-align: center;
+				line-height: 50px;
+				transition: all .5s ease-in-out;
+			}
+			.pay:active{
+				-webkit-filter: brightness(80%);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="pay">支付</div>
+		</div>
+	</body>
+
+</html>

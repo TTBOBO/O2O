@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script type="text/javascript" src="../../js/Itool/Itool2.js"></script>
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/Api/AtlasArticle.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 25px;
+			}
+		</style>
+
+		<script type="text/javascript" charset="UTF-8">
+			var acticle_id = null; //文章id
+			var acticle_title = null; //文章标题
+			var acticle_goodpost = 0; //赞数
+			var typeid = 0; //推荐栏目
+			var mask_share = null;
+			mui.init({
+				swipeBack: true //开启右滑关闭功能
+			});
+
+			mui.ready(function(){
+				new AtlasArticle().get_img_article_content(11, function(data) {
+					if (!data) {
+						mui.toast("数据为空!");
+						plus.webview.currentWebview().close();
+						return;
+					}
+					typeid = data.typeid;
+//					getNetData_tuijian();
+					console.log(JSON.stringify(data)); 
+					//设置图片
+//					document.getElementById("img1").src = WebURL + data.litpic;
+					//设置标题
+					document.getElementById("title1").innerHTML = data.title;
+					//设置正文
+					document.getElementById("textsud").innerHTML = data.body;
+					//设置作者
+					document.getElementById("writer1").innerHTML = data.writer;
+					//设置发表时间
+					document.getElementById("hour1").innerHTML = new Date(parseInt(data.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					//点赞
+					//				    document.getElementById("dzbtn").innerHTML=data.
+				}, function(e) {});
+			});
+			
+		
+
+		</script>
+		<style>
+			body {
+				background: white;
+			}
+			
+			.titsud {
+				margin-top: 5px;
+				padding-left: 10px;
+				font-family: "黑体";
+				font-size: 20px;
+				padding-right: 20px;
+				padding-left: 20px;
+			}
+			
+			.imgsud {
+				margin: auto;
+				width: 88%;
+				padding-top: 10px;
+				padding-bottom: 10px;
+			}
+			
+			#writer1 {
+				color: blue;
+				font-size: 15px;
+			}
+			
+			#hour1 {
+				padding-left: 80px;
+				color: #555555;
+				font-size: 16px;
+			}
+			
+			#textsud {
+				word-break: break-word;
+				padding-bottom: 100px;
+			}
+			
+			#farame {
+				padding-top: 10px;
+				margin-bottom: 20px;
+				margin-right: 10px;
+				margin: auto;
+				width: 88%;
+				height: 208px;
+				border-style: hidden;
+			}
+			
+			#cont {
+				padding-top: 55px;
+				margin-bottom: 60px;
+			}
+			
+			#text2 {
+				color: #000000;
+				font-size: 18px;
+			}
+			
+			h4 {
+				position: absolute;
+				margin-left: 20px;
+			}
+			
+			#red1 {
+				margin-bottom: 25px;
+				margin-left: 5px;
+				height: 25px;
+				width: 13px;
+				background-color: #DD524D;
+			}
+			
+			nav>span {
+				margin-left: 8%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">文章详情</h1>
+			<span id="share" class="mui-icon mui-icon-right-nav mui-pull-right iconfont icon-fenxiang"></span>
+
+		</header>
+
+		<div class="mui-content" id="cont">
+			<div class="titsud">
+				<div class="nav1">
+					<span id="title1" class="title"></span>
+					<br />
+					<span id="writer1" style="padding-top: 8px;"></span>
+					<span id="hour1"></span>
+				</div>
+			</div>
+			<hr />
+
+			<!--<div id="clock_null"></div>-->
+			<div class="imgsud">
+				<img id="img1" src="" style="max-width: 100%; " />
+				<p id="textsud" style="color: #000000; font-family: '宋体'"></p>
+			</div>
+
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/immersed.js" ></script>
+</html>

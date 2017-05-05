@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService2.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/FileTool.js"></script>
+		<script src="../../js/Api/ReleaseDal.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<style>
+			.imgRoom{
+				padding-left: 0.5%;
+				padding-right: 0.5%;
+				margin-top: 10px;
+			}
+			.imgRoom>*{
+				float: left;
+				margin: 0.5%;
+				width: 32.2%;
+				height: 120px;
+			}
+			.mui-input-row{
+				padding-bottom: 10px;
+			}
+			#addImgBtn{
+				color:darkgray;
+				line-height: 120px;
+				font-size: 4.5rem;
+				text-align: center;
+				border: 1px dashed;
+			}
+		</style>
+		<script>
+			var files = null;//缩略图 地址
+			var imgRoom = null;
+			var Yfiles = null;//原图 地址
+			var filenames = null;//缩略图 地址 字符串
+			var Yfilenames = null;//原图 地址字符串
+			mui.init();
+			
+			mui.plusReady(function(){
+				
+				pageInit();
+				
+				menuInit();
+				//返回重写
+				old_back();
+			});
+			
+			function menuInit(){
+				//字数超过180提示
+				document.getElementById("textMSg").oninput = function() {
+						if (this.value.length >= 180) {
+							mui.toast("你已经超过最大180字数限制");
+							this.value = this.value.substr(0,180);
+					}
+				}
+				
+				//取消发布按钮
+				
+				document.getElementById("NotReleaseBtn").addEventListener("tap",function(){
+					if(document.querySelectorAll("#imgRoom>img").length == 0 && document.getElementById("textMSg").value.length == 0){
+						plus.webview.currentWebview().close();
+						return;
+					}
+					
+					plus.nativeUI.confirm("是否暂时保留编辑?",function(e){
+						if(e.index){
+							//关闭
+							plus.webview.currentWebview().close();
+						}else{
+							plus.webview.currentWebview().hide();
+						}
+					},"高安o2o",["保留并退出","直接退出"]);
+				});
+				
+				document.getElementById("addImgBtn").addEventListener("tap",function(){
+					var btnArray = [{
+						title:"从手机中选择"
+					},{
+						title:"拍照"
+					}];
+					plus.nativeUI.actionSheet({
+						cancel: "取消",
+						buttons: btnArray
+					},function(e){
+						var index = e.index;
+						
+						var imgCountMax = function(){
+							document.getElementById("addImgBtn").style.display = "block";
+							var count = 9 -  parseInt(document.querySelectorAll(".imgRoom>img").length);
+							if(count <= 0){
+								document.getElementById("addImgBtn").style.display = "none";
+							}
+						}
+						
+						switch(index){
+							case 0: break;
+							case 1:
+								var maxL = 10 - parseInt(document.querySelectorAll(".imgRoom>img").length);
+								plus.gallery.pick(function(e){
+									var length = e.files.length;
+									if(e.files.length >= maxL){
+										length = maxL; //如果选择的超过9张，就截取
+										mui.toast("最多能添加9张图片！");
+									}
+									var w = plus.nativeUI.showWaiting();
+//									setTimeout( function(){
+//											w.close();
+//									}, 1000);
+									//将本地URL路径转换成平台绝对路径
+									
+									for(var i = 0; i < length; i++){
+										var path ="file://" + plus.io.convertLocalFileSystemURL(e.files[i]);
+										var savePath = " /Dedecms/uploads/uploads/release/" + "_" + new Date().toFormatString("yyyyMMddhhmmss") + "_" + i + ".jpg";
+//										console.log(path);
+//										console.log(savePath);
+										Yfiles.push({
+											savePath,
+											path
+										});
+										var YfileName = path.substring(path.lastIndexOf('/') + 1);
+										Yfilenames = Yfilenames + YfileName + "|";
+										
+										fileTool.ImgFileCompress(path,savePath,'100%',function(existPath,savePath){
+											var path ="file://" + plus.io.convertLocalFileSystemURL(savePath);
+											addimgToPage(path);
+											files.push({ 
+													name: savePath,
+													path: savePath
+												}); 
+												var fileName = savePath.substring(savePath.lastIndexOf('/') + 1);
+												filenames = filenames + fileName + "|";
+												
+												//console.log(Yfilenames);
+												if (files.length == length) {
+													w.close();
+													console.log("完成压缩" + length + "张");
+													//filenames = filenames.substring(0, filenames.length - 1);
+												}
+												imgCountMax(); 
+										},function(e){
+											mui.toast("第" + (i) +"张出错了");
+										});
+										w.close();
+									}
+								}, function(e){
+									w.close();
+								},{
+									filter:"image",
+									multiple:true,
+									maximum:9,
+									system:false,
+									onmaxed:function(){
+										mui.toast('最多只能选择9张图片');
+									}
+								}
+							)}
+					});
+				});
+				var userData = common.myStorage.getItem("userData");
+				if(!userData||userData.length==0){
+					mui.toast("您是游客身份，请先登陆");
+						mui.openWindow({
+							url: "../other/login.html", 
+							id: "login",
+							style: {},
+							show: {
+								aniShow: 'zoom-fade-out',
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+						return;
+				}
+				var mid = userData.mid;
+				//发表动态
+				document.getElementById("ReleaseBtn").addEventListener("tap",function(){
+					if(document.getElementById("textMSg").value.trim() == ''){
+						mui.toast("内容不能为空");
+						return;
+					}
+					if(!document.querySelectorAll("#imgRoom>*").length){
+						mui.toast("至少要一张图片");
+						return;
+					}
+					
+//					plus.nativeUI.showWaiting("正在发表...");
+					
+					/*new Release().set_img_release(mid,1,1,function(data){
+						console.log(JSON.stringify(data));
+					})*/
+					var url = WebServiceURL + "set_img_release";
+					
+					var obj = {
+						mid:mid,
+						content:document.getElementById("textMSg").value
+					};
+					filenames = filenames.substring(0, filenames.length - 1);
+					console.log(filenames);
+					new Release().set_img_release(obj,files,filenames,function(data){
+						console.log(JSON.stringify(data));					
+					})
+				});
+			}
+			
+			function pageInit(){
+				var imgRoom = document.getElementById("imgRoom");
+				files = [];
+				Yfiles = [];
+				filenames = "";
+				Yfilenames = "";
+				//console.log(userData.mid);
+				
+			}
+			
+			function addimgToPage(url){
+				var imgRoom = document.getElementById("imgRoom");
+				var img = document.createElement("img");
+				img.src = url;
+				imgRoom.insertBefore(img,imgRoom.lastChild);
+			}
+			
+			function old_back(){
+				var old_back =mui.back;
+					mui.back = function(){
+						if(document.querySelectorAll("#imgRoom>img").length == 0 && document.getElementById("textMSg").value.length == 0){
+							plus.webview.currentWebview().close();
+							return;
+						}
+						var btn = ["保留并退出","直接退出"];
+						mui.confirm('你确认关闭当前窗口么？','高安o2o',btn,function(e){
+							if(e.index){
+								plus.webview.currentWebview().close();
+							}else{
+								plus.webview.currentWebview().hide();
+							}
+						
+						});
+					}
+			}
+		</script>
+	</head>
+
+	<body>
+		<header style="background: white;" class="mui-bar mui-bar-nav">
+			<a id="NotReleaseBtn" style=" color: #000; font-size: 1em !important;" class="mui-icon mui-pull-left">取消</a>
+			<h1 style="color: white;" class="mui-title">发表动态</h1>
+			<a id="ReleaseBtn" style=" color: #000; font-size: 1em !important;" class="mui-icon mui-pull-right">发表</a>
+		</header>
+		<div class="mui-content" style="background: #fff;">
+			<div class="mui-input-row">
+				<textarea id="textMSg" rows="4" placeholder="说点什么吧..." style="border: none;"></textarea>
+					
+				<div id="imgRoom" class="imgRoom">
+					<!--<img src="../../img/01.jpg" />-->
+				</div>
+				<div class="imgRoom">
+					<span id="addImgBtn" class="mui-icon mui-icon-plusempty"></span>
+				</div>
+			</div>
+		</div>
+		
+		
+	</body>
+	<script src="../../js/immersed.js"></script>
+</html>

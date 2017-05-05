@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../../js/mui.min.js"></script>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../../../js/Chat/arttmpl.js"></script>
+		<script type="text/javascript" src="../../../js/Api/ChatDal.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/JsonTools.js"></script>
+		<style type="text/css">
+			.time_info {
+				float: right;
+				font-size: 0.8em;
+				margin-bottom: 5px;
+			}
+			
+			.mui-badge {
+				margin-top: 10px;
+			}
+			
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 0px;
+			}
+			
+			.mui-table-view img {
+				width: 50px;
+				height: 50px;
+				border-radius: 90em;
+			}
+			
+			.mui-media-body p {
+				width: 90%;
+			}
+			
+			.mui-ellipsis {
+				clear: both;
+				margin-left: 0px;
+				margin-top: 3px;
+				font-size: 0.85em;
+				line-height: 1.5em;
+				white-space: normal !important;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 1;
+				-webkit-box-orient: vertical;
+				color: #6b6b6b;
+			}
+		</style>
+		<script type="text/javascript" charset="UTF-8">
+			var chatTpl; //消息模版对象
+			var msgListul; //装消息对象的容器
+			var locChatMsg; //本地消息对象
+			mui.init();
+			// 扩展API加载完毕后调用onPlusReady回调函数 
+			document.addEventListener("plusready", onPlusReady, false);
+			// 扩展API加载
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+			});
+			// 扩展API加载完毕，现在可以正常调用扩展API 
+			function onPlusReady() {
+				/*页面初始化，加载页面元素*/
+				pageInit();
+				/*页面加载完成发生*/
+				pageOnload();
+				/*页面渲染*/
+				PageRender();
+				//请求网络数据以便判断一致性并渲染文字资料
+				getNetData();
+			};
+
+			function pageInit() {
+				//去除滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				chatTpl = document.getElementById("chattpl");
+				msgListul = document.getElementById("msgListul");
+				//时间初始化
+				MenuInit();
+			};
+
+			function pageOnload() {
+				locChatMsg = new ChatDal().GetLocalChat();
+			};
+
+			function PageRender() {
+				if (!locChatMsg) {
+					document.querySelector("#msgTs").style.display = 'block';
+				} else {
+					document.querySelector("#msgTs").style.display = 'none';
+					msgListul.innerHTML = "";
+					for (var i in locChatMsg) {
+						addModel(locChatMsg[i]);
+					}
+				}
+			};
+
+			function getNetData() {};
+
+			function addModel(data) {
+				var content = chatTpl.content;
+				var li = content.querySelector(".mui-table-view-cell");
+				li.id = data.chat_FROM;
+				var head = li.querySelector('img.mui-media-object');
+				li.querySelector("#nikeNameSpan").innerHTML = data.user_nikeName;
+				var unixTimestamp = new Date(Math.round(data.times / 1000) * 1000);
+				var commonTime = unixTimestamp.toTimeString().substr(0, 5);
+				li.querySelector(".time_info").innerHTML = commonTime;
+				li.querySelector('.mui-ellipsis').innerHTML = data.content;
+				var numberMsg = li.querySelector("#numberMsg");
+				//console.log(data.lengths)
+				if (data.lengths > 0) {
+					numberMsg.innerHTML = data.lengths;
+					numberMsg.style.visibility = "visible";
+				} else {
+					numberMsg.style.visibility = "hidden";
+				}
+				msgListul.appendChild(content.cloneNode(true));
+			}
+			//事件初始化
+			function MenuInit() {
+				mui('.mui-table-view').on('tap', 'li', function(e) {
+					var that = this;
+					var o = new ChatDal().GetLocalChat();
+					//console.log(JSON.stringify(o));
+					var extras = {};
+					for (var i in o) {
+						var temps = o[i];
+						if (temps.chat_FROM == that.id) {
+							o[i].lengths = 0;
+							chatInfo = o;
+							new ChatDal().SaveLocalChat();
+							that.querySelector('#numberMsg').style.visibility = "hidden";
+							extras.Sender = that.id;
+							extras.user_nikeName = o[i].user_nikeName;
+							extras.user_photo = o[i].user_photo;
+							OpenMsg(extras);
+							break;
+						}
+					}
+				});
+				window.addEventListener("page:change", pageChange);
+			};
+
+			function OpenMsg(extras) {
+				mui.openWindow({
+					url: 'im-chat.html',
+					id: 'im-chat',
+					show: {
+						aniShow: 'zoom-fade-out',
+						duration: 300,
+					},
+					waiting: {
+						autoShow: false
+					},
+					extras: extras
+				});
+			}
+
+			function pageChange() {
+				pageOnload();
+				updateNumber(locChatMsg);
+			}
+
+			function updateNumber(o) {
+				for (var index in o) {
+					var tempItem = o[index];
+					var li = document.getElementById(tempItem.chat_FROM);
+					var msgTs = document.querySelector("#msgTs");
+					if(msgTs){
+						msgTs.style.display = 'none';
+					}
+					if(!li)
+					{
+						addModel(tempItem);
+						continue;
+					}
+					var unixTimestamp = new Date(Math.round(tempItem.times / 1000) * 1000);
+					var commonTime = unixTimestamp.toTimeString().substr(0, 5);
+					li.querySelector(".time_info").innerHTML = commonTime;
+					li.querySelector('.mui-ellipsis').innerHTML = tempItem.content;
+					var numberMsg = li.querySelector("#numberMsg");
+					if (tempItem.lengths > 0) {
+						numberMsg.innerHTML = tempItem.lengths;
+						numberMsg.style.visibility = "visible";
+					} else {
+						numberMsg.style.visibility = "hidden";
+					}
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">我的咨询</h1>
+		</header>
+		<div class="mui-content" style="margin-top: 25px;">
+			<ul class="mui-table-view" style="padding: 0px; margin: -5px 0px 0px 0px;" id="msgListul">
+				<div class="mui-table-view-cell mui-media" id="msgTs" style="text-align: center; margin: 4px 0px; color: #ccc; display:none; ">
+					暂无咨询
+				</div>
+			</ul>
+
+			<template id="chattpl">
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" src="../../../img/3.jpg" />
+						<div class="mui-media-body">
+							<span id="nikeNameSpan">用户名称</span>
+	
+							<span style="font-size: 11px;" class="time_info">时间</span>
+							<p class='mui-ellipsis'>类型</p>
+						</div>
+						<span id="numberMsg" style=" padding: 1px 3px; visibility: hidden; line-height: 10px; background: #ff6f46; color: #ff6f46;" class="mui-badge">0</span>
+					</a>
+				</li>
+			</template>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../../js/immersed.js" ></script>
+</html>

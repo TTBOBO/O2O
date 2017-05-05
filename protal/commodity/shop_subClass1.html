@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/android.js" ></script>
+		<script type="text/javascript" src="../../js/Config/Config.js" ></script>
+		<script type="text/javascript" src="../../js/Chat/jquery-1.11.0.js" ></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/OpenW.js" ></script>
+		<script type="text/javascript" src="../../js/Api/Shoplist.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/common.js" ></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/app.css" />
+	</head>
+
+	<body>
+		<div class="mui-content" id="#pullrefresh">
+			123
+			<ul class="mui-table-view mui-scroll-wrapper lessPriceRoom">
+				<template id="shopBox">
+					<li class="mui-table-view-cell mui-media lessPrice-content">
+		                <img class="lp_img" src="../../img/Chicken.jpg">
+		                 <div class="mui-media-body lp_content">
+		                	<p class="commodity_title">【Midea/美的】智能双胆电压力锅</p>
+							<!--<p>价格:<span class="commodity_price">￥101.00</span></p>-->
+							<div class="price"><span class="new">￥<i class="commodity_price">299</i></span><span class="old">￥<i class="price1">1080</i></span></div>
+								<a href="#" class="btn_buy red pos_abs">立即抢购</a>
+		                	</div>
+					</li>
+				</template>
+			</ul>
+		</div>
+		<script type="text/javascript">
+//			{
+//				subpages:[{
+//					url:'shop_subClass1.html',
+//					id:'shop_subClass1',
+//					styles:{
+//						top:'65px',
+//						bottom:'1px'
+//					}
+//				}]
+//			}
+//{
+//				pullRefresh: {
+//					container: "#pullrefresh", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+//					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+//					down: {
+//						callback: pulldownRefresh, //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+//					},
+//					up: {
+//						//						contentrefresh:  '' + "正在刷新" + '' + "上次刷新：" + OldData,
+//						contentrefresh: "正在刷新",
+//						callback: pullupRefresh
+//					}
+//				}
+//			}
+			var page = 1;
+			/*mui.init({
+				pullRefresh: {
+					container: "#pullrefresh",
+					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: "正在刷新",
+						callback: pullupRefresh
+					}
+				}
+			});*/
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
+			function pulldownRefresh() {
+				setTimeout(function() {
+					var table = document.body.querySelector('.mui-table-view');
+					var cells = document.body.querySelectorAll('.mui-table-view-cell');
+					for (var i = cells.length, len = i + 3; i < len; i++) {
+						var li = document.createElement('li');
+						li.className = 'mui-table-view-cell';
+						li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
+						//下拉刷新，新纪录插到最前面；
+						table.insertBefore(li, table.firstChild);
+					}
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+				}, 1500);
+			}
+			function pullupRefresh() {
+				setTimeout(function() {
+					mui('#pullrefresh').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
+					var table = document.body.querySelector('.mui-table-view');
+					var cells = document.body.querySelectorAll('.mui-table-view-cell');
+					for (var i = cells.length, len = i + 3; i < len; i++) {
+						var li = document.createElement('li');
+						li.className = 'mui-table-view-cell';
+						li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
+						table.appendChild(li);
+					}
+				}, 1500);
+			}
+//			function pulldownRefresh(isDown){
+//				
+//				setTimeout(function(){
+//					isDown = true;
+////					get_shop_list(isDown);
+//					mui('#lessPrice').pullRefresh().endPulldownToRefresh();
+//				},500);
+//			}
+//			function pullupRefresh(isDown){
+//				setTimeout(function(){
+//					isDown = false;
+////					get_shop_list(isDown);
+//					mui('#lessPrice').pullRefresh().endPullupToRefresh();
+//				},500);
+//			}
+			
+			mui.plusReady(function(){
+				pageInfo();
+			})
+			
+			function pageInfo(){
+				var ws = plus.webview.currentWebview();
+				var id = ws.aid;
+				var reid = ws.reid;
+				var typename = ws.typename;
+				console.log(1);
+//				console.log(1);
+//				console.log(1);
+//				document.querySelector(".mui-title").innerHTML = typename;
+				
+				//pageMent(id,reid);
+			}
+//			
+
+			
+			/*function get_shop_list(isDown){
+				new Shop().get_shop_list(3,page,3,function(data){
+					console.log(JSON.stringify(data));
+					if(data.length == ""){
+						mui.toast("没有商品了！");
+					}
+					for(var i in data){
+						addShopList(isDown,data[i])
+					}
+					page++;
+				},function(e){
+					console.log(e.message);
+				})
+			}
+			
+			function addShopList(isDown,o){
+				var shopRoom = document.querySelector(".lessPriceRoom");
+				var shopDemo = document.getElementById("shopBox");
+				var content = shopDemo.content;
+				var li = content.querySelector(".mui-media");
+				li.id = o.id;
+				
+				li.querySelector(".lp_img").src = o.litpic;
+				li.querySelector(".commodity_title").innerHTML = o.title;
+				li.querySelector(".commodity_price").innerHTML = o.trueprice;
+				li.querySelector(".price1").innerHTML = o.price;
+				
+				var child = content.cloneNode(true);
+				if(isDown == true){
+					shopRoom.insertBefore(child,shopRoom.firstChild);
+				}else{
+//					shopRoom.insertBefore(child,shopRoom.firstChild);
+					shopRoom.appendChild(child);
+				}
+				
+				var oli = document.getElementById(o.id);
+				oli.addEventListener("tap",function(){
+					mui.openWindow({
+						url:"../commodity/comm_room.html",
+						style:{},
+						id:"comm_room",
+						show:{
+							aniShow:'pop-in',
+							duration:100
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras:{
+							title:o.title,
+							shopId:o.id,
+							price:o.price,
+							trueprice:o.trueprice,
+							shopImg:o.litpic
+						}
+					});
+				})
+			}*/
+			
+			
+			
+			
+			
+		</script>
+		<script type="text/javascript" src="../../js/immersed.js" ></script>
+	</body>
+
+</html>

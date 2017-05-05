@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<!--<script src="../../js/Itool/pay.js"></script>-->
+		<script src="../../js/Api/pay.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<style>
+			.mui-bar-nav {
+				box-shadow: 0 0px 0px #ccc;
+				background-color: white;
+			}
+			.mui-input-row{
+				height: 50px !important;
+				line-height: 50px;
+			}
+			.mui-input-row:after{
+				left: 0px !important;
+				background: #F3F3F3 !important;
+			}
+			.mui-input-row label{
+				height: 50px ;
+				width:30% !important;
+				line-height: 1.6;
+			}
+			.mui-input-group input{
+				width: 70% !important;
+				height: 50px;
+				line-height: 50px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="header"  class="mui-bar mui-bar-nav mui-bar-transparent">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<!--<a class="mui-action-menu mui-icon mui-icon-redo mui-pull-right" style="color: #000; font-size: 15px;">保存</a>-->
+			<!--< class="mui-btn  mui-btn-link mui-pull-right">保存</a>-->
+			<button class="mui-btn  mui-btn-link mui-pull-right" id="btnSubmit" style="color: #000;">保存</button>
+			<h1 class="mui-title"></h1>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+					<div class="mui-input-row">
+						<label>收货人</label>
+						<input type="text" id="consignee" maxlength="6" value="涂**">
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话</label>
+						<input type="text" class="mui-input-clear" value="13698006439" id="tel">
+					</div>
+					<!--<div class="mui-input-row">
+						<label>所在地区</label>
+						<input type="text" class="mui-input-clear" id="">
+					</div>
+					<div class="mui-input-row">
+						<label>街道</label>
+						<input type="text" class="mui-input-clear">
+					</div>-->
+					<textarea id="textarea" rows="5" value="" placeholder="详细地址">江西省南昌市</textarea>
+				</form>
+				<div class="mui-input-row" style="margin: 10px 5px;">
+					
+				</div>
+		</div>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				pageInit();
+			})
+			
+			function pageInit(){
+				var ws = plus.webview.currentWebview();
+				var mid = ws.mid;
+				console.log(mid)
+				document.getElementById("btnSubmit").addEventListener("tap",function(){
+					var consignee = document.getElementById("consignee").value;
+					var address = document.getElementById("textarea").value;
+					
+					var tel = document.getElementById("tel").value;
+					var telReg = /^1\d{10}$/;
+					if(!telReg.test(tel)){
+						mui.toast("请输入正确格式的电话号码！");
+						console.log("请输入正确格式的电话号码！");
+						return;
+					}
+					new Pay().set_member_address(mid,consignee,address,tel,function(data){
+						console.log(JSON.stringify(data));
+						if(data.msg == "success"){
+							mui.toast("添加成功！");
+							var comm_order = plus.webview.getWebviewById("comm_order");
+							var address_about = plus.webview.getWebviewById("address_about");
+							address_about && (address_about.close());
+							comm_order && comm_order.reload();
+						}else if(data.msg == "failed"){
+							mui.toast("你已经添加过了，如需更换请到个人中心更换！");
+							return;
+						}else{
+							mui.toast("系统出错，请稍后再试！");
+							return;
+						}
+					})
+				})
+			}
+		</script>
+		<script src="../../js/immersed.js"></script>
+	</body>
+
+</html>

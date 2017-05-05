@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/Publick.js"></script>
+		<script type="text/javascript" src="../../js/Api/UserDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../js/jQuery.md5.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script src="../../js/Itool/OpenW.js"></script>
+		<script type="text/javascript" src="../../js/Itool/touch-ripple.js" ></script>
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/regist.css" />
+
+		<style type="text/css">
+			body {
+				background-color: white;
+			}
+			
+			#loginBtn {
+				background-color: #6495ED !important;
+				color: white;
+				border: 0px solid #000;
+				height: 50px;
+				line-height: 12px;
+				transition: .3s linear;
+				margin-top: 20px;
+				width: 95%;
+				margin-left: 2.5%;
+			}
+			
+			/*#loginBtn:active {
+				-webkit-filter: brightness(80%);
+			}*/
+			
+			.mui-content {
+				background-color: white;
+				margin-top: 50px;
+			}
+			/*.mui-content>input ,.mui-input-row>input{
+				border: 0px solid #000;
+				border-radius: 10px;
+				background-color: #eee;
+				width: 90%;
+			}*/
+			
+			#eye {
+				margin-right: 5%;
+				margin-top: 2.5%;
+			}
+			
+			#registBtn {
+				color: #fff;
+				font-size: 18px;
+				line-height: 25px;
+			}
+			
+			#oauth {
+				width: 100%;
+				height: 30%;
+			}
+			
+			.button {
+				margin: auto;
+				width: 250px;
+				height: 40px;
+				line-height: 40px;
+				background: co6495EDrnflowerblue;
+				margin-top: 5%;
+				color: white;
+				text-align: center;
+				border-radius: 5px;
+			}
+			
+			#login {
+				height: 50px;
+				width: 90% !important;
+			}
+			
+			#fgPwd {
+				margin-top: 10px;
+				color: #CCCCCC;
+				font-size: 12px;
+				float: right;
+				margin-right: 2%;
+			}
+			
+			.fieldset {
+				border: 1px #ccc;
+				border-top-style: dashed;
+				width: 95%;
+				margin: 0px auto;
+				margin-top: 20%;
+				position: relative;
+				padding-top: 5%;
+			}
+			
+			.legend {
+				background: #fff;
+				position: absolute;
+				width: 30%;
+				font-size: 12px;
+				color: #ccc;
+				left: 35%;
+				top: -10px;
+			}
+			
+			.icon_box {
+				width: 47%;
+				text-align: center;
+				color: #fff;
+				font-size: 12px;
+				float: left;
+				height: 70px;
+				margin: 1.5%;
+				padding: 2%;
+			}
+			
+			.foot-icon {
+				width: 50px;
+				height: 50px;
+				display: inline-block;
+				text-align: center;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				padding-top: 12px;
+				transition: 0.2s ease;
+			}
+			
+			.qq {
+				background: cornflowerblue;
+			}
+			
+			.weixin {
+				background: #2AC845;
+			}
+			
+			.weibo {
+				background: #FF0000;
+			}
+			
+			.a {
+				color: #fff;
+			}
+			
+			.icon_boxa:active p {
+				color: red;
+			}
+			
+			.foot-icon:active {
+				-webkit-filter: brightness(80%);
+			}
+			
+			.foot-icon:active .a {
+				color: white;
+			}
+			
+			.mui-bar-nav {
+				box-shadow: none !important;
+			}
+			.test1{
+				height: 50px;
+				width: 80px;
+				/*margin: 20px auto;*/
+				float: right;
+				padding-top: 5px;
+				margin-right:20px ;
+			}
+			#code{
+				width: 60%;
+			}
+		</style>
+
+		<script type="text/javascript" charset="UTF-8">
+			mui.init();
+			var auths = {};
+			var word = null;
+			mui.plusReady(function() {
+				//next();
+				menuInit();
+				getService(); //获取服务信息
+				get_code();
+				touch_btn();
+			});
+			
+			function touch_btn(){
+				new TouchRipple('#loginBtn', {
+			        color: 'rgba(0,0,0,0.3)',
+			        time: 500,
+			        size: null
+			      })
+			}
+
+			/*function next(){
+				//退出按钮点击事件
+				document.getElementById("close").addEventListener('tap',function(){
+					plus.webview.currentWebview().close();
+					
+				});
+			}*/
+			
+			
+
+			//获取服务信息
+			function getService() {
+				var footIconArr = ['foot-icon weixin', ' foot-icon qq', 'foot-icon weibo'];
+				var iconArr = ['mui-icon mui-icon-weixin a', 'mui-icon mui-icon-qq a', 'mui-icon mui-icon-weibo a'];
+				plus.oauth.getServices(function(services) {
+					var content = document.getElementById("dcontent");
+					var info = document.getElementById("info");
+					for(var i in services) {
+						var service = services[i];
+						console.log(service.id + ": " + service.authResult + ", " + service.userInfo);
+						auths[service.id] = service;
+						var f = document.querySelector(".description");
+						var de = document.createElement("div");
+						var de = document.createElement('div');
+						de.setAttribute("class", "icon_box");
+						de.setAttribute("onclick", "login(this.id)");
+						de.id = service.id;
+						f.appendChild(de);
+
+						var div1 = document.createElement("div");
+						div1.className = footIconArr[i];
+						de.appendChild(div1);
+						var a = document.createElement("a");
+						div1.appendChild(a);
+
+						var span = document.createElement("span");
+						span.className = iconArr[i];
+						div1.appendChild(span);
+
+						var div2 = document.createElement("p");
+						div2.innerHTML = service.description + "登录";
+
+						de.appendChild(div2);
+						//取消微博登录
+						if(i == 1) {
+							return;
+						}
+					}
+				}, function(e) {
+					alert("获取第三方登陆服务失败" + e.message);
+				})
+			}
+
+			function test() {
+				var user = document.getElementById("user").value.trim();
+				var pwd = document.getElementById("pwd").value;
+				if(user == "") {
+					mui.toast("你的用户名不能为空！");
+				}
+			}
+			//登录认证
+			function login(id) {
+				var auth = auths[id];
+				var w = null;
+				if(auth) {
+					if(plus.os.name == "Android") {
+						w = plus.nativeUI.showWaiting();
+					}
+					document.addEventListener("pause", function() {
+						setTimeout(function() {
+							w && w.close();
+							w = null;
+						}, 2000);
+					}, false);
+					auth.login(function() {
+						w && w.close();
+						w = null;
+						console.log("登录认证成功：" + JSON.stringify(auth.authResult));
+						userinfo(auth);
+					}, function(e) {
+						w && w.close();
+						w = null;
+						alert("登录认证失败：" + e.message);
+					})
+				} else {
+					alert("无效的登录认证通道！");
+					plus.nativeUI.alert("无效的登录认证通道！", null, "登录");
+				}
+			}
+			//获取用户信息
+			var users = {};
+
+			function userinfo(a) {
+				a.getUserInfo(function() {
+					console.log(JSON.stringify(a));
+					users.name = a.userInfo.nickname || a.userInfo.name;
+					var gender = a.userInfo.sex || a.userInfo.gender;
+					if(gender == 1) {
+						gender = "男";
+					} else if(gender == 2) {
+						gender = "女";
+					}
+					users.gender = encodeURI(gender);
+					users.face = a.userInfo.figureurl_qq_2 || a.userInfo.headimgurl;
+					users.openid = a.authResult.openid;
+					users.id = a.id;
+					var isNull = false;
+					for(var i in users) {
+						if(users.hasOwnProperty(i)) {
+							isNull = true;
+						} else {
+							isNull = false;
+						}
+					}
+					if(isNull) {
+						new UserDAL().op_user_third_party_login(users.openid, users.gender, users.face, users.name, users.id, function(data) {
+							if(data.result != "success") {
+								mui.toast("系统错误，登录失败");
+							}
+							//mui.toast(data.userData.mid);
+							mui.toast("登陆成功，欢迎“" + data.userData.uname + "”");
+							//保存用户数据
+							userData = data.userData;
+							common.myStorage.setItem("userData", userData);
+							//进入主页
+							plus.runtime.restart();
+							//							mui.fire(plus.webview.getWebviewById(plus.runtime.appid),"goActive");
+							//							mui.fire(plus.webview.getWebviewById("personal/personroom.html"),"goActive");
+							closePage();
+						}, function(e) {
+							console.log("错误,登录失败" + e.message);
+						});
+					}
+				}, function(e) {
+					alert("获取用户信息失败：" + "[" + e.code + "]：" + e.message);
+				})
+			}
+			
+			//
+			function chuange_code(){
+				
+			}
+			
+			//获取验证码
+			function get_code(){
+				new UserDAL().get_img_code(function(data){
+					console.log(JSON.stringify(data))
+					document.querySelector(".code").src =data.imgUrl;
+					word = data.word;
+					console.log(JSON.stringify(word))
+					sessionStorage.setItem("code_word",word);
+				})
+			}
+			
+			function menuInit() {
+				
+				
+				//切换验证码
+				document.querySelector(".code").addEventListener("tap",function(){
+					get_code();
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+				})
+				//注册按键
+				document.getElementById("registBtn").addEventListener('tap', function() {
+					mui.openWindow({
+						url: "regist.html",
+						id: "regist",
+						style: {},
+						show: {
+							aniShow: 'zoom-out',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {}
+					});
+					//lus.webview.open('','','','slide-in-top')
+				});
+
+				//登录
+				document.getElementById("loginBtn").addEventListener('tap', function() {
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+					var user = document.getElementById('user').value.trim();
+					var pwd = document.getElementById("pwd").value;
+					var code = document.querySelector("#code").value;
+					if(user == "" ) {
+						mui.toast("帐号或者密码不能为空");
+						return;
+					}else if( pwd == ""){
+						mui.toast("密码不能为空");
+						return;
+					}else if( code == ""){
+						mui.toast("验证码不能为空");
+						return;
+					}
+					
+					var loginType = true; //user.checkUser();
+					var pwdRe = pwd.checkPwd();
+					if(!loginType) {
+						mui.toast("帐号输入格式错误");
+						return;
+					}
+					if(!pwdRe) {
+						mui.toast("密码输入格式错误");
+						return;
+					}
+					if(code_word != code){
+						get_code();
+						mui.toast("验证码输入错误");
+						return;
+					}else if(code_word == code){
+						//md5加密密码
+						pwd = $.md5(pwd);
+	
+						var w = plus.nativeUI.showWaiting("正在登录...");
+						new UserDAL().op_user_login(user, pwd, function(data) {
+							w.close();
+							console.log(JSON.stringify(data));
+							switch(data.result) {
+								case "empty":
+									mui.toast("用户名密码不允许为空");
+									break;
+								case "error":
+									mui.toast("密码错误");
+									break;
+								case "notExitis":
+									mui.toast("用户名不存在");
+									break;
+								case "success":
+									loginSuccess(data.userData);
+									break;
+								default:
+									mui.toast("操作异常");
+									break;
+							}
+						}, function(e) {
+							w.close();
+						});
+					}
+					//登录接口
+					
+					
+				});
+				
+				//找回密码
+				document.getElementById("fgPwd").addEventListener("tap",function(){
+					var arr = {
+						path:"",
+						id:"forgetPw",
+						extras:{}
+					};
+					new page().openWebViews(arr.path,arr.id,arr.extras);
+				},function(e){
+					console.log(e);
+				})
+			}
+
+			function loginSuccess(userData) {
+				mui.toast(userData.uname + ",欢迎您登录");
+				//保存用户数据
+				common.myStorage.setItem("userData", userData);
+//				plus.runtime.restart();
+//				plus.webview.getWebviewById('main').addEventListener('close', function() {
+//					mui.openWindow({
+//						url: '../main.html',
+//						id: 'main',
+//						show: {
+//							aniShow: 'pop-in',
+//							duration: 300,
+//						},
+//						waiting: {
+//							autoShow: false
+//						}
+//					});
+//				});
+				//登录成功后不重启应用
+				mui.fire(plus.webview.getWebviewById(plus.runtime.appid),"goActive");
+				closePage();
+			}
+
+			//关闭 注册和登录
+			function closePage() {
+				var loginPage = plus.webview.getWebviewById("login");
+				var registPage = plus.webview.getWebviewById("regist");
+				var person = plus.webview.getWebviewById("person");
+				var setting = plus.webview.getWebviewById("settingRoom");
+				var userCar = plus.webview.getWebviewById("userCar");
+				userCar && (userCar.reload());
+				setting && (setting.close());
+				setting && (setting.reload());
+				person && (person.reload());
+				loginPage && (loginPage.close());
+				registPage && (registPage.close());
+			}
+		</script>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">会员登录</h1>
+			<span id="registBtn" class="mui-icon mui-icon-right-nav mui-pull-right">注册</span>
+		</header>
+
+		<div class="mui-content">
+			
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<input id="user" type="text" value="tab521" class="mui-input-clear" placeholder="请输入手机/用户名">
+				</div>
+				<div class="mui-input-row">
+					<input id="pwd" type="password" value="tab520" class="mui-input-password" placeholder="请输入6~18位密码">
+				</div>
+				<div class="mui-input-row">
+					<input id="code" maxlength="4" type="text" value="" placeholder="请输入验证码">
+					<div class="test1">
+					<img class="code" src="" style="width: 80px; height: 30px;">
+				</div>
+				</div>
+			</div>
+
+			<!--<input id="user" type="text" onmouseout="test()" placeholder="邮箱/手机号/用户名">
+			<div class="mui-input-row mui-password">
+				<input id="pwd" type="password"  class="mui-input-password" placeholder="密码">
+				<span id="eye" class="mui-icon mui-icon-eye"></span>
+			</div>-->
+
+			<!--<input id="pwd" type="text" value="abc123456" placeholder="密码">-->
+
+			<div class="mui-content-padded">
+				<button id="loginBtn" type="button" class="mui-btn mui-btn-success mui-btn-block">登录</button>
+			</div>
+
+			<div id="fgPwd">忘记密码？</div>
+			<div class="fieldset">
+				<legend class="legend" align="center">一键登录 </legend>
+				<div class="description"></div>
+			</div>
+			
+		</div>
+		<script src="../../js/immersed.js"></script>
+	</body>
+
+</html>

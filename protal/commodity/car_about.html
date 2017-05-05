@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/android.js" ></script>
+		<script type="text/javascript" src="../../js/Config/Config.js" ></script>
+		<script type="text/javascript" src="../../js/Chat/jquery-1.11.0.js" ></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js" ></script>
+		<script type="text/javascript" src="../../js/Api/Shoplist.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/common.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/OpenW.js" ></script>
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/newCss/mui.min.css" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.mui-bar .mui-pull-left .mui-icon {
+				padding-right: 5px;
+				font-size: 28px;
+			}
+			
+			.mui-bar .mui-btn {
+				font-weight: normal;
+				font-size: 17px;
+			}
+			
+			.mui-bar .mui-btn-link {
+				top: 1px;
+			}
+			
+			.mui-content img {
+				width: 100%;
+			}
+			
+			.hm-description {
+				margin: .5em 0 2em;
+			}
+			
+			.hm-description>li {
+				font-size: 14px;
+				color: #8f8f94;
+			}
+			
+			.detail-info {
+				width: 100%;
+				background: #fff;
+				margin-top: 10px;
+				padding-bottom: 50px;
+			}
+			
+			.slider_box {
+				position: relative;
+			}
+			
+			.cont {
+				position: absolute;
+				bottom: 5px;
+				background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.6)));
+				width: 100%;
+				height: 60px;
+				padding: 0.5rem 1.5rem;
+			}
+			
+			.cont span {
+				width: 100%;
+				color: #fff;
+				font-size: 17px;
+				overflow: hidden;
+			}
+			
+			.cont p {
+				width: 100%;
+				height: 18px;
+				color: #fff;
+				font-size: 15px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			
+			.buy_box {
+				width: 100%;
+				height: 60px;
+				position: relative;
+				padding: 15px 20px;
+			}
+			
+			.buy_box:after {
+				content: "";
+				width: 90%;
+				height: 1px;
+				left: 5%;
+				bottom: 0px;
+				position: absolute;
+				background: #F3F3F3;
+			}
+			
+			.price_num {
+				font-size: 30px;
+				line-height: 30px;
+				color: #D74B28;
+				position: relative;
+				margin-right: 10px;
+			}
+			
+			.price_num:before {
+				content: "￥";
+				font-size: 16px;
+				color: #D74B28;
+			}
+			
+			.old_price_num {
+				font-size: 14px;
+				line-height: 30px;
+				color: #ccc;
+				text-decoration: line-through;
+			}
+			
+			.old_price_num:before {
+				content: "原价：￥";
+				font-size: 14px;
+				color: #ccc;
+			}
+			
+			.buy_btn {
+				width: 100px;
+				height: 30px;
+				border: 1px solid #fff;
+				float: right;
+				line-height: 30px;
+				text-align: center;
+				border-radius: 5px;
+				background: #D74B28;
+				color: #fff;
+				transition: .1s linear;
+			}
+			
+			.buy_btn:active {
+				border-color: #D74B28;
+				color: #D74B28;
+				background: #fff;
+			}
+			
+			.detail-box {
+				height: 300px;
+			}
+			
+			.detail_title {
+				font-size: 16px;
+				width: 100%;
+				height: 50px;
+				padding: 10px 20px;
+				font-weight: 400;
+				color: #ccc;
+			}
+			.detail_body{
+				padding: 1px 20px;
+				font-size: 16px;
+				width: 100%;
+				color: #333333;
+			}
+			.mui-table-view{
+				width: 95%;
+				left: 2.5%;
+			}
+			.mui-table-view:before,.mui-table-view:after{
+				height: 0px;
+			}
+			/*.mui-table-view:after{
+				content: "";
+				width: 100%;
+				height: 1px;
+				position: absolute;
+				
+			}*/
+			.Recommend_title{
+				width: 75px;
+				font-size: 18px;
+				margin-top: 20px;
+				padding: 5px 0px;
+				margin-left: 20px;
+				color: #333;
+				position: relative;
+			}
+			.Recommend_title:after{
+				content: "";
+				width: 100%;
+				height: 1px;
+				bottom: 0px;
+				left: 0px;
+				position: absolute;
+				background: #D74B28;
+			}
+			.T_price_num{
+				font-size: 18px;
+				line-height: 30px;
+				color: #D74B28;
+				position: relative;
+				margin-right: 10px;
+			}
+			.T_price_num:before{
+				content: "￥";
+				font-size: 16px;
+				color: #D74B28;
+			}
+			.T_old_price_num{
+				font-size: 14px;
+				line-height: 30px;
+				color: #ccc;
+				text-decoration: line-through;
+			}
+			.T_old_price_num:before {
+				content: "原价：￥";
+				font-size: 14px;
+				color: #ccc;
+			}
+			.mui-card {
+				width: 95%;
+				margin: 5px auto;
+				border-style: none none solid none;
+				/*border: none !important;*/
+				box-shadow: none !important;
+				position: relative;
+				overflow: hidden;
+				margin-bottom: 5px;
+			}
+			.mui_card_pic{
+				position: absolute;
+				top: -4px;
+				right: 0px;
+				width: 50px;
+				height: 50px;
+				transform: rotate(1deg);
+				
+			}
+			.mui-card-content-inner{
+				/*padding: 100px auto !important;*/
+			}
+			.car_pic{
+				width: 70px;
+				height: 70px;
+				border-radius: 2px;
+				
+				object-fit: cover;
+				/*overflow: hidden;*/
+				/*float: left;*/
+				
+			}
+			.pic_before{
+				width: 70px;
+				height: 70px;
+				margin: 0px 10px 20px auto;
+				position: relative;
+				overflow: hidden;
+				float: left;
+			}
+			/*.pic_before:before{
+				position: absolute;
+				left: 5px;
+				top: -70px;
+				content: "";
+				width: 5px;
+				height: 150px;
+				border-radius: 2px;
+				background: #FAFAFA;
+				z-index: 2px;
+				opacity: 0.5;
+				transform: rotate(45deg);
+				animation: run ease-in-out 2s infinite;
+			}*/
+			
+			@-webkit-keyframes run{
+				0%{
+					left: 5px;
+					top: -40px;
+				}
+				90%{
+					left:70px;
+					top:60px;
+					opacity: 1;
+				}
+				100%{
+					left:70px;
+					top: 60px;
+					opacity: 1;
+				}
+			}
+			.car_info{
+				width: 75% !important;
+				float: left;
+				height: 60px;
+			}
+			.car_title{
+				height: 50%;
+				color: #333;
+			}
+			.car_price{
+				height: 50%;
+				line-height: 45px;
+				color: ;
+			}
+			.truePrice{
+				font-size: 14px;
+				color: #D74B28;
+			}
+			.truePrice:before{
+				content: "优惠价:";
+				color: #333;
+				margin-right: 2px;
+			}
+			.oldPrice{
+				font-size: 12px;
+			}
+			.oldPrice:before{
+				content: "原价:";
+				color: #333;
+				margin-right: 2px;
+			}
+			.car_price span{
+				margin-right: 15px;
+			}
+			.soldNum{
+				float: right;
+				font-size: 12px;
+			}
+			.soldNum:before{
+				content: "已售:";
+			}
+		</style>
+	</head>
+	<body>
+
+		<header id="header" class="mui-bar mui-bar-transparent">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<h1 class="mui-title" style="color: #fff;">商品详情</h1>
+		</header>
+
+		<div class="mui-content">
+			<div class="slider_box">
+				<img id="img1" src="../../img/01.jpg" />
+				<div class="cont">
+					<span class="">全车精洗加手工打蜡套餐1</span>
+					<p class="">全车精洗加手工打蜡套餐1全车精洗加手工打蜡套餐全车精洗加手工打蜡套餐1</p>
+				</div>
+			</div>
+			<div class="detail-info">
+				<div class="buy_box">
+					<span class="price_num"></span>
+					<span class="old_price_num"></span>
+					<div class="buy_btn">立即抢购</div>
+				</div>
+				<div class="detail-box">
+					<h3 class="detail_title">团购详情</h3>
+					<div class="detail_body">
+					</div>
+				</div>
+				<div class="Recommend_more">
+					<div class="Recommend_title">
+						相关推荐
+					</div>
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="rcommend_room">
+						<template id="car_list">
+							<div class="mui-card">
+								<div class="mui-card-content">
+									<div class="mui-card-content-inner">
+										<!--<img class="mui_card_pic" src="../../img/shopImg/caidai.png" />-->
+										<div class="pic_before">
+											<img class="car_pic" src="" />
+										</div>
+										<div class="car_info">
+											<p class="car_title">全车精洗加手工打蜡套餐</p>
+											<p class="car_price"><span class="truePrice">25元</span><span class="oldPrice">36元</span>
+												<!--<span class="soldNum">6</span>-->
+											</p>
+											
+										</div>
+									</div>
+								</div>
+							</div>
+						</template>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		<script type="text/javascript">
+			var id = null;
+			var title = null;
+			var price = null;
+			var truePrice = null;
+			mui.init({
+//				swipeBack: true //启用右滑关闭功能
+			});
+			mui.plusReady(function() {
+				pageInit();
+				pageInfo();
+				get_Recommend_list();
+			});
+			
+			
+			
+			
+
+			function pageInit() {
+				plus.webview.currentWebview().setStyle({
+					//纵向滚动条
+					scrollIndicator: "none"
+				});
+				var ws = plus.webview.currentWebview();
+				id = ws.shopId;
+				title = ws.title;
+				price = ws.price;
+				truePrice = ws.trueprice;
+			}
+			
+			function pageInfo(){
+				new Shop().get_car_about(id,function(data){
+					document.getElementById("img1").src = data.litpic;
+					document.querySelector(".cont span").innerHTML = data.title;
+					document.querySelector(".cont p").innerHTML = data.description;
+					document.querySelector(".price_num").innerHTML = data.trueprice;
+					document.querySelector(".old_price_num").innerHTML = data.price;
+					document.querySelector(".detail_body").innerHTML = data.body;
+//					detail_body
+				})
+			}
+			
+			function get_Recommend_list(){
+				new Shop().get_shop_list(8,1,3,function(data){
+					for (var i = 0;i<data.length; i++) {
+						add_recommend_list("rcommend_room",data[i]);
+					}
+				})
+			}
+			
+			function add_recommend_list(room,o){
+				var room = document.getElementById(room);
+				var content = document.getElementById("car_list").content;
+				var li = content.querySelector(".mui-card");
+				li.id = o.id;
+				li.querySelector(".car_title").innerHTML=o.title;
+				li.querySelector(".truePrice").innerHTML = o.trueprice+"元";
+				li.querySelector(".oldPrice").innerHTML = o.price+"元";
+				li.querySelector(".car_pic").src = o.litpic;
+				var child = content.cloneNode(true);
+				room.appendChild(child);
+				var oli = document.getElementById(o.id);
+				oli.addEventListener("tap", function() {
+					console.log(1)
+//					mui.openWindow({
+//						url: "car_about.html",
+//						id: "car_about" + Math.random(),
+//						style: {},
+//						show: {
+//							aniShow: 'pop-in',
+//							//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+//							duration: 200,
+//						},
+//						waiting: {
+//							autoShow: false
+//						},
+//						extras: {
+//							shopId: o.id,
+//							title : o.title,
+//							trueprice : o.trueprice,
+//							price : o.price
+//						}
+//					});
+				});
+			}
+		</script>
+		<!--<script type="text/javascript" src="../../js/immersed.js" ></script>-->
+	</body>
+
+</html>

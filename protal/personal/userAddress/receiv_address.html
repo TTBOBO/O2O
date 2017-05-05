@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/newCss/mui.min.css" rel="stylesheet" />
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../../js/Api/UserDal.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/OpenW.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/OpenW.js"></script>
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+
+		<style>
+			.mui-content {
+				margin-top: 15px;
+				background: #fff;
+				margin-bottom: 50px;
+			}
+			
+			.mui-card-header:after {
+				height: 0px !important;
+			}
+			
+			.mui-card {
+				width: 100%;
+				/*left: 2.5%;*/
+				border-radius: 0px;
+				margin: 10px auto;
+				border-style: solid none solid none;
+				/*border: none !important;*/
+				box-shadow: none !important;
+			}
+			
+			.mui-card-footer {
+				position: relative;
+				color: #000000 !important;
+			}
+			
+			.editBtn {
+				position: absolute;
+				right: 30%;
+			}
+			
+			.mui-table-view:before {
+				height: 0px !important;
+			}
+			
+			.defult_add {
+				width: 60%;
+			}
+			
+			.defult_add>span,
+			.defult_add>input {
+				/*color: orange;*/
+				/*width: 50%;*/
+				line-height: 40px;
+				float: left;
+			}
+			
+			input:checked {
+				color: orange;
+			}
+			
+			.defult_add>input {
+				margin-top: 2px;
+			}
+			
+			.defult_add>span {
+				/*top: -2px;*/
+				margin-left: 5%;
+			}
+			
+			input[type=radio] {
+				left: 0px;
+			}
+			
+			input[type=radio]:checked:before {
+				color: red !important;
+				line-height: 20px !important;
+			}
+			
+			#bar {
+				text-align: center;
+				line-height: 50px;
+				color: #fff;
+				background: #d74b28;
+				box-shadow: none;
+			}
+		</style>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				//加载本地缓存的用户信息
+				userInfo();
+				//页面初始化，加载用户的收货地址
+				pageInfo();
+				plus.webview.currentWebview().setStyle({
+						//纵向滚动条
+						scrollIndicator: "none"
+					})
+					//				checkListen();
+			});
+
+			function pageMenu() {
+				var address_room = document.querySelector(".address_room");
+				return address_room;
+			}
+
+			function userInfo() {
+				var userData = common.myStorage.getItem("userData");
+				//				console.log(JSON.stringify(userData))
+				return userData;
+			}
+
+			function pageInfo() {
+				var userData = new UserDAL().getUserInfo();
+				var mid = userData.mid;
+				//获取用户地址接口
+				new UserDAL().get_user_address(mid, function(data) {
+//					console.log(JSON.stringify(data))
+					var len = data.addressData.length;
+					var data = data.addressData;
+					for(var i = 0; i < len; i++) {
+						addList(data[i]);
+					}
+				});
+
+				document.getElementById("bar").addEventListener("tap", function() {
+					var arr = {
+						path: '',
+						id: 'add_address',
+						styles: {},
+						extras: {
+							mid: mid
+						}
+					}
+					openWebViews(arr.path, arr.id, arr.styles, 1, arr.extras);
+				})
+
+				function addList(o) {
+					console.log(JSON.stringify(o))
+					var content = pageMenu().content;
+					var li = content.querySelector(".mui-card");
+					var pageList = document.querySelector(".pageList")
+					li.id = o.aid;
+					li.querySelector(".userName").innerHTML = o.consignee;
+					li.querySelector(".userTel").innerHTML = o.tel;
+					li.querySelector(".userTel").innerHTML = o.tel;
+					li.querySelector(".userAddress").innerHTML = o.city + o.address;
+					if(o.des == "1") {
+						li.querySelector(".radio").value = o.des
+						li.querySelector(".defult_add").style.color = "orange"
+						li.querySelector(".defult_address").innerHTML = "默认地址";
+					} else {
+						li.querySelector(".radio").value = o.des
+						li.querySelector(".defult_add").style.color = "#000000"
+						li.querySelector(".defult_address").innerHTML = "设为默认";
+					}
+
+					pageList.appendChild(content.cloneNode(true));
+					var Radio = document.getElementsByName("radio1");
+					for(var i = 0; i < Radio.length; i++) {
+						if(Radio[i].value == "1") {
+							Radio[i].checked = true;
+							break;
+						}
+					}
+
+					var oli = document.getElementById(li.id);
+					//点击地址部位跳转到编辑地址
+					oli.querySelector(".click_card").addEventListener("tap", function() {
+						openUpdate(oli, o);
+					})
+					oli.querySelector(".editBtn").addEventListener("tap", function() {
+						openUpdate(oli, o);
+					})
+					oli.querySelector(".deleteBtn").addEventListener("tap", function() {
+						var btnArr = ['确认', '取消'];
+						mui.confirm('确认要删除该地址吗?', "", btnArr, function(e) {
+							if(e.index == 0) {
+								//删除地址
+								new UserDAL().delete_user_address(oli.id, mid, function(data) {
+									console.log(JSON.stringify(data));
+									switch(data.msg) {
+										case 'success':
+											plus.webview.currentWebview().reload();
+											mui.toast("删除成功！");
+											break;
+										case 'failed':
+											mui.toast("系统出错请稍后再试！");
+											break;
+										case 'user_no_had':
+											mui.toast("用户不存在！");
+											break;
+										default:
+											break;
+									}
+								})
+							}
+						})
+					})
+					//监听单选框修改默认地址
+					checkListen(oli)
+				}
+
+				function openUpdate(oli, o) {
+					var arr = {
+						path: "",
+						id: "update_info",
+						styles: {},
+						extras: {
+							mid: mid,
+							aid: o.aid,
+							consignee: o.consignee,
+							address: o.address,
+							city: o.city,
+							tel: o.tel,
+							des: o.des
+						}
+					}
+					openWebViews(arr.path, arr.id, arr.styles, 1, arr.extras);
+				}
+
+			}
+
+			function checkListen(oli) {
+				var userData = new UserDAL().getUserInfo();
+				var mid = userData.mid;
+				var Radio1 = document.getElementsByName("radio1");
+				oli.querySelector(".radio").addEventListener("click", function() {
+					//if(document.querySelector(".checkBox").checked)
+					if(this.value == 1){
+						mui.toast("已经是默认地址了");
+					}else{
+						var des = this.value
+						var w = plus.nativeUI.showWaiting("正在更新");
+						new UserDAL().change_defult_address(mid,oli.id,des,function(data){
+							console.log(JSON.stringify(data));
+							if(data.msg == "success"){
+								w.setTitle( "正在更新" );
+								w.close();
+								mui.toast("更改成功");
+//								oli.querySelector(".defult_add").style.color = "orange"
+//								oli.querySelector(".defult_address").innerHTML = "默认地址";
+								plus.webview.currentWebview().reload();
+						}else{
+								w.setTitle( "正在更新" );
+								w.close();
+								mui.toast("更改失败");
+						}
+						})
+					}
+				})
+			}
+		</script>
+	</head>
+
+	<body style="background: #fff;">
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">地址管理</h1>
+		</header>
+		<div class="mui-content">
+			<template class="address_room">
+				<li class="mui-card">
+					<div class="click_card">
+						<div class="mui-card-header">
+							<span class="mui-card-link userName">涂爱波</span>
+							<span class="mui-card-link userTel">13698006449</span>
+						</div>
+						<div class="mui-card-content">
+							<div class="mui-card-content-inner userAddress">
+								江西省南昌市青云谱区岱山街道气象路58号江西信息应用技术学院
+							</div>
+						</div>
+					</div>
+					<div class="mui-card-footer">
+						<div class="defult_add">
+							<input class="radio" name="radio1" value="" type="radio">
+							<span class="mui-card-link defult_address">设为默认</span>
+						</div>
+						<span class="  editBtn">编辑</span>
+						<span class="mui-card-link deleteBtn">删除</span>
+					</div>
+				</li>
+			</template>
+			<ul class="mui-table-view pageList">
+
+			</ul>
+		</div>
+		<nav id="bar" class="mui-bar mui-bar-tab">
+			添加收货地址
+		</nav>
+	</body>
+	<script type="text/javascript" src="../../../js/immersed.js" ></script>
+</html>

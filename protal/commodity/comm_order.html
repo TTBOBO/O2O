@@ -1,0 +1,472 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<!--<script src="../../js/Itool/pay.js"></script>-->
+		<script src="../../js/Api/pay.js"></script>
+		<script type="text/javascript" src="../../js/Api/UserDal.js" ></script>
+		<script src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<style>
+			.adress_room {
+				width: 100%;
+				height: 100px;
+				background: #fff;
+			}
+			
+			.address_left_box {
+				float: left;
+				width: 10%;
+				height: 100%;
+				text-align: center;
+				line-height: 100px;
+				position: relative;
+			}
+			
+			#address_right_box {
+				margin-top: 5%;
+				width: 75%;
+				height: 80%;
+				float: left;
+				margin-right: 5px;
+				/*font-size:1rem;*/
+			}
+			
+			#address_right_box p {
+				color: #000;
+				font-size: 1rem;
+			}
+			
+			#address_right_box span {
+				font-size: 14px !important;
+			}
+			
+			.tel {
+				float: right;
+				margin-right: 10%;
+			}
+			
+			.shop_num {
+				margin-top: 20px;
+				position: relative;
+			}
+			
+			.shop_info {
+				width: 100%;
+				height: 100px;
+				margin: 10px auto;
+				background: #eee;
+			}
+			
+			.shop_img {
+				width: 90px;
+				height: 90px;
+				margin: 5px;
+				float: left;
+			}
+			
+			.shop_description {
+				float: left;
+				margin: 5px;
+				width: 67%;
+				height: 90px;
+				position: relative;
+			}
+			
+			.shop_title {
+				width: 90%;
+				font-size: 14px;
+			}
+			
+			.shop_price {
+				color: #E42E35;
+				position: absolute;
+				bottom: 0px;
+			}
+			
+			#submit {
+				background: #E42E35;
+				color: #fff !important;
+			}
+			
+			.mui-bar {
+				box-shadow: none !important;
+			}
+			
+			.shop_price_count {
+				font-size: 14px;
+			}
+			
+			.priceCount,
+			.X_priceCount {
+				color: #E42E35;
+				font-size: 16px;
+			}
+			
+			.user_des {
+				margin-top: 15px;
+				border: 1px none #ccc;
+				/*border-top-style: solid;*/
+				width: 95%;
+				margin-left: 2.5%;
+				height: 150px;
+			}
+			
+			.des_title {
+				margin-top: 15px;
+				/*margin-left: 15px;*/
+				float: left;
+				height: 25px;
+				position: relative;
+				/*border: 1px none #ccc;
+				border-bottom-style: solid;*/
+			}
+			
+			.des_title:after {
+				content: "";
+				width: 100%;
+				height: 1px;
+				position: absolute;
+				left: 0px;
+				bottom: 0px;
+				background: #E42E35;
+			}
+			
+			.des_content {
+				border: none;
+				color: #ccc;
+				font-size: 14px;
+				height: 75px;
+				padding: inherit;
+				line-height: 25px;
+				padding-left: 10px;
+				padding-top: 5px;
+			}
+			
+			textarea {
+				margin-bottom: inherit !important;
+			}
+			
+			.shop_num_about {
+				margin-top: 1%;
+				float: right;
+				position: absolute;
+				right: 5%;
+			}
+			
+			#reduce_num,
+			#num_value,
+			#add_num {
+				width: 40px !important;
+			}
+			
+			.xiaoji {
+				text-align: right;
+				font-weight: 400;
+				width: 100%;
+				height: 50px;
+				background: #fff;
+				float: right;
+				line-height: 50px;
+				padding-right: 10px;
+			}
+			
+			.mui-input-row {
+				padding: 5px;
+				background: #fff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header style="background: #d74b28; " id="header " class="mui-bar mui-bar-nav mui-bar-transparent ">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left " style="color: #fff; "></a>
+			<h1 class="mui-title " style="color: #fff; "></h1>
+		</header>
+		<div class="mui-content ">
+			<div class="adress_room ">
+				<div class="address_left_box ">
+					<span class="iconfont icon-plane " style="font-size: 20px; "></span>
+				</div>
+				<div id="address_right_box">
+
+				</div>
+				<!--<p><span> 收货人：</span><span class="consignee "></span><span class="tel "></span></p>
+					<span>收货地址</span>：<span class="address "></span>-->
+				<!--添加收货地址-->
+			</div>
+			<template id="user_address">
+				<p><span> 收货人：</span><span class="consignee "></span><span class="tel "></span></p>
+				<span>收货地址</span>：<span class="address"></span>
+			</template>
+			<div class="shop_info ">
+				<img class="shop_img " src="../../img/60x60.gif " />
+				<div class="shop_description ">
+					<span class="shop_title "></span>
+					<p class="shop_price "></p>
+				</div>
+			</div>
+			<div class="shop_num ">
+				<div class="mui-input-row ">
+					<label>购买数量</label>
+					<div class="shop_num_about ">
+						<button id="reduce_num">
+								-
+							</button>
+						<button id="num_value" href="# ">
+								1
+							</button>
+						<button id="add_num" type="button ">
+								+
+							</button>
+					</div>
+				</div>
+				<!--买家留言-->
+				<div class="user_des ">
+					<div class="des_title ">买家留言</div>
+					<textarea class="des_content " placeholder="选填，填写您对商品的特别要求。 "></textarea>
+					<div class="xiaoji ">
+						<span class="gongji ">共计1件商品&nbsp;</span> 小计：
+						<span style="color: #E42E35; ">￥</span><span class="X_priceCount "></span>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<nav class="mui-bar mui-bar-tab ">
+			<a class="mui-tab-item ">
+
+			</a>
+			<a class="mui-tab-item shop_price_count ">
+				合计：<span style="color: #E42E35; ">￥</span><span class="priceCount "></span>
+			</a>
+			<a class="mui-tab-item" id="submit">
+				<div>提交订单</div>
+			</a>
+
+		</nav>
+		<script type="text/javascript ">
+			mui.init();
+			var mid = null;
+			var payMode = null;
+			var user_add_aid = null;
+			mui.plusReady(function() {
+				pageMent();
+				pageInit();
+				common.myStorage.getItem("user_address", " ")
+			});
+
+			function pageInit() {
+				var ws = plus.webview.currentWebview();
+				var title = ws.title;
+				var price = ws.trueprice;
+				var aid = ws.shopId;
+				var shopImg = ws.shopImg;
+				document.querySelector(".mui-title ").innerHTML = title;
+				document.querySelector(".shop_title ").innerHTML = title;
+				document.querySelector(".shop_price ").innerHTML = "￥ " + price;
+				document.querySelector(".priceCount ").innerHTML = price;
+				document.querySelector(".X_priceCount ").innerHTML = price;
+				document.querySelector(".shop_img ").src = shopImg;
+				var num = document.querySelector("#num_value");
+				var reduce_num = document.querySelector("#reduce_num ");
+				var add_num = document.querySelector("#add_num ");
+				var priceCount = document.querySelector(".priceCount ");
+				var gongji = document.querySelector(".gongji ");
+				var X_priceCount = document.querySelector(".X_priceCount ");
+
+				reduce_num.addEventListener("tap", function() {
+					if(num.innerHTML == 1) {
+						mui.toast("当前已经是最小购买数量 ");
+						num.innerHTML = 1;
+						return;
+					} else {
+						var show = plus.nativeUI.showWaiting("载入中... ");
+						num.innerHTML = num.innerHTML - 1;
+						gongji.innerHTML = "共计 " + (num.innerHTML) + "件商品 ";
+						priceCount.innerHTML = parseFloat(priceCount.innerHTML) - parseFloat(price);
+						X_priceCount.innerHTML = priceCount.innerHTML;
+						setTimeout(function() {
+							show.close();
+						}, 200);
+					}
+				});
+
+				add_num.addEventListener("tap", function() {
+					var show = plus.nativeUI.showWaiting("载入中... ");
+					num.innerHTML = parseInt(num.innerHTML) + 1;
+					gongji.innerHTML = "共计 " + (num.innerHTML) + "件商品 ";
+					priceCount.innerHTML = parseFloat(priceCount.innerHTML) + parseFloat(price);
+					X_priceCount.innerHTML = priceCount.innerHTML;
+					setTimeout(function() {
+						show.close();
+					}, 200);
+				});
+				ws.setStyle({
+					scrollIndicator: "none"
+				});
+
+				userInfo();
+				//				var userData = common.myStorage.getItem("userData ");
+				//				var mid = userData.mid;
+
+				document.getElementById("submit").addEventListener("tap", function() {
+					var cartcount = (parseInt(num.innerHTML));
+					var PriceCount = priceCount.innerHTML;
+					var user_add_aid = common.myStorage.getItem("user_address");
+					var des = document.querySelector(".des_content").value;
+					var address_box = document.querySelector("#address_right_box").innerHTML;
+					if(address_box.trim() == "请添加收货地址") {
+						mui.toast("请添加后货地址后再提交！(设为默认)");
+						return false;
+					} else {
+						var buttonArr = [{
+							title: "支付宝支付 "
+						}, {
+							title: "微信支付 "
+						}];
+						plus.nativeUI.actionSheet({
+							cancel: "取消 ",
+							buttons: buttonArr
+						}, function(e) {
+							var index = e.index;
+							switch(index) {
+								case 0:
+									break;
+								case 1:
+									payMode = 'alipay';
+									//									new Pay().payfor(payMode,aid,mid,PriceCount,cartcount,function(){
+									//										console.log(JSON.stringify(data));
+									//									});
+									var o = {
+										productID: "1 ",
+										count: "1 ",
+										mid: mid,
+										plat: "alipay "
+									};
+									var mid = userInfo();
+									
+									console.log(price);
+									new UserDAL().set_order_list(aid,mid,title,price,cartcount,function(data){
+										console.log(JSON.stringify(data));
+										if(data.msg == "success"){
+											mui.toast("支付成功");
+											plus.webview.currentWebview().close();
+											plus.webview.getWebviewById("comm_room").close();
+										}
+									})
+									break;
+								case 2:
+									var o = {
+											productID: "1 ",
+											count: "1 ",
+											user_id: mid,
+											plat: "wxpay "
+										}
+										//									new Pay().GetPayInfo(o);
+
+									//									new Pay().getPayInfo(payMode,id,mid,price,cartcount,function(data){
+									//										console.log(JSON.stringify(data));
+									//									});
+									break;
+							}
+						});
+					}
+				})
+			}
+
+			function pageMent() {
+				var mid = userInfo();
+				var address = document.getElementById("address_right_box").innerHTML;
+				new Pay().get_member_address(mid, function(data) {
+					console.log(JSON.stringify(data));
+					if(data.msg == "no") {
+						var userAddressBox = document.getElementById("address_right_box");
+						userAddressBox.innerHTML = "请添加收货地址 ";
+						console.log(userAddressBox.innerHTML)
+						userAddressBox.addEventListener("tap", function() {
+							mui.toast(userAddressBox.innerHTML+"(设为默认)")
+							mui.openWindow({
+								url: "../personal/userAddress/add_address.html",
+								id: "add_address",
+								show: {
+									aniShow: "pop-in",
+									duration: 100
+								},
+								waiting: {
+									autoshow: false
+								},
+								extras: {
+									mid: mid
+								}
+							})
+						});
+					} else if(data.msg == "success") {
+						common.myStorage.setItem("user_address", data.addressData.aid);
+						var userAddressRoom = document.getElementById("user_address");
+						//						 document.querySelector("#user_address")
+						var userAddressBox = document.getElementById("address_right_box");
+						var div = userAddressRoom.content;
+						div.querySelector(".consignee ").innerHTML = data.addressData.consignee;
+						div.querySelector(".tel ").innerHTML = data.addressData.tel;
+						div.querySelector(".address ").innerHTML = data.addressData.city + data.addressData.address;
+						userAddressBox.appendChild(div);
+						userAddressBox.addEventListener("tap",function(){
+							mui.openWindow({
+								url: "../personal/userAddress/receiv_address.html ",
+								id: "receiv_address",
+								show: {
+									aniShow: "pop-in",
+									duration: 100
+								},
+								waiting: {
+									autoshow: false
+								},
+								extras: {
+									mid: mid
+								}
+							})
+						})
+					}
+				});
+			}
+
+			function userInfo() {
+				var userData = common.myStorage.getItem("userData");
+				if(!userData || userData.length == 0) {
+					mui.toast("您是游客身份，请先登陆 ");
+					mui.openWindow({
+						url: "../other/login.html ",
+						id: "login ",
+						style: {},
+						show: {
+							aniShow: 'zoom-fade-out',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					return;
+				}
+				var mid = userData.mid;
+				return mid;
+
+			}
+		</script>
+		<script src="../../js/immersed.js "></script>
+	</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		
+	</head>
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<a class="mui-action-menu mui-icon mui-icon-redo mui-pull-right" href="#topPopover" style="color: #fff;"></a>
+			<h1 class="mui-title" style="color: #fff;">聚实惠</h1>
+		</header>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				gestureConfig:{
+					doubletap:true
+				},
+				subpages:[{
+					url:'../community/lessPriceinfo.html',
+					id:'lessPriceinfo',
+					styles:{
+						top:'65px',
+						bottom:'1px'
+					}
+				}]
+			});
+		</script>
+		<script>
+			mui.plusReady(function(){
+				document.querySelector(".mui-icon-redo").addEventListener("tap",function(){
+					mui.openWindow({
+						url:"../imgArticle/release.html",
+						id:"release",
+						waiting:{
+							autoShow:false
+						}
+					});
+				});
+			});
+		</script>
+		<script type="text/javascript" src="../../js/immersed.js" ></script>
+	</body>
+
+</html>

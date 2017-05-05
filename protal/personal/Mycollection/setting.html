@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="HandheldFriendly" content="true"/>
+		<title></title>
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/OpenW.js" ></script>
+		<link rel="stylesheet" href="../../../css/main.css" />
+		<link rel="stylesheet" href="../../../css/iconfont.css" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/regist.css" />
+
+		<style type="text/css">
+			.mui-bar-nav{box-shadow: none !important;}
+			.mui-table-view{
+				margin-bottom: 10px !important;
+			}
+			.mui-table-view-cell:after{left: 0px !important;}
+		</style>
+		<script>
+			var auths={};
+			var userData = null;
+			mui.init({
+//				pageInit
+			});
+			mui.plusReady(function(){
+				pageInit();
+				menuInit();
+				getService();
+				userInfo();
+			});
+			
+			function userInfo(){
+				var userData = common.myStorage.getItem("userData");
+				return userData;
+			}
+			
+			function getService(){
+				plus.oauth.getServices(function(services){
+					for(var i in services){
+						var service=services[i];
+						auths[service.id]=service;
+					}
+				});
+			}
+			function menuInit(){
+				var userData = common.myStorage.getItem("userData");
+				if(userData){
+					if(userData.qqopenid != null || userData.weixinopenid != null){
+						document.getElementById("changPwd").style.display = "none";
+					}
+					if (userData || userData.length != 0) {
+						document.getElementById("exit").innerHTML = "退出登录";
+					}
+				}else{
+					if (!userData || userData.length == 0) {
+							document.getElementById("exit").innerHTML = "点击登录";
+					}
+				}
+				
+			}
+			function pageInit(){
+				
+				mui('.otherList').on('tap','li',function(mid){
+					var id = this.id;
+					var userData = userInfo();
+					if(!userData){
+						openLogin();
+					}else{
+						mid = userData.mid;
+						var arr = {
+							path: "../userAddress/",
+							id: "receiv_address",
+							styles: {},
+							extras: {
+								mid : mid
+							}
+						}
+						openWebViews(arr.path,arr.id,arr.styles,1,arr.extras);
+//						switch (id){
+//							case 'receiv_address':
+//								
+//								break;
+//							default:
+//								break;
+//						}
+					}
+				})
+								
+				mui('.penList').on('tap','li',function(){
+					var id = this.id;
+					var userData = userInfo();
+					
+					if(!userData){
+						openLogin();
+					}else{
+						var mid = userData.mid;
+//						console.log(JSON.stringify(userData))
+						
+						//判断是否是退出登录还是修改密码
+						id == 'changPwd' ? openChangePwd(mid) : signOut();
+					}
+					
+				})
+				
+				function openChangePwd(mid){
+					var arr = {
+						path: "",
+						id: "changePwd",
+						styles: {},
+						extras: {
+							mid : mid
+						}
+					}
+					openWebViews(arr.path,arr.id,arr.styles,1,arr.extras);
+				}
+				
+				function signOut(){
+					mui.confirm("退出账号后，会影响您的体验效果", "高安o2o", ["取消", "退出"], function(e) {
+						e.index && (function() {
+							//清除缓存
+							common.myStorage.setItem("userData", "");
+							louginOut();
+							mui.fire(plus.webview.getWebviewById(plus.runtime.appid),"goActive");
+							//进入登录界面
+//							plus.runtime.restart();
+							closePage();
+						}());
+					});
+				}
+			}
+			
+			function closePage() {
+				var loginPage = plus.webview.getWebviewById("login");
+				var registPage = plus.webview.getWebviewById("regist");
+				var person = plus.webview.getWebviewById("person");
+				var setting = plus.webview.getWebviewById("settingRoom");
+				var userCar = plus.webview.getWebviewById("userCar");
+				userCar && (userCar.reload());
+				setting && (setting.close());
+				setting && (setting.reload());
+				person && (person.reload());
+				loginPage && (loginPage.close());
+				registPage && (registPage.close());
+			}
+			
+			function louginOut(){
+				for(var i in auths){
+					logout(auths[i]);
+					console.log(logout(auths[i]));
+				}
+			}
+			function logout(auth){
+				auth.logout();
+			}
+			
+			function openLogin(){
+				mui.toast("您是游客身份，请先登陆");
+						mui.openWindow({
+							url: "../../other/login.html",
+							id: "login",
+							style: {},
+							show: {
+								aniShow: 'zoom-out',
+								duration: 200,
+							},
+							waiting: {
+								autoShow: true,
+								title:'正在跳转到登录'
+							}
+						});
+			}
+		</script>
+	</head>
+	<body>
+		<div class="mui-content">
+			<ul   class="mui-table-view otherList  mui-table-view-chevron">
+				<li id="receiv_address" class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+						管理收货地址
+					</a>
+				</li>
+			</ul>
+			<ul  class="mui-table-view penList mui-table-view-chevron">
+				<li id="changPwd" class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+					修改密码
+					</a>
+				</li>
+				<li id="exit" class="mui-table-view-cell">
+					登录
+				</li>
+			</ul>
+		</div>
+		<script src="../../../js/immersed.js"></script>
+	</body>
+
+</html>

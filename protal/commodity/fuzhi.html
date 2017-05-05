@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<style>
+			* {
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div style="margin: auto; width: 80%; text-align: center; margin-top: 200px;">12345645688</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				gestureConfig:{
+					 longtap: true
+				}
+			});
+			document.addEventListener("plusready",onPlusReady,false);
+			function onPlusReady(){
+				fuzhi();
+				Touch();
+				call();
+			}
+			
+			function fuzhi(){
+				var Context = plus.android.importClass("android.content.Context");
+				var main = plus.android.runtimeMainActivity();
+				var clip = main.getSystemService(Context.CLIPBOARD_SERVICE);
+				plus.android.invoke(clip,"setText","I'm copy from Native.js");
+			}
+			function Touch(){
+				document.querySelector("div").addEventListener("longtap",function(){
+					mui.toast("1");
+				})
+			}
+			
+			function call(){
+				
+			}
+			
+		
+		</script>
+	</body>
+</html>

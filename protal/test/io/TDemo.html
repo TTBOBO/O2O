@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			document.addEventListener("plusready",onPlusReady,false);
+			function onPlusReady(){
+				console.log("1");
+				plus.io.requestFileSystem(plus.io.PRIVATE_WWW,function(fs){
+					/*
+					 * 可以通过fs进入文件目录
+					 */
+				},function(e){
+					console.log(e)
+				})
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js" ></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+			<script type="text/javascript" charset="utf-8">
+			mui.init();
+			var shares=null;
+			var artcle_title;
+			var acticle_id;
+			var msg=null;
+			mui.plusReady(function(){
+				getServices();
+				pageInit();
+				pageMent();
+			});
+			var service=null;
+			function pageInit(){
+				var w = plus.webview.currentWebview();
+				artcle_title=w.artcle_title;
+				acticle_id=w.acticle_id;
+				console.log(acticle_id)
+				$("a").bind("click",function(){
+					msg={};
+					if(this.id=="WXSceneTimeline"||this.id=="WXSceneSession"||this.id=="WXSceneFavorite"){
+						service=shares['weixin'];//设置微信端分享
+						msg.pictures=["../../01.img"];//设置分享图片，新浪微博端框架分享图片有问题
+						msg.extra={scene:this.id};//设置分享环境，仅微信客户端区分，WXSceneTimeline=朋友圈，WXSceneSession=微信好友，WXSceneFavorite=微信收藏
+					}else if(this.id=="qq"){
+						service=shares['qq'];//设置qq端分享
+						msg.pictures=["../../01.img"];//设置分享图片，新浪微博端框架分享图片有问题
+					}else if(this.id=="sinaweibo"){
+						service=shares['sinaweibo'];//设置新浪微博端分享
+					}
+					
+					
+					msg.content=artcle_title;//设置消息内容
+					msg.href="http://192.168.1.110:8082/Dedecms/uploads/api/index.php/share/index?id="+acticle_id //设置分享网址
+					msg.title=artcle_title;//设置分享标题
+					shareMsg(msg,service);
+				});
+			}
+			
+			
+			function pageMent(){
+				mui.back = function() {
+					var shareView = plus.webview.getWebviewById('imgArticleAbout').setStyle({
+						mask: "none"
+					});
+					plus.webview.currentWebview().close();
+				}
+			}
+			
+			//分享消息
+			function shareMsg(msg,s){
+				shareAuth(s);//获取授权
+				s.send(msg,function(){//发送分享信息
+					mui.toast("分享成功");
+				},function(e){
+					alert(s.id+"分享失败");
+					console.log(e.message+"分享失败");
+				});
+			}
+			//获取授权
+			function shareAuth(s){
+				if(!s.authenticated){//获取授权状态
+					s.authorize(function(){//授权
+						console.log(s.id+"授权成功");
+					},function(e){
+						console.log(s.id+"授权失败");
+						alert(s.id+"授权失败");
+					});
+				}
+			}
+			//更新分享服务列表
+			function getServices(){
+				plus.share.getServices(function(services){
+					shares={};
+					for(var i in services){
+						var t=services[i];
+						shares[t.id]=t;
+						console.log(JSON.stringify(shares[t.id]));
+					}
+				},function(e){
+					alert("获取分享服务失败"+e.message);
+				});
+			}
+			
+			
+		</script>
+		<style>
+			body{
+				background-color: #CCCCCC;
+			}
+			.flex-container {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-flex-flow: row wrap;
+				justify-content: space-between;
+				text-align: center;
+			}
+			.mui-content{
+			    padding-left: 6%;
+			}
+			
+			.mui-content-padded a {
+				width: 50px;
+				height: 50px;
+				display: inline-block;
+				background-color: #fff;
+				border-radius: 25px;
+			}
+			
+			.mui-content-padded a .mui-icon {
+				margin-top: 12px;
+			}
+			
+			.mui-spinner,
+			.mui-content a {
+				color: #8F8F94;
+				margin-top: 5%;
+				background-color: bisque;
+			}
+			
+			.mui-content a.active {
+				color: #007aff;
+			}
+			
+			.mui-content a h6 {
+				margin-top: 25px;
+			}
+			#exit{
+				  font-size: 55px;
+				  margin-top: 29%;
+				  margin-left: 40%;
+				  
+			}
+		</style>
+	</head>
+
+	<body>
+		<div  class="mui-content"style=" background-color: #CCCCCC;">
+			<div class="mui-content-padded">
+				<div class="flex-container">
+					<a id="WXSceneTimeline"><span class="mui-icon mui-icon-pengyouquan"></span><h6>朋友圈</h6></a>
+					<a id="qq"><span class="mui-icon mui-icon-qq"></span><h6>QQ</h6></a>
+					<a id="WXSceneSession"><span class="mui-icon mui-icon-weixin"></span><h6>微信好友</h6></a>
+					<!--<a id="WXSceneFavorite"><span class="mui-icon mui-icon-star"></span><h6>微信收藏</h6></a>-->
+				</div>
+			</div>	
+		</div>
+	</body>
+
+</html>

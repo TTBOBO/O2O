@@ -1,0 +1,342 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../../css/main.css" />
+		<link rel="stylesheet" href="../../../css/app.css" />
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/Itool/ios.js"></script>
+		<script src="../../../js/Config/Config.js"></script>
+		<script src="../../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../../js/Config/WebService.js"></script>
+		<script src="../../../js/Api/ArticleDal.js"></script>
+		<script src="../../../js/Itool/itool.js"></script>
+		<script src="../../../js/Api/UserDal.js"></script>
+		<script src="../../../js/Itool/common.js"></script>
+		<script src="../../../js/mui.previewimage.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/OpenW.js"></script>
+		<script type="text/javascript">
+			var mid = null;
+			var page = 1;
+			var pagesize = 10;
+			mui.init({
+				pullRefresh: {
+					container: '#user_fav',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载',
+						callback: pullupRefresh,
+					}
+				}
+			});
+
+			mui.plusReady(function() {
+				//页面初始化
+				pageInit();
+				//页面信息获取
+				pageInfo();
+			});
+
+			function pulldownRefresh(isDown) {
+				setTimeout(function() {
+					isDown = true;
+					get_fav_list(isDown); //获取图集文章内容
+					mui('#user_fav').pullRefresh().endPulldownToRefresh();
+				}, 1000);
+			}
+			//上拉加载函数 加载数据
+			function pullupRefresh() {
+				setTimeout(function() {
+					isDown = false;
+					get_fav_list(isDown); //获取图集文章内容
+					mui('#user_fav').pullRefresh().endPullupToRefresh();
+				}, 1000);
+			}
+
+			function pageInit(mid) {
+				var userInfo = new UserDAL().getUserInfo();
+				if(!userInfo) {
+					var arr = {
+						path: "../../other/",
+						id: "login",
+						styles: {},
+						extras: {}
+					}
+					openWebViews(arr.path, arr.id, arr.styles, 1, arr.extras);
+				}
+				mid = userInfo.mid;
+				return mid
+			}
+
+			function pageInfo() {
+				setTimeout(function() {
+					mui('#user_fav').pullRefresh().pullupLoading();
+				}, 1000);
+			}
+
+			function get_fav_list(isDown) {
+				var mid = pageInit();
+				new ArticleDAL().get_user_fav_list(mid, page, pagesize, function(data) {
+					console.log(JSON.stringify(data));
+					if(data.length == "") {
+						mui.toast("没有收藏的文章了！")
+					}
+					for(var i in data) {
+						//console.log(JSON.stringify(data[i]).imgurls);
+						add_fav_list(isDown, 'fav_list', data[i]);
+					}
+					page++;
+				});
+			}
+
+			function add_fav_list(isDown, rollRom, o) {
+				var table = document.getElementById(rollRom);
+				if(o.imgurls.length == 3) {
+					var content = document.getElementById("AtlasArticle").content;
+					var li = content.querySelector(".threeimg");
+					li.id = rollRom + o.id;
+
+					li.querySelector(".mui-ellipsis").innerHTML = o.title;
+					var a = li.querySelector(".mui-ellipsis");
+					var div = document.createElement("div");
+					a.appendChild(div);
+					for(var j in o.imgurls) {
+						var img = document.createElement("img");
+						//						img.setAttribute("datasrc", o.imgurls[j]);
+						img.src = o.imgurls[j];
+						img.setAttribute("id", "e_picture")
+						a.appendChild(img);
+					}
+					li.querySelector(".e_date").innerHTML = new Date(parseInt(o.addtime) * 1000).toFormatString("yyyy-MM-dd");
+					li.querySelector('.fabulous_num').innerHTML = o.goodpost;
+					//创建页面
+					var child = content.cloneNode(true);
+					if(isDown == true) {
+						table.insertBefore(child, table.firstChild);
+					} else {
+						table.appendChild(child);
+					}
+					var oli = document.getElementById(rollRom + o.id);
+					//点击打开详情
+					openArticleAbout();
+					//点击取消收藏
+					cancelSC();
+				} else if(o.imgurls.length == 1) {
+					var content = document.getElementById("oneAtlasArticle").content;
+					var li = content.querySelector(".imgOne");
+					li.id = rollRom + o.id;
+					var a = li.querySelector(".mui-ellipsis_left_title").innerHTML = o.title;
+					li.querySelector(".fabulous_num").innerHTML = o.goodpost;
+					li.querySelector(".e_date").innerHTML = new Date(parseInt(o.addtime) * 1000).toFormatString("yyyy-MM-dd");
+					li.querySelector(".oneimg").src = o.imgurls;
+					//					li.querySelector(".oneimg").setAttribute("datasrc", o.imgurls);
+					//创建页面
+					var child = content.cloneNode(true);
+					if(isDown == true) {
+						table.insertBefore(child, table.firstChild);
+					} else {
+						table.appendChild(child);
+					}
+					var oli = document.getElementById(rollRom + o.id);
+					openArticleAbout();
+
+					cancelSC();
+				} else if(o.imgurls.length == 0) {
+					var content = document.getElementById("noPicture").content;
+					var li = content.querySelector(".noImg");
+					li.id = rollRom + o.id;
+					var a = li.querySelector(".mui-ellipsis").innerHTML = o.title;
+					var a = li.querySelector(".mui-ellipsis");
+					li.querySelector(".e_date").innerHTML = new Date(parseInt(o.addtime) * 1000).toFormatString("yyyy-MM-dd");
+					li.querySelector('.fabulous_num').innerHTML = o.goodpost;
+					//创建页面
+					var child = content.cloneNode(true);
+					if(isDown == true) {
+						table.insertBefore(child, table.firstChild);
+					} else {
+						table.appendChild(child);
+					}
+					var oli = document.getElementById(rollRom + o.id);
+					openArticleAbout();
+					cancelSC();
+				}
+				
+				function openArticleAbout(){
+					
+					oli.addEventListener("tap", function() {
+						
+						var arr = {
+							path: "../../imgArticle/",
+							id: "imgArticleAbout",
+							styles: {},
+							extras: {
+								acticle_id: o.id1,
+								acticle_title: o.title,
+								acticle_goodpost: o.goodpost
+							}
+						}
+						openWebViews(arr.path, arr.id, arr.styles, 1, arr.extras)
+					});
+				}
+
+				function cancelSC() {
+					//取消收藏
+					oli.querySelector(".mui-btn-red").addEventListener("tap", function(e) {
+						e.stopPropagation();
+						var btnArray = ['确认', '取消'];
+						var elem = this;
+						var li = elem.parentNode.parentNode;
+						mui.confirm('确定不再收藏这篇文章？', '高安o2o', btnArray, function(e) {
+							if(e.index == 0) {
+								new ArticleDAL().set_article_fav_cancle(o.id, function(date) {
+									if(date.result != "success") {
+										console.log(JSON.stringify(data));
+										mui.toast('取消收藏失败');
+										return;
+									};
+									var scList = common.myStorage.getItem("scList");
+									//遍历本地缓存收藏数组，splice 删除取消收藏的这个文章
+									for(var i in scList) {
+										if(scList[i] == o.id1) {
+											scList.splice(i, 1);
+											break;
+										}
+									}
+									common.myStorage.setItem("scList", scList);
+									mui.toast('取消收藏成功');
+									li.parentNode.removeChild(li);
+								});
+							} else {
+								setTimeout(function() {
+									mui.swipeoutClose(li);
+								}, 0);
+							}
+						});
+					});
+				}
+			};
+		</script>
+		<style>
+			.mui-btn-red {
+				width: 50px !important;
+				padding: 0 15px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="user_fav" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view" id="fav_list">
+						<!--收藏文章三张图模板-->
+						<template id="AtlasArticle">
+							<li class="mui-table-view-cell threeimg">
+								<div class="mui-slider-right mui-disabled">
+									<a class="mui-btn mui-btn-red">删除</a>
+								</div>
+								<div class="mui-table mui-slider-handle">
+									<div class="mui-table-cell mui-col-xs-10 ">
+										<div id="topBox"></div>
+										<div class="mui-ellipsis" id="mui-ellipsis">
+											<div id="threeImg"></div>
+										</div>
+										<div class="e_info">
+											<span class=" e_date">2016-10-29</span>
+											<span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+										</div>
+									</div>
+								</div>
+							</li>
+						</template>
+						<!--收藏文章一张图模板-->
+						<template id="oneAtlasArticle">
+							<li class="mui-table-view-cell imgOne">
+								<div class="mui-slider-right mui-disabled">
+									<a class="mui-btn mui-btn-red">删除</a>
+								</div>
+								<div class="mui-table mui-slider-handle">
+									<div class="mui-table-cell mui-col-xs-10">
+										<div class="left_box">
+											<div class="leftTitle">
+												<span class="mui-ellipsis_left_title">标题</span>
+											</div>
+											<div class="e_info_left">
+												<span class=" e_date">2016-10-29</span>
+												<span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+											</div>
+										</div>
+										<div class="right_box"><img src="../img/4.jpg" class="oneimg" style="width: 100%; height: 100%;" /> </div>
+									</div>
+								</div>
+							</li>
+						</template>
+						<!--收藏文章无图模板-->
+						<template id="noPicture">
+							<li class="mui-table-view-cell noImg">
+								<div class="mui-slider-right mui-disabled">
+									<a class="mui-btn mui-btn-red">删除</a>
+								</div>
+								<div class="mui-table mui-slider-handle">
+									<div class="mui-table-cell mui-col-xs-10">
+										<div id="noimgDiv"><span class="mui-ellipsis" id="mui-ellipsisnoImg">信息化推进办12313213131公室张彦合同付款信1231息化</span></div>
+										<div class="e_info">
+											<span class=" e_date">2016-10-29</span>
+											<span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+										</div>
+									</div>
+								</div>
+							</li>
+						</template>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		function throttle(fun, delay, time) {
+			var timeout, startTime = new Date();
+			return function() {
+				var context = this,
+					args = arguments,
+					curTime = new Date();
+				clearTimeout(timeout);
+				// 如果达到了规定的触发时间间隔，触发 handler
+				if(curTime - startTime >= time) {
+					fun.apply(context, args);
+					startTime = curTime;
+					// 没达到触发间隔，重新设定定时器
+				} else {
+					timeout = setTimeout(fun, delay);
+				}
+			};
+		};
+		// 实际想绑定在 scroll 事件上的 handler
+		function lazyload(tap) {
+			var num = document.getElementsByTagName('img').length;
+			var img = document.getElementsByTagName("img");
+			var n = 0; //存储图片加载到的位置，避免每次都从第一张图片开始遍历
+			var seeHeight = document.documentElement.clientHeight; //可见区域高度
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; //滚动条距离顶部高度
+			for(var i = n; i < num; i++) {
+				if(img[i].offsetTop < seeHeight + scrollTop) {
+					if(img[i].getAttribute("src") == "") {
+						img[i].src = img[i].getAttribute("datasrc");
+						img[i].className = "img";
+					}
+					n = i + 1;
+				}
+			}
+		}
+		// 采用了节流函数
+		window.addEventListener('scroll', throttle(lazyload, 2000, 1000));
+	</script>
+
+</html>

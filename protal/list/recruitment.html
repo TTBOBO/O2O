@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+		.aaa{
+				white-space:initial;		/*换行设置 为initial*/
+			    word-break:break-all;		/*设置为弹性box*/
+			    -webkit-line-clamp: 1;		/*限制行数*/
+			  	-webkit-box-orient:vertical;
+			    text-overflow: ellipsis;	/*多余变省略号*/
+			    overflow : hidden;			/*溢出的隐藏*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a style=" color: #fff !important;" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #000;"></a>
+			<!--<a class="mui-action-menu mui-icon mui-icon-redo mui-pull-right" href="#topPopover" style="color: #000;"></a>-->
+			<h1 style=" color: #fff !important;" class="mui-title">本地招聘</h1>
+		</header>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				gestureConfig:{
+					doubletap:true
+				},
+				subpages:[{
+					url:'../community/recruitmentinfo.html',
+					id:'recruitmentinfo',
+					styles:{
+						top:'70px',
+						bottom:'1px'
+					}
+				}]
+			});
+			
+//			mui.plusReady(function(){
+//				document.querySelector(".mui-pull-right").addEventListener("tap",function(){
+//					mui.openWindow({
+//						url:"../CourseActivity/CourseActivitypurchase.html",
+//						id:"CourseActivitypurchase",
+//						styles:{},
+//						waiting:{
+//							autoShow:false
+//						}
+//					})
+//				})
+//			})
+		</script>
+		<script type="text/javascript" src="../../js/immersed.js" ></script>
+	</body>
+
+</html>

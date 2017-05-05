@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/Publick.js"></script>
+		<script type="text/javascript" src="../../js/Api/UserDal.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../js/jQuery.md5.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/regist.css" />
+		<style type="text/css">
+			body {
+				background-color: white;
+			}
+			
+			
+			
+
+		
+			
+			#getCode {
+
+				color: royalblue;
+				border: 0px solid #000;
+			}
+			
+			.mui-content {
+				background-color: white;
+				margin-top: 80px;
+			}
+			#code{
+				width: 60%;
+			}
+			.test1{
+				height: 50px;
+				width: 80px;
+				/*margin: 20px auto;*/
+				float: right;
+				padding-top: 5px;
+				margin-right:20px ;
+			}
+			/*.mui-content>input,.mui-input-row>input {
+				border: 0px solid #000;
+				border-radius: 10px;
+				background-color: #eee;
+				//width: 90%;
+			}*/
+			
+			
+			/*.mui-content>button,
+			input {
+				width: 90% !important;
+				margin-left: 5%;
+				margin: 8px 0px 0px 5%;
+			}*/
+			
+			/*.userCz {
+				margin: 15px 0px;
+			}*/
+			
+			/*.userCz>button {
+				width: 41.8%;
+				margin-left: 5%;
+			}*/
+			
+			/*.d3login .mui-icon {
+				float: left;
+				font-size: 1.5rem;
+			}*/
+			
+			/*.d3login>button {
+				width: 90%;
+				margin: 10px 0px 0px 5%;
+			}*/
+			/*.mui-bar-nav{box-shadow: none !important;}
+			.mui-input-group{margin-top: 10px;border: 1px;position: relative;}
+			.mui-input-row{position: relative; margin-bottom: 10px;overflow: auto !important;}
+			.mui-input-group:before{height: 0px !important;}
+			.mui-input-group:after{height: 0px !important;position: absolute;bottom: 50%;}
+			.mui-input-group .mui-input-row:after{height: 0px !important; left: 0px; }
+			.mui-input-group .mui-input-row:last-child:after{height: 0px !important; left: 0px; }
+			.mui-input-group .mui-input-row label{width: 25%;}	
+			.mui-input-group .mui-input-row label~input{float: left; width: 65%; }*/
+			/*input {
+				width: 90% !important;
+				margin-left: 5%;
+				margin: 8px 0px 0px 5%;
+			}*/
+		</style>
+
+		<script type="text/javascript" charset="UTF-8">
+			mui.init();
+			mui.plusReady(function() {
+				
+				get_code();
+				pageMent();
+				
+				//注册完后登录
+				document.getElementById("loginBtn").addEventListener('tap', function() {
+					var code = document.getElementById("code").value.trim();
+					var shouji = document.getElementById('user').value.trim();
+					var pwd = document.getElementById("pwd").value;
+					var code2 = sessionStorage.getItem("code");
+					if(shouji.length == 0){
+						mui.toast("请输入手机号码");
+						return;
+					}else if(pwd.length == 0){
+						mui.toast("请输入密码");
+						return;
+					}else if(code.length==0){
+						mui.toast("请输入验证码");
+						return;
+					}
+				
+					
+					
+//					if(code!=code2){
+//						mui.toast("验证码错误");
+//						return;
+//					}
+					
+					
+					var shouji = document.getElementById('user').value.trim();
+					var pwd = document.getElementById("pwd").value;
+					pwd = $.md5(pwd);
+					
+					var w = plus.nativeUI.showWaiting("正在注册...");
+					
+					new UserDAL().op_user_register(shouji,pwd,function(data){
+						w.close();
+						switch(data.result){
+							case "success":
+										registSuccess(data.shouji);
+										break;
+							case "failed":
+										mui.toast("注册失败");
+										break;
+							case "error":
+										mui.toast("手机号或密码不符合规则");
+										break;
+							case "isHad":
+										mui.toast("该用户已注册");
+										break;
+						}
+						
+					},function(e){w.close();});
+					
+				});
+				
+				//点击获取验证码
+//				document.getElementById("getCode").addEventListener('tap',function(){
+//					
+//					if(checkFrom()){
+//						getCodeHandler();
+//						var shouji = document.getElementById('user').value.trim();
+//						new UserDAL().get_mobile_code(shouji,function(data){
+//							console.log(JSON.stringify(data.mobile_code));
+//							if(data.result!="success"){
+//								mui.toast("获取验证码失败.");
+//								getCodeHandler(0);
+//								return;
+//							}
+//							mui.toast("验证码已发送至您的手机");
+//							//短时间会话  短时间内 同一个会话会保留数据  localStore是长时间会话
+//							sessionStorage.setItem("code",data.mobile_code);
+//						},function(){
+//							
+//						});
+//						
+//						document.getElementById("code").focus();
+//					}
+//				});
+				
+				//清空表单信息
+				/*document.getElementById("clearBtn").addEventListener('tap',function(){
+					document.getElementById('user').value = "";
+					document.getElementById("pwd").value = "";
+//					document.getElementById("nickName").value = "";
+					document.getElementById("code").value = "";
+				});*/
+				
+				//隐藏 注册页面
+				/*document.querySelector(".mui-icon-close").addEventListener("tap",function(){
+					plus.webview.currentWebview().hide("pop-out");
+				});*/
+				
+			});
+			
+			function get_code(){
+				new UserDAL().get_img_code(function(data){
+					console.log(JSON.stringify(data))
+					document.querySelector(".code").src =data.imgUrl;
+					word = data.word;
+					console.log(JSON.stringify(word))
+					sessionStorage.setItem("code_word",word);
+				})
+			}
+			
+			function pageMent(){
+				document.querySelector(".code").addEventListener("tap",function(){
+					get_code();
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+				})
+			}
+			
+			/**
+			 *检查验证表单 
+			 */
+			function checkFrom() {
+				var user = document.getElementById('user').value.trim();
+				var pwd = document.getElementById("pwd").value;
+				var code_word = sessionStorage.getItem("code_word");
+//				var nickName = document.getElementById("nickName").value;
+				//var code = document.getElementById("code").value;
+				if (user == "" || pwd == "" ) {// ||nickName == "") {
+					mui.toast("请输入完整信息");
+					return false;
+				}
+				
+				if (!user.checkUser()) {
+					mui.toast("帐号输入格式错误");
+					return false;
+				}
+				if (!pwd.checkPwd()) {
+					mui.toast("密码输入格式错误");
+					return false;
+				}
+				if(code_word != code){
+					get_code();
+					mui.toast("验证码输入错误");
+					return;
+				}
+//				if (!nickName.checkNickName()) {
+//					mui.toast("昵称输入格式错误");
+//					return false;
+//				}
+				return true;
+			}
+			
+			
+			/**
+			 *开始获取验证码事件 
+			 */
+			/*function getCodeHandler(ss){
+				var s = ss||60;
+				var btn = document.getElementById("getCode");
+				btn.disabled = true;
+				if (s = 0) {
+					btn.disabled = false;
+					btn.innerHTML = "获取验证码";
+				} else {
+					var time = setInterval(function() {
+						s--;
+						btn.innerHTML = s + "秒后获取";
+						if (s < 0) {
+							btn.disabled = false;
+							btn.innerHTML = "获取验证码";
+							clearInterval(time);
+						}
+					}, 1000);
+				}
+			}*/
+			
+			//注册成功的函数
+			function registSuccess(shouji){
+				var ww = plus.nativeUI.showWaiting("正在登录...");
+				new UserDAL().get_user_detail_by_shouji(shouji,function(data){
+					ww.close();
+					var userData = data;
+					if(userData.length==0){
+						mui.toast("获取用户信息失败.");return;
+					}
+					
+					mui.toast(userData.uname + ",欢迎您登录");
+					//保存用户数据
+					common.myStorage.setItem("userData",userData);
+					//进入主页
+					mui.openWindow({
+						url: "../main.html", 
+						id: "main",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {}
+					});
+					
+					closePage();
+					
+				},function(e){ww.close();});
+			}
+			
+			//关闭 注册和登录
+			function closePage(){
+				var loginPage = plus.webview.getWebviewById("login");
+				var registPage = plus.webview.getWebviewById("regist");
+				var setting = plus.webview.getWebviewById("settingRoom")
+				loginPage&&(loginPage.close());
+				registPage&&(registPage.close());
+				setting&&(setting.close());
+			}
+		</script>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<!--<a class="mui-action-back mui-icon  iconfont icon-jiahao1" style="color: white;"></a>-->
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">会员注册</h1>
+		</header>
+
+		<div class="mui-content">
+			
+			<div class="mui-input-group">
+				<div class="mui-input-row row">
+					<input id="user" type="text" value="13698006449"  class="mui-input-clear"  placeholder="手机号">
+				</div>
+				<div class="mui-input-row row">
+					<input id="pwd" type="password" value="123456" class="mui-input-password" placeholder="密码">
+				</div>
+				<div class="mui-input-row row">
+					<input id="code" maxlength="4" type="text" value="" placeholder="请输入验证码">
+					<div class="test1">
+						<img class="code" src="" style="width: 80px; height: 30px;">
+					</div>
+				</div>
+			</div>
+			<div id="loginBtn" class="loginBtn">注册</div>
+		</div>
+			
+		<script type="text/javascript" src="../../js/immersed.js"></script>
+	</body>
+	
+</html>

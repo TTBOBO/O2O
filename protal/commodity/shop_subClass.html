@@ -1,0 +1,312 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/Shoplist.js" ></script>
+		<script src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/app.css" />
+		<style>
+			
+			.lessPrice-content{
+				height: 250px;
+/*				border: 1px solid red;
+*/				width: 49%;
+				margin-right: 0.1em;
+				float: left;
+				margin-bottom: 5px;
+				position: relative;
+				transition: 0.2s linear;
+			}
+			.lessPrice-content:active{
+				
+				transform: translate3d(0,-2px,0);
+				box-shadow: 0px 0px 10px #ccc;
+				/*filter: brightness(90%);
+				-webkit-filter: brightness(90%);*/
+			}
+			.lp_img{
+				width: 100%;
+				height: 190px;
+			}
+			.lp_content{
+				margin: 0.2em auto;
+				color:#a3a3a3;
+				font-size: 14px;
+				letter-spacing: 0px; 
+				white-space: normal; 
+				overflow: hidden; 
+				text-overflow: ellipsis;
+				line-height: 22px;
+				width: 100%;
+			}
+			.lp_content p{
+				color:#a3a3a3;
+				font-size: 12px;
+				margin: 2px auto;
+			}
+			.lp_content p:last-child{
+				text-align: right;
+				margin: 0.1em auto;
+				color:#a3a3a3;
+				font-size: 14px;
+			}
+			/*/.mui-pull-top-pocket{top:20px;}*/
+			.mui-table-view-cell{
+				padding: 0px;
+			}
+			.mui-table-view-cell:after{
+				height: 0px !important;
+			}
+			.commodity_title{
+				text-align: center;
+				font-size: 12px;
+				color: #777777;
+				height: 18px;
+				overflow: hidden;
+			}
+			.commodity_price{
+				margin-top: 10px;
+				color: #ff4b5f;
+			}
+			
+			.mui-table-view:after{
+				height: 0px !important;
+			}
+			.mui-active{
+				background: none !important;
+			}
+			img{background: none !important;}
+			.new,.old{
+				float: left;
+			}
+			.price{
+				width: 50%;
+				float: left;
+				height: 30px;
+				font-size: 10px;
+			}
+			.price span{
+				padding-left: 5px;
+				width: 100%;
+				display: block;
+				height: 13px;
+				line-height: 15px;
+				color: #ff0000;
+				margin: 0px !important;
+			}
+			.price .old{
+				color: #C0C0C0;
+				text-decoration: line-through;
+			}
+			.lp_content>.btn_buy{
+				margin: 5px auto;
+				color: red;
+				height: 20px;
+				border: 1px solid red;
+				border-radius: 5px;
+				float: right;
+				font-size: 10px;
+				line-height: 20px;
+				/*padding: 1px;*/
+			}
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+				
+				transition: color .3s linear !important;
+				/*transition: border-color .3s linear !important;*/
+			}
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+				font-size: 15px !important;
+				border-bottom: 1px solid #d74b28 !important;
+				color: #d74b28;
+				/*border: ;*/
+				/*font-size: 18px;*/
+			}
+			.mui-col-xs-4{
+				color: #d74b28 !important;
+			}
+			#subClass{
+				position: relative;
+				background: #FAFAFA;
+			}
+			#subClass:after{
+				content: "";
+				width: 100%;
+				height: 1px !important;
+				
+				position: absolute;
+				bottom: 0px;
+				background: #d74b28;
+			}
+			.mui-content{
+				margin-top: 20px !important;
+			}
+		</style>
+	</head>
+
+	<body style="background-color: #fff;">
+		<header style="background: #d74b28 !important;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<a class="mui-action-menu mui-icon mui-icon-redo mui-pull-right" style="color: #fff;"></a>
+			<h1 class="mui-title" style="color: #fff;"></h1>
+		</header>
+		<div id="communityinfo" class="mui-content" style="background-color: #fff;">
+			<ul class="mui-table-view mui-scroll-wrapper lessPriceRoom">
+				<template id="shopBox">
+					<li class="mui-table-view-cell mui-media lessPrice-content">
+		                <img class="lp_img" src="../../img/Chicken.jpg">
+		                 <div class="mui-media-body lp_content">
+		                	<p class="commodity_title">【Midea/美的】智能双胆电压力锅</p>
+							<!--<p>价格:<span class="commodity_price">￥101.00</span></p>-->
+							<div class="price"><span class="new">￥<i class="commodity_price">299</i></span><span class="old">￥<i class="price1">1080</i></span></div>
+								<a href="#" class="btn_buy red pos_abs">立即抢购</a>
+		                	</div>
+					</li>
+				</template>
+			</ul>
+		</div>
+
+		<script type="text/javascript">
+			var isios = null; //是否是ios平台
+			var page = 1;
+			var id = null;
+			var reid =null;
+			var typename = null;
+			mui.init({
+				pullRefresh: {
+					container: '#communityinfo',
+//					down: {
+//						callback: pulldownRefresh,
+//					},
+					up: {
+						contentrefresh: '正在加载',
+						callback: pullupRefresh,
+					}
+				}
+			});
+
+//			function pulldownRefresh(isDown) {
+//				setTimeout(function() {
+//					isDown = true;
+//					get_shop_list(isDown);
+//					mui('#communityinfo').pullRefresh().endPulldownToRefresh();
+//				}, 1000);
+//			}
+
+			function pullupRefresh() {
+				setTimeout(function() {
+					isDown = false;
+					get_shop_list(isDown);
+					mui('#communityinfo').pullRefresh().endPullupToRefresh();
+				}, 1000);
+			}
+			document.addEventListener("plusready", onPlusReady, false);
+
+			function onPlusReady() {
+				//加载网络数据
+				get_Data();
+			}
+
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+				
+			});
+			
+			function pageInfo(){
+				var ws = plus.webview.currentWebview();
+				var id = ws.aid;
+				var reid = ws.reid;
+				var typename = ws.typename;
+				document.querySelector(".mui-title").innerHTML = typename;
+				return {
+					'id' : id,
+					'reid' :reid,
+					'typename' : typename
+				}
+			}
+
+			function get_Data() {
+				setTimeout(function() {
+					mui('#communityinfo').pullRefresh().pullupLoading();
+				}, 200);
+			}
+			
+			function get_shop_list(isDown){
+				var pageInfoa =  pageInfo();
+				new Shop().get_shop_subClass_list(pageInfoa.id,page,3,function(data){
+					console.log(JSON.stringify(data));
+					if(data.length == ""){
+						mui.toast("没有商品了！");
+					}
+					for(var i in data){
+						addShopList(isDown,data[i])
+					}
+					page++;
+				},function(e){
+					console.log(e.message);
+				})
+			}
+			
+			function addShopList(isDown,o){
+				var shopRoom = document.querySelector(".lessPriceRoom");
+				var shopDemo = document.getElementById("shopBox");
+				var content = shopDemo.content;
+				var li = content.querySelector(".mui-media");
+				li.id = o.id;
+				
+				li.querySelector(".lp_img").src = o.litpic;
+				li.querySelector(".commodity_title").innerHTML = o.title;
+				li.querySelector(".commodity_price").innerHTML = o.trueprice;
+				li.querySelector(".price1").innerHTML = o.price;
+				
+				var child = content.cloneNode(true);
+				if(isDown == true){
+					shopRoom.insertBefore(child,shopRoom.firstChild);
+				}else{
+//					shopRoom.insertBefore(child,shopRoom.firstChild);
+					shopRoom.appendChild(child);
+				}
+				
+				var oli = document.getElementById(o.id);
+				oli.addEventListener("tap",function(){
+					mui.openWindow({
+						url:"../commodity/comm_room.html",
+						style:{},
+						id:"comm_room",
+						show:{
+							aniShow:'pop-in',
+							duration:100
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras:{
+							title:o.title,
+							shopId:o.id,
+							price:o.price,
+							trueprice:o.trueprice,
+							shopImg:o.litpic
+						}
+					});
+				})
+			}
+			
+		
+		</script>
+		<script type="text/javascript" src="../../js/immersed.js" ></script>
+	</body>
+
+</html>

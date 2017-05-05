@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/android.js" ></script>
+		<script type="text/javascript" src="../../js/Config/Config.js" ></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js" ></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js" ></script>
+		<!--<script type="text/javascript" src="../../js/Itool/OpenW.js" ></script>-->
+		<script type="text/javascript" src="../../js/Api/UserDal.js" ></script>
+		<script type="text/javascript" src="../../js/Api/ArticleDal.js" ></script>
+		<script type="text/javascript" src="../../js/Itool/common.js" ></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-content{
+				margin-top: 20px;
+				background: #fff;
+			}
+			#textarea{
+				border-style: solid none solid none;
+				border-radius: 0px !important;
+				border-color: #d9d9d9;
+			}
+		</style>
+	</head>
+	
+	<body style="background: #fff;">
+		<header style="background: #d74b28;" id="header" class="mui-bar mui-bar-nav mui-bar-transparent">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<button class="mui-btn  mui-btn-link mui-pull-right" id="btnSubmit" style="color: white;">发布</button>
+			<h1 class="mui-title" style="color: #fff;">发布评价</h1>
+		</header>
+		<div class="mui-content">
+			<textarea id="textarea" rows="5" value="" placeholder="说说您对商品的心得"></textarea>
+		</div>
+		
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				pageInfo();
+//				pageMenu();
+			});
+			
+			
+			function pageInfo(){
+				var ws = plus.webview.currentWebview();
+				var shopId = ws.shopId;
+				var buyid = ws.buyid;
+				console.log(buyid);
+				pageMenu(shopId,buyid);
+			}
+			
+			function pageMenu(shopId,buyid){
+				var userData = new UserDAL().getUserInfo();
+				var mid = userData.mid;
+				//是否匿名(0表示匿名，1表示不匿名，默认0)
+				var isanonymous = 0;
+				//评价(0表示顶，1表示踩，2表示中立，默认0)
+				var goodbad = 2;
+				if(!userData){
+					openLogin();
+				}else{
+					document.getElementById("btnSubmit").addEventListener("tap", function() {
+						var txt = document.getElementById("textarea");
+						if(txt.value.length > 140) {
+							mui.toast("评论字数控制在140字以内");
+							return;
+						} else if(txt.value.length == "") {
+							mui.toast("评论失败，内容不能为空！");
+							return;
+						}
+						var info = encodeURI(txt.value);
+						new ArticleDAL().set_article_feedback_save(shopId, mid, goodbad, info, function(data) {
+							console.log(JSON.stringify(data));
+							if(data.result != "success") {
+								mui.toast("评论失败");
+							}
+							mui.toast("评论成功");
+							//修改订单评论状态
+							updatecomment(buyid)
+							var currentPage = plus.webview.currentWebview();
+							var orderList = plus.webview.getWebviewById("orderList");
+							currentPage && currentPage.close();
+							orderList && orderList.reload();
+						}, function(e) {});
+						txt.value = "";
+						
+					});
+					function updatecomment(buyid){
+						new ArticleDAL().updatecomment(buyid,function(data){
+							console.log(JSON.stringify(data));
+						})
+					}
+				}
+			}
+			
+			
+			
+			function openLogin() {
+				mui.toast("您是游客身份，请先登陆");
+				mui.openWindow({
+					url: "../other/login.html",
+					id: "login",
+					style: {},
+					show: {
+						aniShow: 'zoom-fade-out',
+						duration: 200,
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+				return false;
+			}
+		</script>
+		<script type="text/javascript" src="../../js/immersed.js" ></script>
+	</body>
+
+</html>

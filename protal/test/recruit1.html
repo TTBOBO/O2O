@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-bar-nav {
+				border-bottom: 1px solid #efeff4;
+				box-shadow: 0 0;
+			}
+			
+			.mui-bar-nav>a,
+			.mui-bar-nav form {
+				float: left;
+			}
+			
+			.mui-bar-nav .mui-pull-left {
+				width: 13%;
+				font-size: 34px;
+				padding: 5px 2%;
+			}
+			
+			.mui-bar-nav form {
+				height: 34px;
+				width: 69%;
+				margin: 2px 0px 5px 8%;
+			}
+			
+			form .mui-input-clear {
+				border-radius: 30px;
+			}
+			
+			form .mui-icon-search {
+				color: #CCCCCC;
+			}
+			
+			.mui-icon-map {
+				float: right;
+				right: 2%;
+			}
+			
+			.mui-content {
+				margin-top: 44px;
+			}
+			
+			.mui-table-view {
+				background-color: #EFEFF4;
+			}
+			
+			.mui-table-view-cell {
+				background-color: white;
+				margin-bottom: 10px;
+			}
+			
+			.recruit-info {
+				width: 100%;
+				box-sizing: border-box;
+				/*margin-top: 5px;*/
+			}
+			
+			.recruit-info ul {
+				padding: 0;
+			}
+			
+			.recruit-info ul li {
+				list-style: none;
+			}
+			
+			.info-upper {
+				width: 100%;
+				height: 85px;
+				border-bottom: 1px #C7C7CC dashed;
+			}
+			
+			.upper-left {
+				float: left;
+				width: 70%;
+			}
+			
+			.upper-left li {
+				margin-bottom: 5px;
+			}
+			
+			.post {
+				font-size: 16px;
+				font-weight: 300;
+				text-align: justify;
+				overflow: hidden;
+			}
+			
+			.money {
+				font-size: 16px;
+				color: #ff6000;
+			}
+			
+			.post-deal span {
+				padding: 2px;
+				margin-right: 2px;
+				font-size: 13px;
+				line-height: 15px;
+			}
+			
+			.upper-right {
+				float: right;
+			}
+			
+			.release-time {
+				color: #C7C7CC;
+				text-align: right;
+				font-size: 12px;
+			}
+			
+			.job-Application {
+				margin: 15px 10px 0 0;
+				background-color: #ff6000;
+				color: white;
+				font-size: 15px;
+				font-weight: 300;
+				text-align: center;
+				padding: 4px 20px 2px 20px;
+				border-radius: 3px;
+			}
+			
+			.info-down {
+				margin-top: 10px;
+			}
+			
+			.info-down li {
+				float: left;
+			}
+			
+			.info-down li:nth-child(1) {
+				background-color: #ff6000;
+				padding: 0px 4px;
+				font-size: 10px !important;
+				color: white;
+				border-radius: 3px;
+				margin-right: 15px;
+			}
+			
+			.publisher {
+				color: #C7C7CC;
+				font-size: 14px;
+				font-weight: 300;
+				text-align: justify;
+			}
+			
+			.info-down .work-addre {
+				float: right;
+				font-size: 14px;
+				font-weight: 300;
+			}
+		</style>
+		<script type="text/javascript" charset="UTF-8">
+			mui.init();
+		</script>
+	</head>
+
+	<body>
+		<header>
+			<nav class="mui-bar mui-bar-nav" id="header">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<form>
+					<div class="mui-input-row mui-search">
+						<input type="search" class="mui-input-clear" placeholder="输入商家、分类或商圈">
+					</div>
+				</form>
+				<span class="mui-icon mui-icon-map "></span>
+			</nav>
+
+		</header>
+
+		<div class="mui-content">
+
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<div class="recruit-info">
+							<div class="info-upper">
+								<ul class="upper-left">
+									<li class="post">神州专车高薪诚聘超级司机神州专车高薪诚聘超级司机</li>
+									<li class="money">8000~12000元</li>
+									<li class="post-deal">
+										<span class="mui-btn mui-btn-success mui-btn-outlined">五险一金</span>
+										<span class="mui-btn mui-btn-success mui-btn-outlined">带薪年假</span>
+										<span class="mui-btn mui-btn-success mui-btn-outlined">加班补助</span>
+									</li>
+								</ul>
+								<ul class="upper-right">
+									<li class="release-time">今天</li>
+									<li class="job-Application">申请</li>
+								</ul>
+
+							</div>
+							<div class="info-down">
+								<ul class="">
+									<li>发布来源</li>
+									<li class="publisher">神州专车分公司</li>
+									<li class="work-addre">朝阳</li>
+								</ul>
+							</div>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<div class="recruit-info">
+							<div class="info-upper">
+								<ul class="upper-left">
+									<li class="post">神州专车高薪诚聘超级司机</li>
+									<li class="money">8000~12000元</li>
+									<li class="post-deal">
+										<span class="mui-btn mui-btn-success mui-btn-outlined">五险一金</span>
+										<span class="mui-btn mui-btn-success mui-btn-outlined">带薪年假</span>
+										<span class="mui-btn mui-btn-success mui-btn-outlined">加班补助</span>
+									</li>
+								</ul>
+								<ul class="upper-right">
+									<li class="release-time">今天</li>
+									<li class="job-Application">申请</li>
+								</ul>
+
+							</div>
+							<div class="info-down">
+								<ul class="">
+									<li>发布来源</li>
+									<li class="publisher">神州专车分公司</li>
+									<li class="work-addre">朝阳</li>
+								</ul>
+							</div>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<div class="recruit-info">
+							<div class="info-upper">
+								<ul class="upper-left">
+									<li class="post">神州专车高薪诚聘超级司机</li>
+									<li class="money">8000~12000元</li>
+									<li class="post-deal">
+										<span class="mui-btn mui-btn-success mui-btn-outlined">五险一金</span>
+										<span class="mui-btn mui-btn-success mui-btn-outlined">带薪年假</span>
+										<span class="mui-btn mui-btn-success mui-btn-outlined">加班补助</span>
+									</li>
+								</ul>
+								<ul class="upper-right">
+									<li class="release-time">今天</li>
+									<li class="job-Application">申请</li>
+								</ul>
+
+							</div>
+							<div class="info-down">
+								<ul class="">
+									<li>发布来源</li>
+									<li class="publisher">神州专车分公司</li>
+									<li class="work-addre">朝阳</li>
+								</ul>
+							</div>
+						</div>
+					</a>
+				</li>
+
+			</ul>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,323 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<script src="../../js/Api/ArticleDal.js"></script>
+		<script src="../../js/Api/UserDal.js"></script>
+		<script src="../../js/Api/getUserList.js"></script>
+		<script src="../../js/Itool/Itool2.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/main.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/imgView.css" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<script type="text/javascript">
+			mui.init();
+			var ws = null;
+			var title = null;
+			var acticle_goodpost = null;
+			var content_page = null;
+			var userInfo = null;
+			var article_id = null;
+			document.addEventListener("plusready", onPlayReady, false);
+
+			function onPlayReady() {
+				//				common.myStorage.setItem("dzList","");
+				LoadUserInfo();
+				pageInit();
+			}
+			/**
+			 * 获取本地用户session信息
+			 */
+			function LoadUserInfo() {
+				userInfo = new UserDAL().getUserInfo();
+				//var mid = userInfo.mid
+			}
+
+			/**
+			 * 页面初始化，加载是否是否点赞
+			 */
+			function isDz(article_id) {
+				var dzList = common.myStorage.getItem("dzList") || [];
+				if(dzList.length == 0 || acticle_goodpost == 0) {
+					return;
+				}
+				if(dzList.isHas(article_id)) {
+					var that = document.getElementById("dzbtn");
+					var up = document.getElementById("up");
+					that.className = "mui-icon iconfont icon-zantongfill";
+					that.style.color = "red";
+					up.style.display = "block";
+					up.innerHTML = acticle_goodpost;
+				}
+			}
+
+			function pageInit() {
+				userInfo = new UserDAL().getUserInfo();
+
+				
+				var ws = plus.webview.currentWebview();
+				var title = ws.article_title;
+				var acticle_goodpost = ws.article_goodpost;
+				var images = ws.article_imgs;
+				var time = ws.time;
+				var writer = ws.uname;
+				var face = ws.face;
+				var article_id = ws.article_id;
+				
+				console.log(article_id)
+				isDz(article_id); //把数据添加到模板里面
+				
+				document.querySelector(".face").src = face;
+				document.querySelector(".head_author").innerHTML = writer;
+				document.querySelector(".e_date").innerHTML = time;
+				document.querySelector(".new_content").innerHTML = title;
+				document.querySelector(".c_comment_num").innerHTML = acticle_goodpost;
+				for(var i = 0; i < images.length; i++) {
+					var img = document.createElement("img");
+					img.src = images[i];
+					img.setAttribute("id", "e_picture1");
+					img.setAttribute("class", "img")
+					img.setAttribute("data-preview-src", "");
+					img.setAttribute("data-preview-group", "1");
+					imgBox.appendChild(img);
+				}
+
+				getPageInfo(article_id, title);
+				pageInfo(ws.Amid,article_id);
+			}
+			
+			//执行删除动态操作并且只有动态文章本人才可以删除
+			function pageInfo(Amid,article_id){
+//				var Amid = ws.Amid;
+				var deleteBtn = document.querySelector(".delete");
+				if(!userInfo) {
+					deleteBtn.style.display = "none";
+				} else if(userInfo) {
+					var mid = userInfo.mid;
+					if(mid != Amid) {
+						deleteBtn.style.display = "none";
+					} else if(mid == Amid) {
+						deleteBtn.style.display = "block";
+						var btnArray = ['确认', '取消'];
+
+						deleteBtn.addEventListener("tap", function() {
+							mui.confirm('确认删除这条动态么？', '高安o2o', btnArray, function(e) {
+								if(e.index == 0) {
+									console.log("1")
+									console.log(article_id);
+									new getUserList().delete_user_dynamic(article_id, function(data) {
+										console.log(JSON.stringify(data))
+										if(data.msg == "faild") {
+											mui.toast("删除失败，请稍后再试！");
+										} else if(data.msg == "success") {
+											mui.toast("删除成功！");
+											var releaseHtml = plus.webview.getWebviewById("communityinfo");
+											releaseHtml && (releaseHtml.reload());
+											var myselfCommunityinfo = plus.webview.getWebviewById("myselfCommunityinfo");
+											myselfCommunityinfo && (myselfCommunityinfo.reload());
+											plus.webview.currentWebview().close();
+										}
+									});
+								}
+							})
+
+						})
+					}
+				}
+			}
+
+			function getPageInfo(article_id, title) {
+				document.querySelector(".icon-liuyan").addEventListener("tap", function() {
+					if(!userInfo) {
+						openLogin();
+					} else {
+						mui.openWindow({
+							url: "../article/articleCommentDirectory.html",
+							id: "articleCommentDirectory",
+							show: {
+								aniShow: 'pop-in',
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: article_id,
+								acticle_title: title
+							}
+						});
+					}
+				});
+				/**
+				 *	发起点赞
+				 */
+				document.getElementById("dzbtn").addEventListener('tap', function() {
+					if(this.classList.contains('icon-zantongfill')) {
+						mui.toast("你已经表达过态度了");
+						//如果 已经点赞过 就不能点赞了
+						return;
+					}
+					var that = this;
+					var up = document.getElementById("up");
+					var jia = document.getElementById("jia");
+					new ArticleDAL().set_article_isgood(article_id, function(data) {
+						if(data.result != "success") {
+							mui.toast('点赞失败');
+							console.log(JSON.stringify(data));
+							return;
+						}
+						jia.setAttribute("class", "jia");
+						mui.toast('点赞成功');
+						that.className = "mui-icon iconfont icon-zantongfill";
+						that.style.color = "red";
+						up.innerHTML = data.goodpost;
+						var dzList = common.myStorage.getItem("dzList") || [];
+						if(!dzList.isHas(article_id)) {
+							dzList.push(article_id);
+							common.myStorage.setItem("dzList", dzList);
+						}
+					})
+				});
+
+				
+			}
+
+			function openLogin() {
+				mui.toast("您是游客身份，请先登陆");
+				mui.openWindow({
+					url: "../other/login.html",
+					id: "login",
+					style: {},
+					show: {
+						aniShow: 'zoom-fade-out',
+						duration: 200,
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+			}
+		</script>
+		<style>
+			.mui-table-view:before,
+			.personal_info:after {
+				height: 0px !important;
+			}
+			
+			.personal_info {
+				border-bottom-style: none !important;
+			}
+			
+			/*.head_author {
+				color: #ccc;
+			}*/
+			
+			.mui-active {
+				background: transparent !important;
+			}
+			
+			.fun_box {
+				width: 50px;
+				position: relative;
+				float: right;
+			}
+			
+			.jia {
+				transition: .6s ease-in-out;
+				animation: shang .3s ease-in-out;
+			}
+			
+			#jia {
+				color: red;
+				width: 20%;
+				text-align: right;
+				opacity: 0;
+				right: 0px;
+				font-size: 14px;
+				top: 10%;
+				position: absolute;
+			}
+			
+			@keyframes shang {
+				50% {
+					transform: translateY(-5px);
+					opacity: 1;
+				}
+				100% {
+					transform: translateY(-10px);
+					opacity: 0;
+					display: none;
+				}
+			}
+			
+			.mui-icon-chatboxes {
+				margin-top: 6px;
+			}
+			
+			.c_comment_num {
+				margin-right: 15px !important;
+			}
+			.delete{
+				display: none;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<h1 class="mui-title" style="color: #fff;">详情</h1>
+			<span style="color: #fff;" class="mui-icon mui-icon-right-nav mui-pull-right mui-icon-more-filled"></span>
+		</header>
+		<div class="mui-content">
+
+			<ul class="mui-table-view" style="margin-top: 10px;">
+				<li class="mui-table-view-cell item" id="mui-table-view-cell">
+					<div class="personal_info">
+						<div class="head_img"><img class="face" style="width: 50px; height: 50px;" /></div>
+						<p class="head_author"></p>
+						<div class="release">
+							<span class=" e_date"></span>
+						</div>
+					</div>
+					<p class="new_content"></p>
+					<div class="mui-table-cell mui-col-xs-10" id="imgBox">
+					</div>
+					<div class="icon_options">
+						<span class="delete">删除</span>
+						<ul>
+							<li class="fun_box">
+								<span class=" iconfont icon-zantong " id='dzbtn'></span>
+								<span id="up" class="c_comment_num" style="margin-left: 5px;"></span>
+								<span id="jia" class="">+1</span>
+							</li>
+							<li class="fun_box">
+								<span class=" iconfont icon-liuyan"></span>
+							</li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="../../js/Itool/immersed.js"></script>
+	<script src="../../js/mui.zoom.js"></script>
+	<script src="../../js/mui.previewimage.js"></script>
+	<script>
+		mui.previewImage();
+	</script>
+
+</html>

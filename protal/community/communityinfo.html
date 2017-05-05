@@ -1,0 +1,325 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<script src="../../js/Api/AtlasArticle.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/Itool/OpenW.js" ></script>
+		<style>
+			.mui-table-view {
+				background: #EAEAEA;
+			}
+			#imgBox>div {
+				background-attachment: fixed;
+				background-repeat: no-repeat;
+				background-size: cover;
+				-moz-background-size: cover;
+				-webkit-background-size: cover;
+				background-position: center center;
+			}
+			
+			.num {
+				position: absolute;
+				background: rgba(0, 0, 0, .3);
+				width: 32.73%;
+				height: 120px;
+				color: #fff;
+				font-size: 24px;
+				text-align: center;
+				line-height: 120px;
+				bottom: 0px;
+				right: 4px;
+			}
+			
+			#imgBox:last-child {
+				position: relative;
+			}
+			.mui-table-view:before,
+			.mui-table-view:after {
+				height: 0px;
+			}
+			
+			.mui-table-view-cell {
+				background: #fff;
+				margin-bottom: 5px;
+			}
+			
+			.mui-table-view-cell:active {
+				margin-bottom: 5px;
+			}
+			
+			.mui-table-view-cell:active .personal_info {
+				border-color: #BBBBBB;
+			}
+			
+			.mui-table-view-cell:after {
+				height: 0px;
+			}
+			
+			.mui-bar-nav~ .mui-content .mui-pull-top-pocket {
+				top: 70px !important;
+			}
+			.goTop{
+				width: 26px;
+				height: 26px;
+				position: fixed;
+				right: 0px;
+				bottom: 0px;
+				transition: .3s linear;
+				z-index: 999;
+				background: url(../../img/gotop.png);
+				background-size: cover;
+				opacity: 0;
+			}
+			.goTop:before{
+				content: "";
+				position: absolute;
+				top: -5px;
+				left: -5px;
+				width: 37px;
+				height: 37px;
+				border: 1px solid #D74B28;
+				border-radius: 50%;
+			}
+			.scale{
+				animation: getNow .3s ease-in-out;
+				right: 30px; bottom: 30px;
+			}
+			.scale1{
+				animation: getNow1 .3s ease-in-out;
+			}
+			@keyframes getNow{
+				0%{ transform: scale(0);}
+				50%{transform: scale(1.1); }
+				100%{transform: scale(1);}
+			}
+			@keyframes getNow1{
+				0%{ transform: scale(1);}
+				50%{transform: scale(1.1);}
+				100%{transform: scale(0);}
+			}
+			.advertisement{
+				/*width: 60px;*/
+				height: 20px;
+				border: 1px solid #D74B28;
+				color: #D74B28;
+				font-size: 12px;
+				border-radius: 2px;
+				float: left;
+				padding: 1px 4px;
+				line-height: 18px;
+				text-align: center;
+				opacity: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="communityinfo" class="mui-content">
+			<div class="goTop"></div>
+			<ul class="mui-table-view">
+				
+				<div class="mui-scroll">
+					<div id="releaseRoom">
+						<template id="releaseTemp">
+							<li class="mui-table-view-cell item" id="mui-table-view-cell">
+								<div class="personal_info">
+									<div class="head_img"><img class="face" src="../../img/03.jpg" style="width: 50px; height: 50px;" /></div>
+									<p class="head_author">凤凰沟</p>
+									<div class="release">
+										<span class=" e_date">2016-10-29</span>
+										<!--<span class="e_adress">南昌</span>-->
+									</div>
+								</div>
+								<p id="new_title" class="new_content">凤凰沟，是一个以农业观光旅游为主题的生态园</p>
+								<div class="mui-table-cell mui-col-xs-10" id="imgBox">
+									
+								</div>
+								<div class="icon_options">
+									<ul>
+										<li class="fun_box">
+											<span class=" iconfont icon-zantong "></span>
+											<span class="c_comment_num" style="margin-left: 5px;"></span>
+										</li>
+										<li class="fun_box">
+											<span class=" iconfont icon-liuyan"></span>
+										</li>
+									</ul>
+								</div>
+								
+							</li>
+						</template>
+					</div>
+				</div>
+			</ul>
+			
+		</div>
+
+		<script type="text/javascript">
+			var isios = null; //是否是ios平台
+			var page = 1;
+			mui.init({
+//				swipeBack: true, //开启右滑关闭功能
+				pullRefresh: {
+					container: '#communityinfo',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载',
+						callback: pullupRefresh,
+					}
+				}
+			});
+
+			function pulldownRefresh(isDown) {
+				setTimeout(function() {
+					isDown = true;
+					get_release(isDown);
+					mui('#communityinfo').pullRefresh().endPulldownToRefresh();
+				}, 1000);
+			}
+
+			function pullupRefresh() {
+				setTimeout(function() {
+					isDown = false;
+					get_release(isDown);
+					mui('#communityinfo').pullRefresh().endPullupToRefresh();
+				}, 1000);
+			}
+			document.addEventListener("plusready", onPlusReady, false);
+
+			function onPlusReady() {
+				//加载网络数据
+				get_Data();
+				//加载本地化列表信息
+				getUserInfo();
+				
+				gotop();
+			}
+
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+
+			});
+
+			function get_Data() {
+				setTimeout(function() {
+					mui('#communityinfo').pullRefresh().pullupLoading();
+				}, 200);
+			}
+			
+			
+			function get_release(isDown) {
+				//console.log(page);
+				//2 表示每次刷新两篇文章
+				new AtlasArticle().get_release_list(10, page,3, function(data) {
+					console.log(JSON.stringify(data));
+
+					if(data.length == "") {
+						mui.toast("没有文章了！");
+					}
+					for(var i in data) {
+						addRelease(isDown, data[i]);
+					}
+					page++;
+				}, function(e) {});
+			}
+			
+			function addRelease(isDown, o) {
+				//获取内容模板的框架
+				var content = releaseTemp.content;
+				var releaseroom = document.getElementById("releaseTemp");
+				var li = content.querySelector(".item");
+				var imgBox = li.querySelector("#imgBox");
+				imgBox.innerHTML = "";
+				li.id = o.id;
+				li.querySelector(".face").src = o.face[0];
+				li.querySelector(".head_author").innerHTML = o.uname;
+				var dtime = new Date(parseInt(o.pubdate) * 1000);
+				li.querySelector('.e_date').innerHTML = TimeDifference(dtime);
+				li.querySelector("#new_title").innerHTML = o.title;
+				if(o.imgurls.length <= 3) {
+					for(var j = 0; j < o.imgurls.length; j++) {
+						var img = document.createElement("img");
+						img.src = o.imgurls[j];
+						img.setAttribute("id", "e_picture1");
+						img.setAttribute("class", "img")
+						imgBox.appendChild(img);
+					}
+				} else {
+					for(var j = 0; j < 3; j++) {
+						var img = document.createElement("img");
+						//					img.setAttribute("datasrc",);
+						img.src = o.imgurls[j];
+						img.setAttribute("id", "e_picture1");
+						img.setAttribute("class", "img")
+						imgBox.appendChild(img);
+					}
+					var box = document.createElement("span");
+					box.setAttribute("class", "num");
+					box.innerHTML = "+" + (o.imgurls.length - 3);
+					imgBox.appendChild(box);
+				}
+
+				li.querySelector(".c_comment_num").innerHTML = o.goodpost;
+				var child = content.cloneNode(true);
+				if(isDown == true) {
+					releaseRoom.insertBefore(child, releaseRoom.firstChild);
+				} else {
+					releaseRoom.appendChild(child);
+				}
+				document.getElementById(o.id).addEventListener("tap", function() {
+//					mui.fire(release,'show',null);
+					mui.openWindow({
+						url: "../imgArticle/releaseAbRoom.html",
+						id: "releaseAbRoom",
+						style: {},
+						show: {
+							aniShow: 'slide-in-right',
+							//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+							duration: 200,
+						},
+						waiting: {
+							autoShow: true,
+							title:'正在加载....'
+						},
+						extras: {
+							article_id: o.id,
+							article_title: o.title,
+							article_goodpost: o.goodpost,
+							article_imgs:o.imgurls,
+							uname: o.writer,
+							time : TimeDifference(dtime),
+							face : o.face[0],
+							article_id:o.id,
+							Amid:o.mid
+						}
+					});
+				});
+			}
+
+			function getUserInfo() {
+				var releaseRoom = document.getElementById("releaseRoom");
+				var releaseTemp = document.getElementById("releaseTemp");
+			}
+		</script>
+		
+	</body>
+
+</html>

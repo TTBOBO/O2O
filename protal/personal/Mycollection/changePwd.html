@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/Itool/ios.js" ></script>
+		<script type="text/javascript" src="../../../js/Itool/android.js" ></script>
+		<script type="text/javascript" src="../../../js/Config/Config.js" ></script>
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.min.js" ></script>
+		<script type="text/javascript" src="../../../js/Config/WebService.js" ></script>
+		<script type="text/javascript" src="../../../js/Api/UserDal.js" ></script>
+		<script type="text/javascript" src="../../../js/jQuery.md5.js" ></script>
+		<script type="text/javascript" src="../../../js/Itool/common.js" ></script>
+		<script type="text/javascript">
+			var mid = null;
+			mui.init();
+			mui.plusReady(function(){
+				pageInfo();
+				
+				pageMent();
+				
+				get_code();
+			});
+			
+			
+			function pageInfo(){
+				var ws = plus.webview.currentWebview();
+				mid = ws.mid;
+				return mid
+			}
+			
+			function get_code(){
+				new UserDAL().get_img_code(function(data){
+					document.querySelector(".code").src =data.imgUrl;
+					word = data.word;
+					sessionStorage.setItem("code_word",word);
+				})
+			}
+			
+			function pageMent(){
+				//点击验证码切换验证码
+				document.querySelector(".code").addEventListener("tap",function(){
+					get_code();
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+				})
+				
+				document.getElementById("nextBtn").addEventListener("tap",function(){
+					var code_word = sessionStorage.getItem("code_word");
+					console.log(code_word);
+					var oldPwd = document.getElementById("oldPwd").value.trim();
+					var newPwd = document.getElementById("newPwd").value.trim();
+					var code = document.querySelector("#code").value;
+					
+					oldPwd = $.md5(oldPwd);
+					newPwd = $.md5(newPwd);
+					if(oldPwd == "" ) {
+						mui.toast("旧密码不能为空");
+						return;
+					}else if( newPwd == ""){
+						mui.toast("新密码不能为空");
+						return;
+					}else if( code == ""){
+						mui.toast("验证码不能为空");
+						return;
+					}
+					if(oldPwd == newPwd){
+						mui.toast("新密码不能跟就密码相同!");
+						return false;
+					}
+					console.log(oldPwd)
+					console.log(newPwd)
+					if(code_word != code){
+						get_code();
+						mui.toast("验证码输入错误");
+						return;
+					}else{
+						new UserDAL().change_user_pwd(mid,oldPwd,newPwd,function(data){
+							console.log(JSON.stringify(data));
+							switch (data.msg){
+								case 'no':
+									mui.toast("旧密码不正确，请重新输入！");
+									break;
+								case 'success':
+									mui.toast("修改成功！请重新登录！");
+									closePage();
+									break;
+								case 'failed':
+									mui.toast("数据错误，请您稍后再试！");
+									break;
+								default:
+									break;
+							}
+						})
+					}
+				})
+			}
+			
+			
+			function closePage(){
+				var changePwd = plus.webview.currentWebview();
+				var settingRoom = plus.webview.getWebviewById("settingRoom");
+				var person = plus.webview.getWebviewById("person");
+				changePwd && changePwd.close();
+				settingRoom && settingRoom.close();
+				common.myStorage.setItem("userData", "");
+				person && person.reload();
+				
+			}
+		</script>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.infoList{
+				margin-top: 20%;
+			}
+			label{
+				color: #ccc;
+				padding-left: 15px;
+				margin: 20px 0px;
+			}
+			#nextBtn{
+				background-color: #6495ED !important;
+				color: white;
+				border: 0px solid #000;
+				height: 50px;
+				line-height: 12px;
+				transition: .3s linear;
+				margin-top: 20px;
+				width: 95%;
+				margin-left: 2.5%;
+			}
+			#nextBtn:active {
+				-webkit-filter: brightness(80%);
+			}
+			.mui-input-row{
+				margin: 5px 0px;
+			}
+			input{
+				font-size: 12px;
+			}
+			#code{
+				width: 70%;
+			}
+			.test1{
+				height: 40px;
+				width: 80px;
+				/*margin: 20px auto;*/
+				float: right;
+				/*padding-top: 5px;*/
+				margin-right:20px ;
+			}
+		</style>
+	</head>
+		
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">修改密码</h1>
+		</header>
+		<div class="mui-content">
+			<div class="infoList"> 
+				<label>旧密码：</label>
+				<div class="mui-input-row">
+					<input id="oldPwd" type="password" class="mui-input-clear" value="tab521"  placeholder="请输入旧密码">
+				</div>
+				<label>新密码：</label>
+				<div class="mui-input-row">
+					<input id="newPwd" type="password" class="mui-input-clear" value="tab520"  placeholder="请输入新密码">
+				</div>
+				<label>验证码：</label>
+				<div class="mui-input-row">
+					<input id="code" maxlength="4" type="text" value=""  placeholder="请输入验证码">
+					<div class="test1">
+					<img class="code" src="" style="width: 100%; height: 100%;">
+					</div>
+			</div>
+			<div class="mui-content-padded">
+				<button id="nextBtn" type="button" class="mui-btn mui-btn-success mui-btn-block">确认</button>
+			</div>
+		</div>
+		
+	</body>
+	<script type="text/javascript" src="../../../js/immersed.js" ></script>
+</html>

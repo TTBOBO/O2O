@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="MobileOptimized" content="320"/>
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/main.css" />
+
+		<script type="text/javascript" src="../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../js/Api/AskDal.js"></script>
+		<script type="text/javascript" src="../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../js/Api/AtlasArticle.js"></script>
+		<script type="text/javascript" src="../js/Api/CourseActivity.js"></script>
+		<script src="../js/mui.previewimage.js"></script>
+		<link rel="stylesheet" href="../css/iconfont.css" />
+		<style type="text/css">
+			.title {
+				padding-top: 7px;
+				margin: 1px 0px 0px 0px;
+				background-color: white;
+				width: 100%;
+				height: 35px;
+			}
+			header {
+				width: 100%;
+				height: 45px;
+				font-size: 20px;
+				text-align: center;
+				line-height: 45px;
+				-ms-touch-action: none;
+			}
+			.ask-title {
+				font-size: 0.9em;
+				color: #000000;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+			
+			.title>a {
+				margin-left: 20px;
+				color: black;
+			}
+			
+			#navlist {
+				border-bottom: 6px solid #F2F2F2;
+				background-color: white;
+			}
+			
+			#navlist div {
+				padding: 0px;
+				margin: auto;
+				color: white !important;
+				font-size: 13px;
+			}
+			
+			#navlist>div {
+				margin: 2% 0% 2% 4.5%;
+				width: 70px;
+				border-radius: 70px 70px;
+			}
+			
+			.info span {
+				font-size: 0.8em;
+				color: #688;
+			}
+			
+			.mui-grid-view.mui-grid-9:after,
+			.mui-grid-view.mui-grid-9:before {
+				display: none;
+			}
+			
+			.mui-grid-view.mui-grid-9 {
+				border-left: 0px solid #ccc;
+			}
+			
+			#zhx {
+				font-size: 25px;
+				letter-spacing: 2px;
+				margin: auto;
+				padding: 9px;
+				padding-left: 2.5em;
+			}
+			
+			#zhx .spanLogo {
+				color: white;
+			}
+			
+			#zhx .spanDisc {
+				font-size: 12px;
+				color: white;
+				padding-left: 1.5em;
+			}
+			
+			#logo {
+				width: 100%;
+				height: 40px;
+				background-color: #0d8bf5;
+			}
+			
+			#slider {
+				width: 100%;
+				height: 200px;
+				margin: auto;
+				padding: 0px;
+				overflow: hidden;
+			}
+			
+			#middle {
+				padding: 0px;
+				margin: auto;
+				background-color: white;
+				width: 21em;
+				height: 6.3em;
+			}
+			
+			#middle>div {
+				float: left;
+			}
+			
+			#middleone {
+				font-size: 0.9em;
+				width: 40%;
+				border-right: 5px solid #F2F2F2;
+				text-align: center;
+				vertical-align: middle;
+			}
+			
+			#onebiao{
+				font-size: larger;
+				position: relative;
+				top: 0.3em;
+			}
+			
+			#zione1 {
+				font-size: 0.8em;
+				color: black;
+				position: relative;
+				top: 0.3em;
+			}
+			
+			#zione2 {
+				font-size: 0.8em;
+				color: black;
+			}
+			
+			#imgone{
+				width: 30%;
+				
+			}
+			
+			#middletwo {
+				margin: auto;
+				padding: 0px;
+				width: 12.6em;
+				height: 3.15em;
+			}
+			
+			#middletwo1 {
+				width: 12.6em;
+				height: 100%;
+				border-bottom: 5px solid #F2F2F2;
+			}
+			
+			#middletwo2 {
+				width: 12.6em;
+				height: 100%;
+			}
+			
+			#imgtwo {
+				margin: auto;
+				padding: 0px;
+				width: 15%;
+				position: relative;
+				top: 18%;
+				left: 10%;
+			}
+			
+			#biao {
+				color: black;
+				position: relative;
+				bottom: 25%;
+				left: 13%;
+			}
+			
+			#biao1 {
+				color: black;
+				position: relative;
+				bottom: 19%;
+				left: 13%;
+			}
+			
+			#zitwo1 {
+				font-size: 0.65em;
+				color: black;
+				position: relative;
+				bottom: 28%;
+				left: 30%;
+			}
+			
+			#zitwo2 {
+				font-size: 0.65em;
+				color: black;
+				position: relative;
+				bottom: 18%;
+				left: 30%;
+			}
+			.mui-bar-nav ~ .mui-content .mui-pull-top-pocket{
+	           		top: 75px !important;
+	        }
+			img {
+				border: none !important;
+				background: #FAFAFA;
+	        }
+			.img{
+	        	animation: zhuan .5s ease-in;
+	        }
+	        @-webkit-keyframes zhuan{
+	        	0%{opacity: 0;}
+	        	50%{opacity: 0.5;}
+	        	100%{opacity: 1;}
+	        }
+	       	
+		</style>
+		<script>
+			var isios = null; //是否是ios平台
+			var page = 1;
+			mui.init({
+				pullRefresh: {
+					container: "#pullrefresh", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					deceleration: (mui.os.ios ? 0.003 : 0.0006),
+					down: {
+						//						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						//						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						//						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh, //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback:pullupRefresh
+					}
+				}
+			});
+			// 扩展API加载完毕后调用onPlusReady回调函数 
+			document.addEventListener("plusready",onPlusReady,false);
+			// 扩展API加载完毕现在可以正常加载API
+			function onPlusReady(){
+				
+				//获取广告
+				getNetData_roll(); 
+				
+				//获取问答栏目数据
+				get_category(); 
+				
+				//文章栏目数据
+				get_article(); 
+				
+				//页面初始化
+				pageInit();
+				
+				getNetData();
+			}
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+
+			});
+			function getNetData(){
+				//获取网络数据
+				setTimeout(function() {
+					mui('#pullrefresh').pullRefresh().pullupLoading();
+				}, 200);
+			}
+			
+			
+			//下拉刷新回调函数
+			function pulldownRefresh(isDown) {
+				
+				setTimeout(function() {
+					//mui.toast("1");
+					isDown = true;
+					get_img_article(isDown);//获取图集文章内容
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+				}, 1000);
+				
+			}
+			//上拉加载函数 加载数据
+			function pullupRefresh(){
+				setTimeout(function() {
+					isDown = false;
+					get_img_article(isDown);//获取图集文章内容
+					mui('#pullrefresh').pullRefresh().endPullupToRefresh();
+				}, 1000);
+			}
+
+			
+			function pageInit() {
+				plus.webview.currentWebview().setStyle({
+					//纵向滚动条
+					scrollIndicator: "vertical"
+				})
+				isios = mui.os.ios;
+				menuInit();
+				roll();
+				var width = document.body.clientWidth;
+				console.log(width);
+			}
+
+			function roll() {
+				mui("#slider").slider({
+					interval: 2000
+				});
+			}
+
+			function menuInit() {
+					//栏目点击事件
+				mui('.nav_list_box').on('tap', 'a', function() {
+					var lanmuid = this.getAttribute('data-id');
+					var lanmutitle = this.innerText.trim();
+					switch (lanmuid) {
+						//高安社区
+						case "1":
+							opencommunityPage();
+							break;
+							//聚实惠
+						case "2":
+							openlessPricePage();
+							break;
+							//抢红包		
+						case "3":
+							opentakeMoneyPage();
+							break;
+							//粉丝经济	
+						case "4":
+							openfunsPage();
+							break;
+							//房产
+						case "5":
+							openhousePage();
+							break;
+							//招聘
+						case "6":
+							openrecruitPage();
+							break;
+							//汽车
+						case "7":
+							opencarPage();
+							break;
+							//美容
+						case "8":
+							openCosmetologyPage();
+							break;
+					}				
+				});
+			}
+
+			//打开栏目菜单上高安社区界面
+			function opencommunityPage() {
+				mui.openWindow({
+								url:'list/communityRoom.html',
+								id:'community',
+								style: {},
+								show: {
+									aniShow: 'pop-in',
+									duration: 200,
+								},
+								waiting: {
+									autoShow:false,
+//									autoShow: true,
+//									title:'正在加载'
+								},
+								extras: {
+									
+								}
+							});
+			};
+			//打开栏目菜单上粉丝经济界面
+			function openfunsPage() {
+				mui.openWindow({
+								url:'list/demo.html',
+								id:'demo',
+								style: {},
+								show: {
+									aniShow: 'pop-in',
+									duration: 200,
+								},
+								waiting: {
+									autoShow:false,
+								},
+								extras: {
+									
+								}
+							});
+			};
+			//打开栏目菜单上抢红包界面
+			function opentakeMoneyPage() {
+				mui.openWindow({
+								url:'list/takeMoney.html',
+								id:'takeMoney',
+								style: {},
+								show: {
+									aniShow: 'pop-in',
+									duration: 200,
+								},
+								waiting: {
+									autoShow:false,
+//									autoShow: true,
+//									title:'正在加载'
+								},
+								extras: {
+									
+								}
+							});
+			};
+			
+			//打开栏目菜单上聚实惠界面
+			function openlessPricePage() {
+				mui.openWindow({
+								url:'list/lessPrice.html',
+								id:'lessPrice',
+								style: {},
+								show: {
+									aniShow: 'pop-in',
+									duration: 200,
+								},
+								waiting: {
+									autoShow:false,
+//									autoShow: true,
+//									title:'正在加载'
+								},
+								extras: {
+									
+								}
+							});
+			};
+
+			
+			
+			
+			
+			//获取广告
+			function getNetData_roll() {
+				//添加数据
+				new ArticleDAL().get_article_list(1, 1, 0, function(data) {
+					//console.log(JSON.stringify(data));
+					document.getElementById("slider1").innerHTML = "";
+					//<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					//console.log(JSON.stringify(data));
+					var f = data[0];
+					//<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					var l = data[data.length - 1];
+					data.unshift(l);
+					data.push(f);
+					
+					for (var i in data) {
+						if(i == 0||i == data.length - 1){
+							
+							addrollList2('slider1', data[i]);
+							continue;
+						}
+						addrollList('slider1', data[i]);
+					}
+				}, function(e) {
+					console.log(e);
+				});
+			}
+
+			function addarticleList(articleroomId, o) {
+				var content = document.getElementById("articlelistMode").content;
+				var li = content.querySelector('li.mui-media');
+				//设置文章id
+				li.id = o.id;
+				//设置文章图片
+				li.querySelector('img.mui-pull-left').src = "";
+				li.querySelector("img.mui-pull-left").setAttribute("datasrc",o.litpic);
+				//设置标题
+				li.querySelector('.mui-ellipsis').innerHTML = o.title;
+				//设置作者
+				li.querySelector('.writer').innerHTML = o.writer;
+				//设置发表时间
+				li.querySelector('.pubdate').innerHTML = new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+				//点赞
+				li.querySelector('.goodpost').innerHTML = o.goodpost;
+				//添加到页面
+				document.getElementById(articleroomId).appendChild(content.cloneNode(true));
+				var eli = document.getElementById(o.id);
+				//添加点击事件
+				eli.addEventListener('tap', function() {
+					mui.openWindow({
+						url: "article/articleAbout.html",
+						id: "articleAbout",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							acticle_id: o.id,
+							acticle_title: o.title,
+							acticle_goodpost: o.goodpost
+						}
+					});
+				});
+			}
+
+
+			function addrollList(rollRom, o) {
+				var content = document.getElementById("rollRoom").content;
+				var div = content.querySelector('div.mui-slider-item');
+				//设置id
+				div.id = rollRom + o.id;
+				//设置图片
+				div.querySelector('.rollC').src = "";
+				div.querySelector(".rollC").setAttribute("datasrc",o.litpic);
+				div.querySelector(".mui-slider-titleC")
+				//添加到页面
+				document.getElementById(rollRom).appendChild(content.cloneNode(true));
+				var eli = document.getElementById(rollRom + o.id);
+				//点击事件
+				eli.addEventListener('tap', function() {
+					mui.openWindow({
+						url: "article/articleAbout.html",
+						id: "articleAbout",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							duration: 100,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							acticle_id: o.id,
+							acticle_title: o.title,
+							acticle_goodpost: o.goodpost
+						}
+					});
+				});
+			}
+			
+			function addrollList2(rollRom, o) {
+				var content = document.getElementById("rollRoom2").content;
+				var div = content.querySelector('div.mui-slider-item-duplicate');
+				//设置图片
+				div.querySelector(".rollR").src = "";
+				div.querySelector(".rollR").setAttribute("datasrc",o.litpic);
+
+				//添加到页面
+				var eli = document.getElementById(rollRom).appendChild(content.cloneNode(true));
+				
+			}
+
+			//获取问答栏目数据 将其存储到本地中
+			function get_category() {
+				//获取分栏上的id,名称
+				new AskDAL().get_ask_category(0, function(data) {
+					//console.log(JSON.stringify(data));
+					var categorydata = data;
+					//保存数据
+					common.myStorage.setItem("categorydata", categorydata);
+				}, function(e) {});
+			}
+			//获取文章栏目数据 将其存储到本地中
+			function get_article() {
+				//获取分栏上的id,名称
+				new ArticleDAL().get_article_category(0, function(data) {
+					//console.log(JSON.stringify(data));
+					var articledata = data;
+					//保存数据
+					common.myStorage.setItem("articledata", articledata);
+				}, function(e) {});
+			}
+			
+			
+			function get_img_article(isDown){	
+//			mui.toast(pageSize);
+				new AtlasArticle().get_img_article(2,page,1,function(data){
+					console.log(JSON.stringify(data));
+					if(data.length == ""){
+						mui.toast("没有文章 了！")
+					}
+//					document.getElementById("tuji").innerHTML ="";
+					for (var i in data) {
+						//console.log(JSON.stringify(data[i]).imgurls);
+						addAtlasArticle(isDown,'tuji', data[i]);
+					}
+					page++;
+				},function(e){});
+			}
+			
+			function addAtlasArticle(isDown,rollRom,o){
+				var table = document.getElementById(rollRom);
+				if(o.imgurls.length == 3){
+				var content = document.getElementById("AtlasArticle").content;
+				var li = content.querySelector(".threeimg");
+				li.id = rollRom+o.id;
+
+				li.querySelector(".mui-ellipsis").innerHTML = o.title;
+				var a = li.querySelector(".mui-ellipsis");
+				var div = document.createElement("div");
+				a.appendChild(div);
+				for(var j in o.imgurls){
+					var img = document.createElement("img");
+					img.setAttribute("datasrc",o.imgurls[j]);
+					img.src  = "";
+					img.setAttribute("id","e_picture")
+					a.appendChild(img);
+				}
+				li.querySelector(".e_date").innerHTML =  new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+				li.querySelector('.fabulous_num').innerHTML = o.goodpost;
+				//创建页面
+				var child = content.cloneNode(true);
+				if(isDown == true){
+					table.insertBefore(child,table.firstChild);
+				}else{
+					table.appendChild(child);
+				}
+				//
+				
+
+//				document.getElementById(rollRom).insertBefore(content,table.firstChild);
+				var oli = document.getElementById(rollRom+o.id);
+				oli.addEventListener("tap",function(){
+					mui.openWindow({
+						url: "imgArticle/imgArticleAbout.html",
+						id: "imgArticleAbout",
+						style: {},
+						show: {
+							aniShow: 'slide-in-right',
+							//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							acticle_id: o.id,
+							acticle_title: o.title,
+							acticle_goodpost: o.goodpost
+						}
+					});
+				});
+				}else if(o.imgurls.length == 1){
+					var content = document.getElementById("oneAtlasArticle").content;
+					var li = content.querySelector(".imgOne");		
+					li.id = rollRom+o.id;
+					var a = li.querySelector(".mui-ellipsis_left_title").innerHTML = o.title;
+					li.querySelector(".fabulous_num").innerHTML = o.goodpost;
+					li.querySelector(".e_date").innerHTML = new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					li.querySelector(".oneimg").src = "";
+					li.querySelector(".oneimg").setAttribute("datasrc",o.imgurls);
+					//创建页面
+					var child = content.cloneNode(true);
+					if(isDown == true){
+						table.insertBefore(child,table.firstChild);
+					}else{
+						table.appendChild(child);
+					}
+					var oli = document.getElementById(rollRom+o.id);
+					oli.addEventListener("tap",function(){
+					mui.openWindow({
+						url: "imgArticle/imgArticleAbout.html",
+						id: "imgArticleAbout",
+						style: {},
+						show: {
+							aniShow: 'slide-in-right',
+							//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							acticle_id: o.id,
+							acticle_title: o.title,
+							acticle_goodpost: o.goodpost
+						}
+					});
+				});
+				}else if(o.imgurls.length == 0){
+					var content = document.getElementById("noPicture").content;
+					var li = content.querySelector(".noImg");
+					li.id = rollRom+o.id;
+					var a = li.querySelector(".mui-ellipsis").innerHTML = o.title;
+					var a = li.querySelector(".mui-ellipsis");
+					li.querySelector(".e_date").innerHTML =  new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+					li.querySelector('.fabulous_num').innerHTML = o.goodpost;
+					//创建页面
+					var child = content.cloneNode(true);
+					if(isDown == true){
+						table.insertBefore(child,table.firstChild);
+					}else{
+						table.appendChild(child);
+					}
+					var oli = document.getElementById(rollRom+o.id);
+					oli.addEventListener("tap",function(){
+						mui.openWindow({
+							url: "imgArticle/imgArticleAbout.html",
+							id: "imgArticleAbout",
+							style: {},
+							show: {
+								aniShow: 'slide-in-right',
+								//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+								duration: 200,
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								acticle_id: o.id,
+								acticle_title: o.title,
+								acticle_goodpost: o.goodpost
+							}
+						});
+					});
+				}
+			}
+		</script>
+	</head>
+
+	<body >
+		<!--<header class="mui-bar mui-bar-nav" id="header">
+		    <h1 class="mui-title" >智慧心</h1>
+		</header>-->
+		<div class="mui-content">
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--<div id="logo" class="">-->
+					</div>
+					<div id="slider" class="mui-slider" id="picture">
+						<div id="slider1" class="mui-slider-group mui-slider-loop">
+							<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+							<div class="mui-slider-item mui-slider-item-duplicate">
+								<a href="#">
+									<!--<img src="../img/03.jpg">-->
+								</a>
+							</div>
+							<!-- 第一张 -->
+							<div class="mui-slider-item">
+								<a href="#">
+									<!--<img src="../img/01.jpg">-->
+								</a>
+							</div>
+							<!-- 第二张 -->
+							<div class="mui-slider-item">
+								<a href="#">
+									<!--<img src="../img/02.jpg">-->
+								</a>
+							</div>
+							<!-- 第三张 -->
+							<div class="mui-slider-item">
+								<a href="#">
+									<!--<img src="../img/03.jpg">-->
+								</a>
+							</div>
+							<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+							<div class="mui-slider-item mui-slider-item-duplicate">
+								<a href="#">
+									<!--<img src="../img/01.jpg">-->
+								</a>
+							</div>
+						</div>
+						<div class="mui-slider-indicator">
+							<div class="mui-indicator mui-active"></div>
+							<div class="mui-indicator"></div>
+							<div class="mui-indicator"></div>
+						</div>
+					</div>
+
+					<template id="rollRoom">
+						<div class="mui-slider-item">
+							<a href="#">
+								<img class="rollC" src="">
+								<p class="mui-slider-titleC"></p>
+							</a>
+						</div>
+					</template>
+
+					<template id="rollRoom2">
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img class="rollR" src="">
+								<p class="mui-slider-titleR"></p>
+							</a>
+						</div>
+					</template>
+					<div class="hot_column">
+						<ul>
+							<li class="hot_column_li">
+								<a data-id="1">
+									<i class="iconfont icon-shequ community_box"></i>
+									<span>高安社区</span>
+								</a>
+							</li>
+							<li>
+								<a data-id="2">
+									<i class="iconfont icon-youhui discount_box"></i>
+									<span>聚实惠</span>
+								</a>
+							</li>
+							<li>
+								<a data-id="3">
+									<i class="iconfont icon-redpacket_fill red_box"></i>
+									<span>抢红包</span>
+								</a>
+							</li>
+							<li>
+								<a data-id="4">
+									<i class="iconfont icon-qian funBox"></i>
+									<span>粉丝经济</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<!--<div class="hot_column">-->
+							<!--<div class="nav_list_box" id="community">
+								<a class="mui-tab-item consultation" data-id="1"> 
+									<span class="iconfont icon-shequ community_box"></span>
+									<span class="mui-tab-label iconfont_title">高安社区</span>
+								</a>
+							</div>
+							<div class="nav_list_box" id="lessPrice">
+								<a class="mui-tab-item consultation" data-id="2">
+									<span class="iconfont icon-youhui discount_box">
+									</span>
+									<span class="mui-tab-label iconfont_title">聚实惠</span>
+								</a>
+							</div>
+							<div class="nav_list_box" id="takeMoney">
+								<a class="mui-tab-item consultation" data-id="3">
+									<span class="iconfont icon-redpacket_fill red_box">
+									</span>
+									<span class="mui-tab-label iconfont_title">抢红包</span>
+								</a>
+							</div>
+							<div class="nav_list_box" id="fun_box">
+								<a class="mui-tab-item consultation" data-id="4">
+									<span class="iconfont icon-qian funBox">
+									</span>
+									<span class="mui-tab-label iconfont_title">粉丝经济</span>
+								</a>
+							</div>-->
+							<!--<div class="nav_list_box">
+								<a class="mui-tab-item consultation">
+									<span class="iconfont icon-fangchan caichan_box">
+									</span>
+									<span class="mui-tab-label iconfont_title">房产</span>
+								</a>
+							</div>
+							<div class="nav_list_box">
+								<a class="mui-tab-item consultation">
+									<span class="iconfont icon-kefuyouxian zhaopinxinxi_box">
+									</span>
+									<span class="mui-tab-label iconfont_title">招聘</span>
+								</a>
+							</div>
+							<div class="nav_list_box">
+								<a class="mui-tab-item consultation">
+									<span class="iconfont icon-fill_car icon-qiche1_box">
+									</span>
+									<span class="mui-tab-label iconfont_title">汽车</span>
+								</a>
+							</div>
+							<div class="nav_list_box">
+								<a class="mui-tab-item consultation">
+									<span class="iconfont icon-meirong tehuijingxuan_box">
+									</span>
+									<span class="mui-tab-label iconfont_title">美容</span>
+								</a>
+							</div>-->
+					<!--</div>-->
+					<!--图集列表-->
+					
+					<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="tuji">
+					
+					</ul>
+					<template id="AtlasArticle">
+						<li class="mui-table-view-cell threeimg">
+					           <div class="mui-table">
+					               <div class="mui-table-cell mui-col-xs-10 ">
+					                <div id="topBox"></div>
+					                <div class="mui-ellipsis" id="mui-ellipsis">
+					                	<div id="threeImg"></div>
+					                </div>
+					                <div class="e_info">
+					                   	<span class=" e_date">2016-10-29</span>
+					                    <span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+					                </div>
+					            </div>
+					        </div>
+					    </li>
+					</template>
+					<template id="oneAtlasArticle">
+					    <li class="mui-table-view-cell imgOne">
+					        <div class="mui-table">
+					            <div class="mui-table-cell mui-col-xs-10">
+					                <div class="left_box">
+						                <div class="leftTitle">
+							                <span  class="mui-ellipsis_left_title">标题</span>
+							            </div>
+							            <div class="e_info_left">
+							                <span class=" e_date">2016-10-29</span>
+							                <span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+							            </div>
+					            	</div>
+					            	<div class="right_box"><img src="../img/4.jpg" class="oneimg" style="width: 100%; height: 100%;"/> </div>
+					        	</div>
+					        </div>
+					    </li>
+					</template>
+					<template id="noPicture">
+						 
+					    <li class="mui-table-view-cell noImg">
+					           <div class="mui-table">
+					               <div class="mui-table-cell mui-col-xs-10">
+					                <div id="noimgDiv"><span class="mui-ellipsis" id="mui-ellipsisnoImg">信息化推进办12313213131公室张彦合同付款信1231息化</span></div>
+					                <div class="e_info">
+					                   	<span class=" e_date">2016-10-29</span>
+					                    <span class="fabulous_num">1</span><span class=" iconfont icon-zantongfill e_fabulous"></span>
+					                </div>
+					            </div>
+					        </div>
+					    </li>
+					</template>
+					<div id="new_column">
+						<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+					        <!--广告-->
+					        <li class="mui-table-view-cell">
+					            <div class="mui-table">
+					                <div class="mui-table-cell mui-col-xs-10">
+					                   <div class="e_advertisement"><img src="" datasrc="../img/3.jpg" style="width: 100%; height: 150px;" /> </div>
+					                </div>
+					            </div>
+					        </li>
+						</ul>
+					</div>
+					
+					<!--<div id="navlist" class="mui-table-view mui-grid-view mui-grid-9">
+						<div class="mui-table-view-cell mui-media mui-col-xs-4">
+							<a style="background-color: #ea5451;" href="#" class="article" data-id="1">
+								<span class="mui-icon mui-icon-home"></span>
+								<div class="mui-media-body">资讯</div>
+							</a>
+						</div>
+						<div class="mui-table-view-cell mui-media mui-col-xs-4">
+							<a style="background-color: #ed7e9c;" href="#" class="article" data-id="4">
+								<span class="mui-icon mui-icon-list"></span>
+								<div class="mui-media-body">课程</div>
+							</a>
+						</div>
+						<div class="mui-table-view-cell mui-media mui-col-xs-4">
+							<a style="background-color: #f0852c;" href="#" class="article" data-id="19">
+								<span class="mui-icon iconfont icon-iconfontshijuan"></span>
+								<div class="mui-media-body">测评</div>
+							</a>
+						</div>
+						<div class="mui-table-view-cell mui-media mui-col-xs-4">
+							<a style="background-color: #c781dc;" href="#" class="article" data-id="17">
+								<span class="mui-icon mui-icon-paperplane"></span>
+								<div class="mui-media-body">咨询</div>
+							</a>
+						</div>
+					</div>-->
+					
+
+				</div>
+
+			</div>
+		</div>
+		</div>
+		<script>
+		function throttle(fun, delay, time) {
+    	var timeout,startTime = new Date();
+    	return function() {
+	        var context = this,
+	            args = arguments,
+	            curTime = new Date();
+	        	clearTimeout(timeout);
+	        // 如果达到了规定的触发时间间隔，触发 handler
+	        if (curTime - startTime >= time) {
+	            fun.apply(context, args);
+	            startTime = curTime;
+	            // 没达到触发间隔，重新设定定时器
+	        } else {
+	            timeout = setTimeout(fun, delay);
+	        }
+	    };
+	};
+	// 实际想绑定在 scroll 事件上的 handler
+	function lazyload(tap) {
+		var num = document.getElementsByTagName('img').length;
+	    var img = document.getElementsByTagName("img");
+	    var n = 0; //存储图片加载到的位置，避免每次都从第一张图片开始遍历
+		var seeHeight = document.documentElement.clientHeight; //可见区域高度
+	        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; //滚动条距离顶部高度
+	        for (var i = n; i < num; i++) {
+	            if (img[i].offsetTop < seeHeight + scrollTop) {
+	                if (img[i].getAttribute("src") == "") {
+	                    img[i].src = img[i].getAttribute("datasrc");
+	               		img[i].className = "img";
+	                }
+	                n = i + 1;
+	            }
+	        }
+	}
+	// 采用了节流函数
+	window.addEventListener('scroll',throttle(lazyload,2000,1000));
+	</script>
+	<script type="text/javascript" src="../js/immersed.js" ></script>
+</body>
+
+</html>

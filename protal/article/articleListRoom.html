@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.mui-bar~.mui-content .mui-fullscreen {
+				top: 44px;
+				height: auto;
+			}
+			
+			.listdata {
+				margin-top: 10px;
+			}
+			
+			.answer {
+				color: white;
+				font-size: 1em;
+				border: 1px solid green;
+				background: green;
+			}
+			
+			.mui-table {
+				color: #000000;
+				margin-left: 8px;
+			}
+			
+			.mui-user {
+				color: #000000;
+				margin-left: 8px;
+				margin-right: 8px;
+				margin-top: 8px;
+			}
+			
+			.title {
+				margin-top: 11px;
+				font-size: 1rem;
+				color: #000000;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+			
+			.line {
+				border: 1px solid hsla(255, 80%, 85%, 0.2);
+				margin-top: 5px;
+			}
+			
+			.mui-table-view-cell {
+				/*margin-top: 10px;*/
+				background-color: #FFFFFF;
+			}
+			
+			.ask-time {
+				margin-left: 5px;
+				font-size: 0.7em;
+			}
+			
+			.username {
+				font-size: 0.7em;
+				position: relative;
+				top: -2px;
+			}
+			
+			.mui-table-view {
+				background-color: #F7F7F7;
+				margin-top: -11px;
+			}
+			
+			.mui-pull-top-tips {
+				position: absolute;
+				top: -20px;
+				left: 50%;
+				margin-left: -25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				z-index: 1;
+			}
+			
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			
+			.mui-pull-top-wrapper {
+				width: 42px;
+				height: 42px;
+				display: block;
+				text-align: center;
+				background-color: #efeff4;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				box-shadow: 0 4px 10px #bbb;
+				overflow: hidden;
+			}
+			
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			
+			.mui-pull-top-tips .mui-pull-loading {
+				/*-webkit-backface-visibility: hidden;
+				-webkit-transition-duration: 400ms;
+				transition-duration: 400ms;*/
+				margin: 0;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon.mui-reverse {
+				/*-webkit-transform: rotate(180deg) translateZ(0);*/
+			}
+			
+			.mui-pull-bottom-tips {
+				text-align: center;
+				background-color: #efeff4;
+				font-size: 15px;
+				line-height: 40px;
+				color: #777;
+			}
+			
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			
+			.mui-slider-indicator.mui-segmented-control {
+				background-color: #efeff4;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen" style="background-color:white ;">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background-color:white ;">
+					<div class="mui-scroll newlanmu">
+						<a data-id="1" id="item1" class="mui-control-item mui-active" href="#itemmobile1">
+
+						</a>
+					</div>
+				</div>
+				<div id="mui-slider-group" class="mui-slider-group">
+					<div list-id="1" index="7" id="itemmobile1" class="mui-slider-item mui-control-content mui-active">
+						<div id="scroll1" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view">
+									<li id="asklistdata1" class="">
+
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<template id="askModeitem1mobile">
+			<div class="listdata" style="border: 1px solid #F1F1F1; background-color:white ;">
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" src="">
+						<div class="mui-media-body">
+							<span class="article-title">标题</span>
+							<div class="info">
+								<span></span><span class="pubdate">发布时间</span>
+								<span></span><span class="writer">作者</span>
+								<span class="mui-pull-right cz">
+						                	<span class="goodpost mui-icon iconfont icon-dianzan1" style="font-size: 10px;">赞数</span>
+								<!--<span class="badpost mui-icon iconfont icon-cai">踩数</span>-->
+								</span>
+							</div>
+						</div>
+					</a>
+				</li>
+			</div>
+		</template>
+
+		<script src="../../js/mui.pullToRefresh.js"></script>
+		<script src="../../js/mui.pullToRefresh.material.js"></script>
+		<script>
+			var lanmuid = 1;
+			var page = 1;
+			mui.init();
+			mui.plusReady(function() {
+					getStorage();
+					getasklist(1);
+					sliderOnlick();
+					listSwipe();
+
+				})
+				//=====================获取添加栏目========================
+			var articledata = common.myStorage.getItem("articledata");
+			//console.log(JSON.stringify(articledata));
+			if (articledata.length > 1) {
+				for (var j = 0; j < articledata.length - 1; j++) {
+					var artic = articledata[j].id;
+					//========添加滚动栏栏目部分======
+					//创建新元素
+					var a = document.createElement("a");
+					//创建新元素属性
+					a.className = "mui-control-item";
+					a.setAttribute('data-id', artic);
+					var h = "#itemmobile" + artic;
+					a.setAttribute('href', h);
+					a.id = "item" + artic;
+					//获取已有元素节点
+					var e = document.body.querySelector('div.newlanmu');
+					//向已有元素中添加新元素
+					e.appendChild(a);
+					//=========添加列表数据部分======
+					//创建最外层div
+					var div = document.createElement("div");
+					div.className = "mui-slider-item mui-control-content";
+					div.id = "itemmobile" + artic;
+					div.setAttribute("list-id", artic);
+					div.setAttribute("index", j);
+					//获取已有元素节点
+					var ea = document.body.querySelector('div.mui-slider-group');
+					//向已有元素中添加新元素
+					ea.appendChild(div);
+					//创建第2层div
+					var div2 = document.createElement("div");
+					div2.className = "mui-scroll-wrapper";
+					div.appendChild(div2);
+					//创建第3层div
+					var div3 = document.createElement("div");
+					div3.className = "mui-scroll";
+					div2.appendChild(div3);
+					//创建第4层ul
+					var ul = document.createElement("ul");
+					ul.className = "mui-table-view";
+					div3.appendChild(ul);
+					//创建第5层li
+					var li = document.createElement("li");
+					li.id = "asklistdata" + artic;
+					ul.appendChild(li);
+				}
+			}
+
+			function getStorage() {
+				for (var i in articledata) {
+					//console.log(JSON.stringify(articledata[0].typename))
+					var item = "item" + articledata[i].id;
+					document.getElementById(item).innerHTML = articledata[i].typename;
+				}
+			}
+			//==============tap分栏的点击跳转===========
+			function sliderOnlick() {
+				mui('#sliderSegmentedControl').on('tap', 'a', function() {
+					var sliderid = this.getAttribute('data-id');
+					lanmuid = sliderid;
+					switch (sliderid) {
+						case '1':
+							document.getElementById("asklistdata1").innerHTML = "";
+							getasklist(sliderid);
+							break;
+						default:
+							if (articledata.length > 1) {
+								for (var j = 1; j <= articledata.length - 1; j++) {
+									var id = "asklistdata" + sliderid;
+									document.getElementById(id).innerHTML = "";
+									getasklist(sliderid);
+									break;
+								}
+							}
+							break;
+					}
+				})
+			}
+			//=====================滑动事件跳转================
+			function listSwipe() {
+				//左滑事件
+				mui('#mui-slider-group').on('swipeleft', 'div.mui-slider-item', function() {
+					var listid = this.getAttribute('list-id');
+					var indexid = this.getAttribute("index");
+					if (indexid == 7) {
+						indexid = -1;
+					}
+					var l = listid;
+					var n = Number(indexid) + 1;
+					lanmuid = listid;
+					switch (listid) {
+						case '1':
+							document.getElementById("asklistdata11").innerHTML = "";
+							getasklist(articledata[n].id);
+							break;
+						default:
+							if (articledata.length > 1) {
+								for (var j = 0; j < articledata.length - 1; j++) {
+									if (n > articledata.length - 1) {
+										break;
+									}
+									var id = "asklistdata" + articledata[n].id;
+									document.getElementById(id).innerHTML = "";
+									getasklist(articledata[n].id);
+									break;
+								}
+							}
+							break;
+					}
+				});
+				//右滑事件
+				mui("#mui-slider-group").on("swiperight", "div.mui-slider-item", function() {
+					var listid = this.getAttribute('list-id');
+					var indexid = this.getAttribute("index");
+					if (indexid == 0) {
+						indexid = 8;
+					}
+					var l = listid;
+					var n = Number(indexid) - 1;
+					lanmuid = l;
+					switch (listid) {
+						case '11':
+							document.getElementById("asklistdata1").innerHTML = "";
+							getasklist(articledata[n].id);
+							break;
+						default:
+							if (articledata.length > 1) {
+								for (var j = 0; j < articledata.length - 1; j++) {
+									if (l == 0) {
+										break;
+									}
+									var id = "asklistdata" + articledata[n].id;
+									document.getElementById(id).innerHTML = "";
+									getasklist(articledata[n].id);
+									break;
+								}
+							}
+							break;
+					}
+				});
+			}
+			//====================获取问答列表数据====================
+			function getasklist(tyid) {
+				new ArticleDAL().get_article_list(tyid, 1, 8, function(data) {
+					for (var i in data) {
+						addList(data[i], tyid);
+					}
+				}, function(e) {});
+			}
+			//====================将服务器获取的数据添加到页面中========================
+			function addList(o, l) {
+				var content = document.getElementById("askModeitem1mobile").content;
+				var div = content.querySelector('div.listdata');
+				//设置文章id
+				div.id = o.id;
+				//设置文章图片
+				var img = div.querySelector('img.mui-media-object');
+				//设置默认图片
+				img.src = "../../img/header.jpg";
+				if (o.litpic) {
+					img.src = o.litpic;
+				}
+				//设置标题
+				div.querySelector('.article-title').innerHTML = o.title;
+				//设置作者
+				div.querySelector('.writer').innerHTML = o.writer;
+				//设置发表时间
+				div.querySelector('.pubdate').innerHTML = new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+				//点赞
+				div.querySelector('.goodpost').innerHTML = o.goodpost;
+				//添加到页面
+				var s = "asklistdata" + l;
+				document.getElementById(s).appendChild(content.cloneNode(true));
+				var eli = document.getElementById(o.id);
+				//添加点击事件
+				eli.addEventListener('tap', function() {
+					mui.openWindow({
+						url: "articleAbout.html",
+						id: "articleAbout",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							acticle_id: o.id,
+							acticle_title: o.title,
+							acticle_goodpost: o.goodpost
+						}
+					});
+				});
+			}
+			//============================下拉刷新和上拉加载=================
+			(function($) {
+				//阻尼系数
+				var deceleration = mui.os.ios ? 0.003 : 0.0009;
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, //是否显示滚动条
+					deceleration: deceleration
+				});
+				$.ready(function() {
+					page = 2;
+					//循环初始化所有下拉刷新，上拉加载。
+					$.each(document.querySelectorAll('.mui-slider-group .mui-scroll'), function(index, pullRefreshEl) {
+						$(pullRefreshEl).pullToRefresh({
+							down: {
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										var ul = self.element.querySelector('.mui-table-view');
+										//下拉刷新请求最新数据
+										new ArticleDAL().get_article_list(lanmuid, 1, 8, function(data) {
+											var s = "asklistdata" + lanmuid;
+											document.getElementById(s).innerHTML = "";
+											for (var i in data) {
+												addList(data[i], lanmuid);
+											}
+										}, function(e) {});
+										self.endPullDownToRefresh();
+									}, 1000);
+								}
+							},
+							up: {
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										var ul = self.element.querySelector('.mui-table-view');
+										//上拉加载
+										new ArticleDAL().get_article_list(lanmuid, page, 8, function(data) {
+											page++;
+											if (data == "") {
+												mui.toast("没有更多的文章了");
+												self.endPullUpToRefresh();
+											}
+											for (var i in data) {
+												addList(data[i], lanmuid);
+											}
+										}, function(e) {});
+										self.endPullUpToRefresh();
+									}, 1000);
+								}
+							}
+						});
+					});
+				});
+			})(mui);
+		</script>
+	</body>
+	<script type="text/javascript" src="../../js/immersed.js" ></script>
+</html>

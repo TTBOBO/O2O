@@ -1,0 +1,537 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/Shoplist.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<script type="text/javascript" src="../../js/Itool/OpenW.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-input-row {
+				top: 0px;
+				width: 70%;
+				font-size: 15px;
+				color: #fff;
+				font-weight: 400;
+				position: absolute;
+				display: table;
+				overflow: hidden;
+				left: 15%;
+				table-layout: fixed;
+				background-color: transparent;
+			}
+			
+			.mui-input-clear {
+				color: #fff !important;
+			}
+			
+			.mui-icon-search:before {
+				color: #fff;
+			}
+			
+			.mui-table-view .recruit-info {
+				width: 100%;
+				box-sizing: border-box;
+			}
+			
+			.recruit-info ul {
+				padding: 0;
+			}
+			
+			.recruit-info ul li {
+				list-style: none;
+				font-size: 12px;
+			}
+			
+			.info-upper {
+				width: 100%;
+				height: 95px;
+				border-bottom: 1px #C7C7CC dashed;
+			}
+			
+			.info-upper .upper-left {
+				float: left;
+				width: 70%;
+				height: 90px;
+			}
+			
+			.info-upper .upper-left li {
+				margin-bottom: 5px;
+			}
+			
+			.info-upper .upper-left .title {
+				font-size: 16px;
+				height: 25px;
+				line-height: 25px;
+				width: 100%;
+				text-align: justify;
+				overflow: hidden;
+			}
+			
+			.info-upper .upper-left .money {
+				font-size: 18px;
+				color: #ff6000;
+				position: relative;
+				top: 3px;
+			}
+			
+			.title_deal {
+				position: relative;
+				top: 6px;
+			}
+			
+			.info-upper .upper-left .title_deal span {
+				padding: 2px;
+				margin-right: 2px;
+				font-size: 13px;
+				line-height: 15px;
+			}
+			
+			.info-upper .upper-right {
+				width: 30%;
+				height: 100%;
+				float: right;
+				text-align: right;
+				padding: 0px 10px;
+			}
+			
+			.upper-right li {
+				width: 100%;
+				height: 35px;
+			}
+			
+			.upper-right .release_time {
+				font-size: 14px;
+				color: #C7C7CC;
+				text-align: right;
+				position: relative;
+			}
+			
+			.job-Application {
+				width: 60px !important;
+				height: 30px !important;
+				background-color: #ff6000;
+				line-height: 30px;
+				color: white;
+				float: right;
+				font-size: 15px;
+				font-weight: 300;
+				text-align: center;
+				border-radius: 3px;
+			}
+			
+			.recruit-info .info-down {
+				margin-top: 10px;
+			}
+			
+			.info-down li {
+				float: left;
+			}
+			
+			.info-down li:nth-child(1) {
+				background-color: #ff6000;
+				padding: 0px 4px;
+				text-align: center;
+				height: 20px;
+				line-height: 22px;
+				font-size: 10px !important;
+				color: white;
+				border-radius: 3px;
+				margin-right: 15px;
+			}
+			
+			.info-down .publisher {
+				color: #ccc;
+				font-size: 15px;
+				font-weight: 300;
+				text-align: justify;
+			}
+			
+			.info-down .work_addre {
+				margin-right: 10px;
+				float: right;
+				font-size: 15px;
+				font-weight: 300;
+				color: #ccc;
+			}
+			.mui-table-view:before,.mui-table-view:after{
+				height: 0px;
+			}
+			.history_search{
+				width: 100%;
+				height: auto;
+				padding-bottom: 10px;
+				background: #fff;
+				display: none;
+				/*margin-bottom: 10px;*/
+			}
+			
+			.hot_search{
+				background: #fff;
+			}
+			.mod_hd{
+			    padding: 10px 10px 5px;
+			    font-size: 13px;
+			    color: #8D8D8D;
+			}
+			.mod_bd{
+				padding-left: 10px;
+			    font-size: 0;
+			    overflow: hidden;
+			}
+			.mui-icon-trash{
+				float: right;
+				font-size: 17px;
+			}
+			.history_search_ul{
+				padding: 5px;
+				max-height: 150px;
+				overflow: hidden;
+			}
+			.history_search_ul .tag{
+				display: inline-block;
+			    height: 30px;
+			    max-width: 98%;
+			    line-height: 30px;
+			    padding: 0 10px;
+			    margin: 0 10px 10px 0;
+			    font-size: 14px;
+			    background-color: #F7F7F7;
+			    border-radius: 2px;
+			    overflow: hidden;
+			    white-space: nowrap;
+			    text-overflow: ellipsis;
+			    color: #4C4C4C;
+			}
+			.mui-table-view-cell{
+				font-size: 14px;
+				color: #4C4C4C;
+				padding-left: 20px;
+			}
+			.mui-table-view-cell:after{
+				left: 0px;
+			}
+			.mui-table-view-cell em{
+				display: inline-block;
+			    /*background: #d74b28;*/
+			    /*border: solid 1px #d74b28;*/
+			    border-radius: 1px;
+			    font-size: 14px;
+			    -webkit-text-size-adjust: none;
+			    color: #fff;
+			    padding: 2px 5px;
+			    line-height: 10px;
+			    margin-right: 10px;
+			    /*box-shadow: inset 0 1px 1px rgba(255,255,255,.5);*/
+			    text-shadow: 0 1px rgba(0,0,0,.3);
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="header" style="background: #d74b28;">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<div class="mui-input-row mui-search">
+				<input id="key_focus" maxlength="15" value="" type="search" style="color: #fff;" class="mui-input-clear" placeholder="搜索">
+			</div>
+			<a id="search" class="mui-pull-right" style="line-height: 45px;color: white;">搜索</a>
+		</header>
+		<div class="mui-content">
+			<div class="history_search">
+				<div class="mod_hd">
+					<span>历史搜索:</span>
+					<span class="mui-icon mui-icon-trash"></span>
+				</div>
+				<div class="history_search_ul">
+					<span class="tag">人民的名义</span><span class="tag">火线出击</span>
+				</div>
+			</div>
+			<div class="hot_search">
+				<div class="mod_hd">
+					<span>热门搜索:</span>
+					<!--<span class="mui-icon mui-icon-trash"></span>-->
+				</div>
+				<ul id="list" class="mui-table-view mui-table-view-chevron">
+				</ul>
+				<template id="hot_room">
+					<li class="mui-table-view-cell">
+						<em>1</em>人民的名义
+					</li>
+				</template>
+			</div>
+			<ul id="work_list" class="mui-table-view">
+
+			</ul>
+			<template id="listTemp">
+				<li class="mui-table-view-cell mui-media board">
+					<a href="javascript:;">
+						<div class="recruit-info">
+							<div class="info-upper">
+								<ul class="upper-left">
+									<li class="title">神州专车高薪诚聘超级司机</li>
+									<li class="money">8000~12000元</li>
+									<li class="title_deal">
+										<!--span=>class:mui-btn mui-btn-success mui-btn-outlined-->
+
+									</li>
+								</ul>
+								<ul class="upper-right">
+									<li class="release_time">今天</li>
+									<li class="job-Application">申请</li>
+								</ul>
+
+							</div>
+							<div class="info-down">
+								<ul class="">
+									<li class="resource">发布来源</li>
+									<li class="publisher">神州专车分公司</li>
+									<li class="work_addre">朝阳</li>
+								</ul>
+							</div>
+						</div>
+					</a>
+				</li>
+			</template>
+		</div>
+
+		<script type="text/javascript">
+			mui.init();
+			var typeid = null;
+			mui.plusReady(function() {
+				pageInit();
+				pageinfo();
+			})
+			function pageInit() {
+				document.getElementById("key_focus").focus();
+			}
+			
+			
+			//获取搜索信息
+			function pageinfo() {
+				var ws = plus.webview.currentWebview();
+				typeid = ws.typeid;
+				var keyArr = [];
+				keyArr = common.myStorage.getItem("keywords");
+				if(!keyArr){
+					var keyArr = [];
+					document.querySelector(".history_search").style.display = "none";
+				}else{
+					document.querySelector(".history_search").style.display = "block";
+				}
+				
+				//添加关键及记录
+				addKeySpan(keyArr)
+				//删除本地搜索关键字记录
+				deleteKey()
+				console.log(keyArr)
+				//添加搜索关键字排名榜
+				addHotKeywords(typeid);
+				document.getElementById("search").addEventListener("tap", function() {
+					var keywords = document.getElementById("key_focus").value;
+					if(keywords == "") {
+						mui.toast("关键字不能为空！");
+						return;
+					}
+					//查找本地缓存里面的关键字信息  如何有就删除并添加关键之到数组的第一位
+					//如果没有就直接添加到数组的第一位
+					var index = keyArr.indexOf(keywords)
+					if(index != -1){
+						keyArr.splice(index,1);
+					}
+					keyArr.unshift(keywords);
+					common.myStorage.setItem("keywords", keyArr);
+					document.getElementById('work_list').innerHTML = "";
+					
+					addSelectList(keywords,keyArr);
+					
+					//添加搜索关键字记录
+					new Shop().set_user_search_keywords(typeid,keywords,function(data){
+						console.log(JSON.stringify(data));
+					});
+				});
+				
+				document.getElementById("key_focus").addEventListener("keydown", function(e) {
+					if(13 == e.keyCode){
+						console.log("你按了搜索键！");
+						var keywords = document.getElementById("key_focus").value;
+					if(keywords == "") {
+						mui.toast("关键字不能为空！");
+						return;
+					}
+					//查找本地缓存里面的关键字信息  如何有就删除并添加关键之到数组的第一位
+					//如果没有就直接添加到数组的第一位
+					var index = keyArr.indexOf(keywords)
+					if(index != -1){
+						keyArr.splice(index,1);
+					}
+					keyArr.unshift(keywords);
+					common.myStorage.setItem("keywords", keyArr);
+					document.getElementById('work_list').innerHTML = "";
+					
+					addSelectList(keywords,keyArr);
+					
+					//添加搜索关键字记录
+					new Shop().set_user_search_keywords(typeid,keywords,function(data){
+						console.log(JSON.stringify(data));
+					});
+						document.activeElement.blur();
+					}
+				},false);
+			}
+			
+			function addSelectList(keywords,keyArr){
+				//搜索关键字接口
+					new Shop().select_for_keywords(keywords, function(data) {
+						if(data.length == 0){
+							mui.toast("没有搜索到有关信息！");
+							return false;
+						}else{
+							var w = plus.nativeUI.showWaiting("正在搜索");
+							setTimeout(function() {
+								document.getElementById("work_list").style.display = "block";
+								document.querySelector(".history_search").style.display = "none";
+								document.querySelector(".hot_search").style.display = "none";
+								for(var i in data) {
+									add_list('work_list', data[i]);
+								}
+								w.close();
+								//当搜搜完毕后点击清理按键后回到关键字排名页面
+								onchange(keyArr);
+							}, 1000);
+						}
+					});
+			}
+			
+			//添加数据列表
+			function add_list(rollRom, o) {
+				var table = document.getElementById(rollRom);
+				
+				var content = document.getElementById("listTemp").content;
+				var li = content.querySelector(".board");
+				li.id = rollRom + o.id;
+				li.querySelector(".title").innerHTML = o.title;
+				li.querySelector(".publisher").innerHTML = o.writer;
+				li.querySelector(".work_addre").innerHTML = o.source;
+				li.querySelector(".money").innerHTML = o.shorttitle;
+				li.querySelector(".release_time").innerHTML = new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+				//创建页面
+				var child = content.cloneNode(true);
+				table.appendChild(child);
+				pageInit();
+				var span = document.querySelector(".mui-search").getElementsByTagName("span");
+//				span[0].className = "mui-icon mui-input-clear";
+				document.activeElement.blur();
+				//				}
+				//对应页面id打开详情页
+				document.getElementById(rollRom + o.id).addEventListener("tap", function() {
+					mui.openWindow({
+						url: "../car/detailaPageinfo.html",
+						id: "detailaPage",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+							duration: 200,
+						},
+						waiting: {
+							autoShow: true,
+							title: '正在加载....'
+						},
+						extras: {
+							article_id: o.id,
+							article_title: o.title,
+							article_goodpost: o.goodpost,
+							uname: o.writer,
+							time: o.pubdate
+						}
+					});
+				});
+				
+				
+			}
+			
+			
+			function addKeySpan(keyArr){
+				var search = document.querySelector(".history_search_ul");
+				search.innerHTML = ""
+				for (var i in keyArr) {
+					var span = document.createElement("span");
+					span.innerHTML = keyArr[i];
+					span.className = "tag";
+					search.appendChild(span);
+					span.addEventListener("tap",function(){
+						document.getElementById("key_focus").value = this.innerHTML;
+					})
+				}
+			}
+			
+			
+			function deleteKey(){
+				document.querySelector(".mui-icon-trash").addEventListener("tap",function(){
+					common.myStorage.setItem("keywords","");
+					document.querySelector(".history_search").style.display = "none";
+				})
+			}
+			
+			
+			function addHotKeywords(typeid){
+				new Shop().get_hot_search_keywords(typeid,function(data){
+//					console.log(JSON.stringify(data));
+					if(data.length == 0){
+						document.querySelector(".hot_search").style.display = "none";
+					}else{
+						for (var i in data) {
+							addHotKeywordsList("list",data[i],i)
+						}
+					}
+				})
+			}
+			
+			function addHotKeywordsList(List,o,i){
+//				console.log(JSON.stringify(o))
+				var colorArr = ["#d74b28","#FF8C00","#FFD700","#ccc"];
+				var list = document.getElementById(List);
+				var content = document.getElementById("hot_room").content;
+				var li = content.querySelector(".mui-table-view-cell");
+				li.id =List+i;
+				li.innerHTML ="<em></em>"+o.keyword;
+				if(i < 3){
+					li.querySelector("em").style.background = colorArr[i];
+				}else{
+					li.querySelector("em").style.background = colorArr[3];
+				}
+				li.querySelector("em").innerHTML = parseInt(i)+1;
+				//创建节点
+				var child = content.cloneNode(true);
+				list.appendChild(child);
+				document.getElementById(List+i).addEventListener("tap",function(){
+					//去除em标签
+					var value = this.innerHTML.replace(/<.*>/ig,"")
+					document.getElementById("key_focus").value = value;
+				})
+			}
+			
+			function onchange(keyArr){
+				document.querySelector(".mui-icon-clear").addEventListener("tap",function(){
+					document.getElementById("work_list").style.display = "none";
+					document.querySelector(".history_search").style.display = "block";
+					document.querySelector(".hot_search").style.display = "block";
+					addKeySpan(keyArr)
+				})
+				
+			}
+		</script>
+	</body>
+
+</html>

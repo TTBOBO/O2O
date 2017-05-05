@@ -1,0 +1,329 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../../js/mui.js"></script>
+		<script src="../../../js/Itool/itool.js"></script>
+		<script src="../../../js/Itool/android.js"></script>
+		<script src="../../../js/Itool/ios.js"></script>
+		<script src="../../../js/Config/Config.js"></script>
+		<script src="../../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../../js/Config/WebService.js"></script>
+		<!--<script src="../../js/Itool/pay.js"></script>-->
+		<script src="../../../js/Api/pay.js"></script>
+		<script src="../../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../../js/mui.picker.js"></script>
+		<script type="text/javascript" src="../../../js/mui.poppicker.js"></script>
+		<script type="text/javascript" src="../../../js/city.data-3.js"></script>
+		<script type="text/javascript" src="../../../js/Api/UserDal.js"></script>
+		<link rel="stylesheet" href="../../../css/iconfont.css" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../../css/mui.poppicker.css" />
+		<style>
+			.mui-bar-nav {
+				box-shadow: 0 0px 0px #ccc;
+				background-color: white;
+			}
+			
+			.mui-input-row {
+				height: 50px !important;
+				line-height: 50px;
+			}
+			
+			.mui-input-row:after {
+				left: 0px !important;
+				background: #F3F3F3 !important;
+			}
+			
+			.mui-input-row label {
+				height: 50px;
+				width: 30% !important;
+				line-height: 1.6;
+			}
+			
+			.mui-input-group input {
+				width: 70% !important;
+				height: 50px;
+				line-height: 50px;
+			}
+			
+			.mui-table-view-cell input {
+				float: right;
+				background: red;
+			}
+			
+			.mui-table-view-cell {
+				padding-right: 20px !important;
+			}
+			
+			.mui-active {
+				background: none !important;
+			}
+			
+			.mui-poppicker-header {
+				background: #fff !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" id="header" class="mui-bar mui-bar-nav mui-bar-transparent">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<button class="mui-btn  mui-btn-link mui-pull-right" id="btnSubmit" style="color: white;">修改</button>
+			<h1 class="mui-title" style="color: white;">修改地址</h1>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>收货人：</label>
+					<input type="text" id="consignee" maxlength="6" value="">
+				</div>
+				<div class="mui-input-row">
+					<label>联系电话：</label>
+					<input type="text" class="mui-input-clear" value="" id="tel">
+				</div>
+				<div class="mui-input-row" id="showCityPicker3">
+					<label>所在地区：</label>
+					<input type="text" id="userAddress" class="mui-input-clear ">
+				</div>
+				<textarea id="textarea" rows="5" value="" placeholder="详细地址">江西省南昌市</textarea>
+
+			</form>
+			<ul class="mui-table-view mui-table-view-radio">
+				<li class="mui-table-view-cell">
+					<label>设成默认地址</label>
+					<input class="checkBox" name="radio1" type="checkbox">
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				//				pageInit();
+				//				pick();
+				pageMenu();
+				back();
+				
+			});
+
+			function pageMenu() {
+				var ws = plus.webview.currentWebview();
+				var aid = ws.aid;
+				var consignee = ws.consignee;
+				var address = ws.address;
+				var city = ws.city;
+				var tel = ws.tel;
+				var des = ws.des;
+				var mid = ws.mid
+				//给表单输入所对应的值
+				$("#consignee").val(consignee);
+				$("#tel").val(tel);
+				$("#userAddress").val(city);
+				$("#textarea").val(address);
+				
+				if(des == 1) {
+					$('.checkBox').attr('checked', true);
+					$('.checkBox').val("1")
+				} else {
+					$('.checkBox').val("0")
+				}
+
+//				点击修改事件
+				document.getElementById("btnSubmit").addEventListener("tap",function(){
+					var nAid = aid;
+					var nConsignee = $("#consignee").val();
+					var nTel = $("#tel").val();
+					var nCity = $("#userAddress").val().trim();
+					var nAddress = $("#textarea").val();
+					var Cvalue = $('.checkBox').val();
+					//把地区里面的空格去掉
+					nCity = nCity.replace(/\s/g, '');
+					//检索手机号码
+					var telReg = /^1\d{10}$/;
+					if(nConsignee == "") {
+						mui.toast("请输入联系人姓名！");
+						return;
+					} else if(nTel == "") {
+						mui.toast("请输入联系号码！");
+						console.log("请输入联系号码！");
+						return;
+					} else if(nCity == "") {
+						mui.toast("请添加所在地区");
+						return;
+					}
+					if(!telReg.test(nTel)) {
+						mui.toast("请输入正确格式的电话号码！");
+						return;
+					}
+					if(document.querySelector(".checkBox").checked){
+					    Cvalue = '1';
+					}else{
+						Cvalue = '0';
+					}
+					if( nAid == aid &&  nConsignee == consignee && address == nAddress && city == nCity && tel == nTel && des == Cvalue){
+						mui.toast("您还未修改地址，请修改后提交！");
+						return;
+					}
+					
+					var arrBtn = ['确认','取消'];
+					mui.confirm("你确认已填写的修改信息么？","",arrBtn,function(e){
+						if(e.index == 0){
+							//修改地址开始
+							new UserDAL().update_user_address(mid,nAid,nConsignee,nAddress,nCity,nTel,Cvalue,function(data){
+								console.log(JSON.stringify(data))
+								if(data.msg == 'failed'){
+									mui.toast("修改失败！");
+									closePage();
+								}else if(data.msg == 'success'){
+									mui.toast("修改成功！");
+									closePage();
+								}
+							})
+						}else{
+							
+						}
+					})
+				})
+			}
+			
+			function closePage(){
+				var add_address = plus.webview.currentWebview();
+				var receiv_address = plus.webview.getWebviewById("receiv_address")
+				var comm_order = plus.webview.getWebviewById("comm_order")
+				comm_order && comm_order.reload();
+				receiv_address && receiv_address.reload();
+				add_address && add_address.close();
+			}
+			
+			
+			
+			function pageInit() {
+
+				var ws = plus.webview.currentWebview();
+				var mid = ws.mid;
+				document.getElementById("btnSubmit").addEventListener("tap", function() {
+					var consignee = document.getElementById("consignee").value;
+					var address = document.getElementById("textarea").value;
+					var city = document.getElementById("userAddress").value.trim();
+					//把地区里面的空格去掉
+					city = city.replace(/\s/g, '');
+					var tel = document.getElementById("tel").value;
+					var telReg = /^1\d{10}$/;
+
+					if(consignee == "") {
+						mui.toast("请输入联系人姓名！");
+						return;
+					} else if(tel == "") {
+						mui.toast("请输入联系号码！");
+						console.log("请输入联系号码！");
+						return;
+					} else if(city == "") {
+						mui.toast("请添加所在地区");
+						return;
+					}
+					if(!telReg.test(tel)) {
+						mui.toast("请输入正确格式的电话号码！");
+						return;
+					}
+					if(document.querySelector(".checkBox").checked) {
+						des = '1';
+					} else {
+						des = '0';
+					}
+					new UserDAL().add_user_address(mid, consignee, address, city, tel, des, function(data) {
+						console.log(JSON.stringify(data));
+						switch(data.msg) {
+							case 'failed':
+								mui.toast("系统出错，请稍后再试");
+								closePage();
+								break;
+							case 'user_no_had':
+								mui.toast("用户不存在");
+								closePage();
+								break;
+							case 'success':
+								mui.toast("添加成功");
+								closePage();
+								break;
+							default:
+								break;
+						}
+					})
+				})
+			}
+
+			function back() {
+				var old_back = mui.back;
+				mui.back = function() {
+					var btn = ['确定', '取消'];
+					mui.confirm('你确认取消现在的更改么？', '', btn, function(e) {
+						if(e.index == 0) {
+							old_back();
+						} else {
+
+						}
+
+					});
+				}
+			}
+
+			//关闭页面
+			function closePage() {
+				var add_address = plus.webview.currentWebview();
+				var receiv_address = plus.webview.getWebviewById("receiv_address")
+				var comm_order = plus.webview.getWebviewById("comm_order")
+				comm_order && comm_order.reload();
+				receiv_address && receiv_address.reload();
+				add_address && add_address.close();
+			}
+
+			function pick() {
+				//				var cityPicker3 = new $.PopPicker({
+				//						layer: 3
+				//					});
+				var cityPicker;
+				cityPicker3.setData(cityData3);
+				var showCityPickerButton = doc.getElementById('showCityPicker3');
+				//					var cityResult3 = doc.getElementById('cityResult3');
+				showCityPickerButton.addEventListener('tap', function(event) {
+					cityPicker3.show(function(items) {
+						//							cityResult3.userAddress = "你选择的城市是:" + (items[0] || {}).text + " " + (items[1] || {}).text + " " + (items[2] || {}).text;
+						mui.toast("你选择的城市是:" + (items[0] || {}).text + " " + (items[1] || {}).text + " " + (items[2] || {}).text);
+						//返回 false 可以阻止选择框的关闭
+						//return false;
+					});
+				}, false);
+			}
+		</script>
+		<script>
+			(function($, doc) {
+				$.init();
+				$.ready(function() {
+					//-----------------------------------------
+					//					//级联示例
+					var cityPicker3 = new $.PopPicker({
+						layer: 3
+					});
+					cityPicker3.setData(cityData3);
+					var showCityPickerButton = doc.getElementById('showCityPicker3');
+					var userAddress = document.getElementById('userAddress');
+					showCityPickerButton.addEventListener('tap', function(event) {
+						cityPicker3.show(function(items) {
+							userAddress.value = (items[0] || {}).text + " " + (items[1] || {}).text + " " + (items[2] || {}).text;
+							mui.toast("你选择的城市是:" + (items[0] || {}).text + " " + (items[1] || {}).text + " " + (items[2] || {}).text);
+							//返回 false 可以阻止选择框的关闭
+							//return false;
+						});
+					}, false);
+				});
+			})(mui, document);
+		</script>
+		<script src="../../../js/immersed.js"></script>
+	</body>
+
+</html>

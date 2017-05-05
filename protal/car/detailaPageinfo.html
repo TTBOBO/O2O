@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<script src="../../js/Api/AtlasArticle.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<style type="text/css">
+			.content{ width: 100%;  margin:25px auto; }
+			.content > div{ padding-left: 4%; padding-right: 4%;  margin: auto; background-color: white; }
+			#title{  padding:30px 0 40px 0 ; width: 100%; text-align: center; margin: auto;  background-color: white;  border-bottom: 1px solid #C7C7CC; }
+			.currency{ padding-bottom: 10px; border-bottom: 1px solid #C7C7CC;}
+			.currency p{ margin-bottom:5px  ;}
+			.currency p span{ color: #000000;   font-weight: 700; }
+			.compensation{ padding: 15px 0 !important; margin: 0px; color:#FD7222 ; font-size: 24px; font-weight: 600;}
+			.compensation span{ color:#FD7222 !important;}
+			.JobDescription{ padding: 20px 0; margin: 5px 0 !important;}
+			.JobDescription div{ margin-bottom: 10px;}
+			.JobDescription p{ font-size: 15px ; line-height: 25px; margin-bottom: 0px !important;}
+			.JobDescription h4{ margin-bottom: 10px;}
+			.ModeApplication{ height:48px ; width: 100%; padding: 0 1%; background-color: white; margin: 0;  }
+			.ModeApplication div{ border-radius: 5px;  background-color: green; text-align: center; height: 36px; margin: 6px 1.5%; line-height: 36px; color: white;  }
+			.Resumes{ float: left; width: 41%; }
+			a{
+				color: white;
+				text-decoration: none;
+			}
+			.MicroTalk{ float: left; width: 24%; }
+			.call{ float: right; width: 26%; background-color: #FF7200 !important;}
+			.ModeApplication div span{ padding: 0 !important; font-size: 16px !important; margin-right: 4px;}
+			.Publisher span{ margin-left: 10px;}
+			.phone{ padding-top: 10px !important;}
+			.mui-bar{
+				box-shadow: none !important;
+				border-top-style: 1px solid #ccc !important; 
+			}
+		</style>
+	</head>
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #fff;"></a>
+			<a class="mui-action-menu mui-icon iconfont icon-roundadd mui-pull-right" style="color: #fff; font-size: 30px;"></a>
+			<h1 class="mui-title" style=" color: #fff !important;"></h1>
+		</header>
+		
+			<div class="mui-content content" >
+				
+				 <!--职位名 : title--> 
+				<!--<h3 id="title" ></h3>-->
+				
+				<!--职位待遇及职位要求-->
+				<div class="deal currency">
+					
+					<!--月工资-->
+					<p class="compensation"><span></span></p>
+					
+					<!--招聘人数-->
+					<p >招聘人数 :  <span class="recruitmentNumber">60</span></p> 
+					
+					<!--学历要求-->
+					<p>学历要求 : <span class="Education">不限</span></p>
+					
+					<!--经验要求-->
+					<p>经验要求 : <span class="experience">不限</span></p>
+				</div>
+				
+				<!--岗位职责-->
+				<div class="JobDescription">
+					<h4>岗位职责</h4>
+					<!--招聘公司-->
+					<p class="RecruitmentFirm">江西鸿利光电有限公司</p>
+					<div id="RecruitmentBrochure">
+						
+					</div>
+				</div>
+				<!--发布者-->
+				<div class="currency Publisher">
+					<p  class="phone" >电话 <span id="phoneNum">17370850127</span></p>
+					<p >联系人 <span id="pointContact">杨主管</span></p>
+					<p>联系地址   <span id="ContactAddress">红谷滩新区会展路545号</span></p>
+					<p>发布时间   <span id="createTime"></span></p>
+				</div>
+				<!--申请方式-->
+				<!--<div class="ModeApplication">-->
+				<nav class="mui-bar mui-bar-tab ModeApplication">	
+					<!--投简历-->
+					<div class="Resumes"><span class="mui-icon mui-icon-email"> </span> 投简历</div>
+					
+					<!--微聊-->
+					<div class="MicroTalk"><span class="mui-icon mui-icon-chat"></span>微聊</div>
+					
+					<!--打电话-->
+					<div class="call"><span class="mui-icon mui-icon-phone"></span><a id="call">打电话</a> </div>
+				</nav>
+		</div>
+		<!--招聘简章-->
+					<template id="infoTem">
+						<p>招聘简章</p>
+						
+						<!--招聘岗位-->
+						<p>招聘岗位 : <span class="post">操作员  计划员  品质员  储蓄干部 晋升空间大</span></p>
+						
+						<!--招聘要求-->
+						<div class=" personalDetails">
+							<p>1.年龄18-35岁、身体健康、男女不限；</p>
+							<p>2.初中以上文化，有中专或大专学历者优先；</p>
+							<p>3.能接受两班倒，连体服，站着上班。无色盲，能吃苦耐劳、遵章守纪、服从工作安排、无不良记录</p>
+						</div>
+				
+					<!--工资待遇-->
+					<div class="salary">
+						<p>工资待遇:</p>
+						<p>1.试用期：底薪1530元+伙食补助350元+全勤100元+夜班补助10元/晚+加班费
+	满一个月：底薪1630元+伙食补助350元+全勤100元+夜班补助10元/晚+加班费约（正常加班13.19元，周六、日17.58元，国家法定假日26.38元）综合工资3500－5200元/月；</p>
+						<p>2.入职满3个月：底薪1930元，加班费和其它补贴标准不变，另加绩效奖金300元左右。综合工资3800－5500元。</p>
+						<p>3.入职满6个月：底薪2030元，加班费和其它补贴标准不变，综合工资4000－5800元。</p>
+					</div>
+					
+					<!--其他福利-->
+					<div class="OtherBenefits">
+						<p>其他福利:</p>
+						<p>1.工龄奖，满一年40元，每满一年增加40元，不封顶。</p>
+						<p>2.住宿：6人套间（免费），24小时热水、空调、单独阳台、洗漱间、卫生间、衣柜。住宿押金100，一个星期左右退回。</p>
+						<p>3.一年以上员工年度旅游，端午、中秋等传统节日礼物、生日晚会，工作满一年五天带薪年休假。</p>
+						<p>4.入职满两个月后，体检费用公司报销一半。体检男女65元</p>
+					</div>
+					
+					<!--工作时间-->
+					<div class="WorkTime">
+						<p>1、白、夜班两班转。白班08：10－20：10，夜班20：10－08：10；</p>
+					</div>
+					
+					<!--工作地点-->
+					<p> 地址: <span class="WorkAddre">南昌市临空经济开发区儒乐湖大街999号.</span></p>
+				</template>
+				
+		<script type="text/javascript" charset="UTF-8">
+		var article_id = null; //文章id
+		var article_title = null; //文章标题
+		var mask_share = null;	//遮罩
+		var mid = null;
+		var userInfo = null;
+		mui.plusReady(function (){
+			//获取文章所需的参数
+			getPageInfo();
+			//获取文章内容详情
+			getNetData();
+			//传递电话号码
+			setPhoneNum();
+
+		})
+
+		
+		//获取传参
+		function getPageInfo() {
+			plus.webview.currentWebview().setStyle({
+				scrollIndicator: "none"
+			})
+			var w = plus.webview.currentWebview();
+			article_id = w.article_id;
+			article_title = w.article_title;
+			mask_share = mui.createMask(function() {
+				//关闭遮罩时的事件
+				var shareView = plus.webview.getWebviewById('share');
+				//点击遮罩关闭当前页面
+				shareView && shareView.close();
+			});
+		}
+		
+		//加载文章详情数据 
+		function getNetData() {
+			new AtlasArticle().get_img_article_content(article_id, function(data) {
+				console.log(JSON.stringify(data));
+				if(!data) {
+					mui.toast("招聘信息为空!");
+					plus.webview.currentWebview().close();
+					return;
+				}
+				typeid = data.typeid;
+				//设置标题
+				document.querySelector(".mui-title").innerHTML = data.title;
+				document.querySelector('.RecruitmentFirm').innerHTML = data.writer;
+				//设置正文
+				document.getElementById("RecruitmentBrochure").innerHTML = data.body;
+				//设置作者、地址发布时间
+				document.getElementById("pointContact").innerHTML = data.keywords;
+				document.querySelector(".compensation").innerHTML = data.shorttitle+"元/月";
+				document.getElementById("ContactAddress").innerHTML = data.source;
+				document.getElementById("createTime").innerHTML = new Date(parseInt(data.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+			}, function(e) {}); 
+		};
+
+	//setPhoneNum()应放入自执行块
+		function setPhoneNum(){
+			var phoneNum = document.getElementById('phoneNum');
+			var call 	 = document.getElementById('call');
+			phoneValue = phoneNum.textContent;
+			call.href = "tel:" + phoneValue;
+		}
+			
+			
+		</script>
+	</body>
+</html>

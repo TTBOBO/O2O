@@ -1,0 +1,602 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>本地招聘</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/Itool/itool.js"></script>
+		<script src="../../js/Itool/ios.js"></script>
+		<script src="../../js/Itool/android.js"></script>
+		<script src="../../js/Config/Config.js"></script>
+		<script src="../../js/jquery-1.7.2.min.js"></script>
+		<script src="../../js/Config/WebService.js"></script>
+		<script src="../../js/Api/AtlasArticle.js"></script>
+		<script type="text/javascript" src="../../js/Api/Shoplist.js"></script>
+		<script src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Itool/OpenW.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<!--<link rel="stylesheet" href="../../css/main.css" />-->
+		<link rel="stylesheet" href="../../css/app.css" />
+		<style>
+			body {
+				line-height: 20px;
+				font-size: 14px;
+			}
+			
+			li {
+				list-style: none;
+			}
+			
+			.nav_box {
+				background: url(../../img/bjt_regular_2.jpg) no-repeat center;
+				display: block;
+				width: 100%;
+				/*position: relative;*/
+				height: 200px;
+				margin: 0 auto;
+				font-family: "microsoft yahei" !important;
+			}
+			
+			.nav_box .in {
+				position: relative;
+				width: 100%;
+				margin: 0 auto;
+				padding-top: 48px;
+			}
+			
+			.nav_box .fltr {
+				float: left;
+				width: 98%;
+				margin: -1% 1% 0 1%;
+				height: 142px;
+				padding: 2% 2% 0 2%;
+				background: url(../../img/bg_flter.png) repeat;
+				border-radius: 5px;
+			}
+			
+			.fltr .ush {
+				position: relative;
+				width: 100%;
+				height: 34px;
+				margin-top: 4px;
+				margin-bottom: 10px;
+				z-index: 2;
+			}
+			
+			.fltr .el {
+				position: relative;
+				display: block;
+				float: left;
+				width: 85%;
+				height: 34px;
+				line-height: 34px;
+			}
+			
+			.fltr .el .ipt {
+				position: relative;
+				float: left;
+				width: 66.02%;
+				height: 34px;
+				padding: 8px 0 8px 0px;
+				background-color: #fff;
+				border-right: 1px solid #fff;
+				border-radius: 2px 0 0 2px;
+			}
+			
+			.fltr .el .mytxt {
+				float: left;
+				margin-top: -8px;
+				width: 99%;
+				height: 34px;
+				line-height: 34px;
+				font: 16px/26px "Microsoft YaHei";
+				color: #333;
+				text-indent: 10px;
+				font-size: 14px;
+				padding: 0;
+				border-radius: 0;
+				border-style: none none none none;
+			}
+			
+			.fltr .el .addbut {
+				float: left;
+				width: 33.9%;
+				height: 34px;
+				font-size: 14px;
+				font-family: "Microsoft YaHei";
+				color: #333;
+				cursor: pointer;
+				background-color: #fff;
+			}
+			
+			.fltr .el .addbut input {
+				float: left;
+				text-align: left;
+				width: 100%;
+				height: 34px;
+				color: #333;
+				cursor: pointer;
+				background-color: #fff;
+				outline: 0 none;
+				border: 0 none;
+			}
+			
+			.c_999 {
+				color: #999 !important;
+			}
+			
+			.at {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			/*被阻挡在input中看不见*/
+			
+			.fltr .el .addbut em {
+				float: right;
+				display: block;
+				font-style: italic;
+				width: 10px;
+				height: 10px;
+				margin: -24px 13px 0 0;
+				background-position: -75px -85px;
+				border: 1px red solid;
+			}
+			
+			.dicon {
+				display: block;
+				background: url(../../img/list_icon_dw.png) no-repeat;
+			}
+			
+			.fltr .ush button:active {
+				background-color: #ea5800;
+			}
+			
+			.fltr .ush button {
+				/*float: left;*/
+				width: 15%;
+				height: 34px;
+				font-size: 16px;
+				color: #fff;
+				cursor: pointer;
+				background-color: #ff6000;
+				border: 0 none;
+				-webkit-border-radius: 0 3px 3px 0;
+				-moz-border-radius: 0 3px 3px 0;
+				-ms-border-radius: 0 3px 3px 0;
+				border-radius: 0 3px 3px 0;
+			}
+			
+			.nav_box .ht {
+				height: 20px;
+				color: #f1f1f1;
+				overflow: hidden;
+			}
+			
+			.nav_box .ht p {
+				display: inline-block;
+				white-space: nowrap;
+				margin-left: 10px;
+				color: #f1f1f1;
+			}
+			
+			.nav_box .lks {
+				margin-top: 15px;
+				padding-top: 15px;
+				border-top: 1px solid #fff;
+				color: #fff;
+			}
+			
+			.nav_box .lks span:last-child {
+				border-right-style: none;
+			}
+			
+			.nav_box .lks span {
+				text-align: center;
+				width: 20%;
+				float: left;
+				height: 14px;
+				line-height: 14px;
+				border-width: 1px;
+				border-color: #fff;
+				border-right-style: solid;
+			}
+			
+			.lks .e_mb {
+				background-position: -150px 3px;
+			}
+			
+			.lks a {
+				text-align: center;
+				/*position: relative;*/
+				color: #f1f1f1;
+				height: 20px;
+				/*line-height: 20px;*/
+				/*top: -3px;*/
+				/*padding-left: 20px;*/
+			}
+			/*template列表css*/
+			
+			.mui-table-view {
+				width: 100%;
+				padding: 0;
+				background-color: #EFEFF4;
+				/*margin: 0 1% 0 1%;*/
+			}
+			
+			.mui-table-view:after,
+			.mui-table-view:before,
+			.mui-table-view-cell:before,
+			.mui-table-view-cell:after {
+				height: 0px;
+			}
+			
+			.mui-table-view .mui-table-view-cell {
+				background-color: white;
+				margin-bottom: 5px;
+				border-radius: 3px;
+			}
+			
+			.mui-table-view .recruit-info {
+				width: 100%;
+				box-sizing: border-box;
+			}
+			
+			.recruit-info ul {
+				padding: 0;
+			}
+			
+			.recruit-info ul li {
+				list-style: none;
+				font-size: 12px;
+			}
+			
+			.info-upper {
+				width: 100%;
+				height: 95px;
+				border-bottom: 1px #C7C7CC dashed;
+			}
+			
+			.info-upper .upper-left {
+				float: left;
+				width: 70%;
+				height: 90px;
+			}
+			
+			.info-upper .upper-left li {
+				margin-bottom: 5px;
+			}
+			
+			.info-upper .upper-left .title {
+				font-size: 16px;
+				height: 25px;
+				line-height: 25px;
+				width: 100%;
+				text-align: justify;
+				overflow: hidden;
+			}
+			
+			.info-upper .upper-left .money {
+				font-size: 18px;
+				color: #ff6000;
+				position: relative;
+				top: 3px;
+			}
+			
+			.title_deal {
+				position: relative;
+				top: 6px;
+			}
+			
+			.info-upper .upper-left .title_deal span {
+				padding: 2px;
+				margin-right: 2px;
+				font-size: 13px;
+				line-height: 15px;
+			}
+			
+			.info-upper .upper-right {
+				width: 30%;
+				height: 100%;
+				float: right;
+				text-align: right;
+				padding: 0px 10px;
+			}
+			
+			.upper-right li {
+				width: 100%;
+				height: 35px;
+			}
+			
+			.upper-right .release_time {
+				font-size: 14px;
+				color: #C7C7CC;
+				text-align: right;
+				position: relative;
+			}
+			
+			.job-Application {
+				width: 60px !important;
+				height: 30px !important;
+				background-color: #ff6000;
+				line-height: 30px;
+				color: white;
+				float: right;
+				font-size: 15px;
+				font-weight: 300;
+				text-align: center;
+				border-radius: 3px;
+			}
+			
+			.recruit-info .info-down {
+				margin-top: 10px;
+			}
+			
+			.info-down li {
+				float: left;
+			}
+			
+			.info-down li:nth-child(1) {
+				background-color: #ff6000;
+				padding: 0px 4px;
+				text-align: center;
+				height: 20px;
+				line-height: 22px;
+				font-size: 10px !important;
+				color: white;
+				border-radius: 3px;
+				margin-right: 15px;
+			}
+			
+			.info-down .publisher {
+				color: #ccc;
+				font-size: 15px;
+				font-weight: 300;
+				text-align: justify;
+			}
+			
+			.info-down .work_addre {
+				margin-right: 10px;
+				float: right;
+				font-size: 15px;
+				font-weight: 300;
+				color: #ccc;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="info_list" class="mui-content">
+			<div class="nav_box">
+				<div class="in">
+					<div class="fltr radius_5">
+						<div class="ush top_wrap">
+							<div class="el on">
+								<p class="ipt">
+									<input type="text" maxlength="200" placeholder="请输入关键字" readonly="readonly" class="mytxt at">
+								</p>
+								<p class="addbut" id="work_position_click">
+									<input type="button" value="工作地点" type="text" onclick="" id="work_position_input" class="at c_999">
+									<em class="dicon"></em>
+									<input type="hidden" id="jobarea" value="">
+								</p>
+								<div class="ul" id="KwdSearchResult" style="display:none">
+								</div>
+							</div>
+							<button>搜索</button>
+						</div>
+
+						<p class="ht" track-type="recommendKeyword" recommend-type="2">
+							猜你喜欢：
+							<span>Web前端开发</span>
+							<span>前端设计</span>
+							<span>网页前端</span>
+							<span>HTML5</span>
+							<!--<a href=""></a>
+							<a href="">前端设计</a>
+							<a href="">网页前端</a>
+							<a href="">HTML5</a>-->
+						</p>
+						<p class="lks">
+							<span><a class="e_mb e_icon" target="_blank" href="http://jianli.51job.com"></a>简历模板</span>
+							<span><a class="e_qzx e_icon" target="_blank" href="http://qiuzhixin.51job.com"></a>求职信</span>
+							<span><a class="e_qzgl e_icon" target="_blank" href="http://arts.51job.com/cls/class_0501.html"></a>求职攻略</span>
+							<span><a class="e_bbs e_icon" target="_blank" href="http://bbs.51job.com"></a>BBS</span>
+							<span><a class="e_px e_icon" target="_blank" href="http://tr.51job.com/default-tr.php"></a>培训</span>
+							<!--<span><a class="e_gz" target="_blank" href="http://my.51job.com/careerpost/2010/mkt_awards10/index.php">2016典范雇主</a></span>-->
+						</p>
+					</div>
+				</div>
+			</div>
+			<!--显示列表-->
+			<ul id="work_list" class="mui-table-view">
+				<template id="listTemp">
+					<li class="mui-table-view-cell mui-media board">
+						<div class="recruit-info">
+							<div class="info-upper">
+								<ul class="upper-left">
+									<li class="title">神州专车高薪诚聘超级司机</li>
+									<li class="money">8000~12000元</li>
+									<li class="title_deal">
+										<!--span=>class:mui-btn mui-btn-success mui-btn-outlined-->
+
+									</li>
+								</ul>
+								<ul class="upper-right">
+									<li class="release_time">今天</li>
+									<li class="job-Application">申请</li>
+								</ul>
+
+							</div>
+							<div class="info-down">
+								<ul class="">
+									<li class="resource">发布来源</li>
+									<li class="publisher">神州专车分公司</li>
+									<!--<li class="work_addre">朝阳</li>-->
+								</ul>
+							</div>
+						</div>
+					</li>
+				</template>
+			</ul>
+
+		</div>
+
+		<script type="text/javascript">
+			var isios = null; //是否是ios平台
+			var page = 1;
+			mui.init({
+				//				swipeBack: true, //开启右滑关闭功能
+				pullRefresh: {
+					container: '#info_list',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载',
+						callback: pullupRefresh,
+					}
+				}
+			});
+
+			function pulldownRefresh(isDown) {
+				setTimeout(function() {
+					isDown = true; //已下载，直接从本地缓存读取
+					get_img_article(isDown); //获取图集文章内容
+					//get_release(isDown);
+					mui('#info_list').pullRefresh().endPulldownToRefresh();
+				}, 500);
+			}
+
+			function pullupRefresh() {
+				setTimeout(function() {
+					isDown = false; //未缓存，从网络服务器获取
+					get_img_article(isDown); //获取图集文章内容
+					//get_release(isDown);
+					mui('#info_list').pullRefresh().endPullupToRefresh();
+				}, 500);
+			}
+			document.addEventListener("plusready", onPlusReady, false);
+
+			function onPlusReady() {
+				//加载网络数据
+				get_Data();
+				//				get_for_key();
+				click_input();
+			}
+
+			function click_input() {
+				document.querySelector(".mytxt").addEventListener("tap", function() {
+					//					var arr = {
+					//						path: "../car/",
+					//						id: "keywords",
+					//						styles: {},
+					//						extras: {}
+					//					}
+					//					openWebViews(arr.path, arr.id, arr.styles, 3, arr.extras);
+					mui.openWindow({
+						url: "../car/keywords.html",
+						id: "keywords",
+						style: {},
+						show: {
+							aniShow: 'fade-in',
+							duration: 200,
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras:{
+							typeid : "7"
+						}
+					});
+				})
+			}
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+
+			});
+
+			function get_Data() {
+				//获取网络数据
+				setTimeout(function() {
+					mui('#info_list').pullRefresh().pullupLoading();
+				}, 200);
+			}
+
+			function get_img_article(isDown) {
+				//mui.toast(pageSize);
+				new AtlasArticle().get_img_article(7, page, 2, function(data) {
+					console.log(JSON.stringify(data));
+					if(data.length == "") {
+						mui.toast("没有招聘信息了！")
+					}
+					for(var i in data) {
+						addJobArticle(isDown, 'work_list', data[i]);
+					}
+					page++;
+				}, function(e) {});
+			}
+
+			function addJobArticle(isDown, rollRom, o) {
+				var table = document.getElementById(rollRom);
+				//				var arr = {
+				//					path: "../recruitment/",
+				//					id: "detailaPage",
+				//					styles: {},
+				//					extras: {
+				//						article_id: o.id,
+				//						article_title: o.title,
+				//						article_goodpost: o.goodpost,
+				//						uname: o.writer,
+				//						time: o.pubdate
+				//					}
+				//				}
+				var content = document.getElementById("listTemp").content;
+				var li = content.querySelector(".board");
+				li.id = rollRom + o.id;
+				li.querySelector(".title").innerHTML = o.title;
+				li.querySelector(".publisher").innerHTML = o.writer;
+//				li.querySelector(".work_addre").innerHTML = o.source;
+				li.querySelector(".money").innerHTML = o.shorttitle;
+				li.querySelector(".release_time").innerHTML = new Date(parseInt(o.pubdate) * 1000).toFormatString("yyyy-MM-dd");
+				//创建页面
+				var child = content.cloneNode(true);
+				if(isDown == true) {
+					table.insertBefore(child, table.firstChild);
+				} else {
+					table.appendChild(child);
+				}
+				//对应页面id打开详情页
+				document.getElementById(rollRom + o.id).addEventListener("tap", function() {
+					mui.openWindow({
+						url: "../car/detailaPageinfo.html",
+						id: "detailaPage",
+						style: {},
+						show: {
+							aniShow: 'pop-in',
+							//slide-in-bottom(top/left/right) fade-in(out) zoom-out zoom-fade-out
+							duration: 200,
+						},
+						waiting: {
+							autoShow: true,
+							title: '正在加载....'
+						},
+						extras: {
+							article_id: o.id,
+							article_title: o.title,
+							article_goodpost: o.goodpost,
+							uname: o.writer,
+							time: o.pubdate
+						}
+					});
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

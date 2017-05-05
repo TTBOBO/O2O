@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title nvtt" style="color: white;"></h1>
+			<!--<div class="nvtt">首页</div>-->
+			<!--<div class="nvbt idoc" onclick="openDoc('Barcode Document','/doc/barcode.html')"></div>-->
+		</header>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var ws = null,
+				embed = null;
+			
+			// 判断扩展API是否准备，否则监听"plusready"事件
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			
+			// 扩展API加载完毕，现在可以正常调用扩展API 
+			function plusReady() {
+				ws = plus.webview.currentWebview();
+				var description = ws.description;
+				var acticle_title = ws.acticle_title;
+				document.querySelector(".mui-title").innerHTML = acticle_title;
+//				document.querySelector("body").innerHTML = description;
+				ws.addEventListener('show', createEmbed, false);
+				setTimeout(function(){
+					createEmbed(description);
+				},500);
+				
+			}
+			// 创建子Webview
+			function createEmbed(description) {
+				var topoffset = '45px';
+				if(plus.navigator.isImmersedStatusbar()) { // 兼容immersed状态栏模式
+					topoffset = (Math.round(plus.navigator.getStatusbarHeight())) + 'px';
+				}
+//				plus.nativeUI.showWaiting('', {
+//					style: 'black',
+//					modal: false,
+//					background: 'rgba(0,0,0,0)'
+//				});
+				embed = plus.webview.create(description, 'embed', {
+					top: topoffset,
+					bottom: '0px',
+					position: 'absolute',
+					dock: 'bottom',
+					bounce: 'vertical'
+				});
+				ws.append(embed);
+				embed.addEventListener('loaded', function() {
+//					plus.nativeUI.closeWaiting();
+				}, false);
+//				embed.addEventListener('loading', function() {
+//					plus.nativeUI.showWaiting('', {
+//						style: 'black',
+//						modal: false,
+//						background: 'rgba(0,0,0,0)'
+//					});
+//				}, false);
+			}
+			// 打开网址
+			function openUrl() {
+				var url = document.getElementById("url");
+				embed.loadURL(url.value);
+				url.blur();
+			}
+			// 页面加载后自动打开
+			document.addEventListener("DOMContentLoaded", function() {
+				if(embed) {
+					openUrl();
+				} else {
+					auto = true;
+				}
+			}, false);
+			// 页面跳转完成事件
+			function onBrowserLoading() {
+				document.getElementById("url").value = embed.getURL();
+				plus.webview.currentWebview().reload();
+			}
+			
+		</script>
+	</body>
+
+</html>

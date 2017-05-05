@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Api/ArticleDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/itool.js"></script>
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/iconfont.css" rel="stylesheet" />
+		<style>
+			#content {}
+			
+			.mui-bar {
+				border: none !important;
+				box-shadow: none !important;
+			}
+			
+			#bar {
+				background: #fff;
+			}
+			
+			#textshu {
+				margin: auto;
+				width: 78%;
+				margin-top: 1%;
+				margin-left: 2%;
+				border: 1px solid #EAEAEA;
+			}
+			
+			#btn {
+				margin: auto;
+				padding: 0px;
+				width: 15%;
+				height: 80%;
+				margin-left: 2%;
+				margin-top: -.5%;
+				background: #d74b28;
+				border: none;
+			}
+			
+			.article_header {
+				height: 40px;
+				border: 1px none #EFEFF4;
+				border-bottom-style: solid;
+			}
+			
+			.new_feed_back {
+				position: relative;
+				float: left;
+				height: 40px;
+				color: #ccc;
+				font-size: 15px;
+				line-height: 40px;
+				bottom: 0px;
+			}
+			
+			.new_feed_back:after {
+				position: absolute;
+				content: "";
+				width: 100%;
+				height: 1px;
+				bottom: 0px;
+				left: 0px;
+				background: #EB4F38;
+			}
+			
+			.mui-table-view {
+				border: none !important;
+			}
+			
+			.mui-table-view:before {
+				height: 0px !important;
+			}
+			
+			.mui-table-view:after {
+				height: 0px;
+			}
+			
+			.directory:after {
+				content: "";
+				height: 1px;
+				position: absolute;
+				bottom: 0px;
+				background: #FAFAFA;
+				width: 90%;
+				left: 5%;
+			}
+			
+			.directory {
+				border: none !important;
+				position: relative;
+				width: 100%;
+				height: auto;
+				border-bottom: 1px solid #CCCCCC;
+				float: left;
+			}
+			
+			#listMode {
+				position: absolute;
+				width: 100%;
+				height: auto;
+			}
+			
+			html {
+				background: #fff !important;
+			}
+			
+			.noMsg {
+				width: 80%;
+				height: 300px;
+				margin: 30% 10% 0% 10%;
+				display: block;
+			}
+			
+			.mui-content {
+				background: #fff !important;
+			}
+			
+			.userImg {
+				position: relative;
+				left: 5px;
+				width: 40px;
+				height: 40px;
+				margin-top: 10px;
+				border-radius: 50px;
+				object-fit: cover;
+			}
+			
+			.directoryAll {
+				position: relative;
+				top: -25px;
+				left: 10%;
+				width: 80%;
+				height: 100%;
+				margin-left: 5%;
+			}
+			
+			.info {
+				width: 100%;
+				height: 20%;
+				line-height: 1;
+				margin-bottom: 10px;
+				margin-top: -18px;
+				font-size: 18px;
+			}
+			
+			#writer {
+				width: 100%;
+				display: block;
+				color: #000 !important;
+			}
+			
+			#pubdate {
+				width: 100%;
+				color: #ccc !important;
+				margin-right: 15%;
+				line-height: 18px;
+				font-size: 12px;
+			}
+			
+			.directoryContent {
+				width: 80%;
+				letter-spacing: 1px;
+				height: 70%;
+				font-size: 14px;
+				word-break: break-word;
+				color: #000 !important;
+			}
+			
+			#refreshContainer {
+				overflow: scroll;
+				position: absolute;
+				overflow-x: hidden;
+				/*bottom: 10%;*/
+			}
+			
+			.article_title {
+				font-size: 18px;
+				width: 100%;
+				margin-top: 80px;
+				letter-spacing: 2px;
+				font-weight: 400;
+			}
+			
+			.mui-scroll {
+				width: 95%;
+				left: 2.5%;
+			}
+			/*.mui-table-view:before{background: #fff !important;}*/
+		</style>
+		<script>
+			var aid = null;
+			var mid = null;
+			//是否匿名(0表示匿名，1表示不匿名，默认0)
+			var isanonymous = 0;
+			//评价(0表示顶，1表示踩，2表示中立，默认0)
+			var goodbad = 2;
+			mui.init({
+				swipeBack: true
+			});
+			mui.plusReady(function() {
+				//页面初始化
+				pageInit();
+				//加载本地数据
+				//				loadData();
+				//获取网络数据
+				//				getNetData();
+				//发送点击事件
+				textshuempty();
+				//隐藏滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: "none"
+				})
+			});
+			//发送点击事件
+			function textshuempty() {
+				/*var box = document.getElementById("box");
+					box.addEventListener('tap', function() {
+						if (box.value == "0") {
+							box.value = '1';
+						} else {
+							box.value = '0';
+						}
+						isanonymous = box.value;
+					});*/
+//				document.getElementById("btn").addEventListener("tap", function() {
+//					var txt = document.getElementById("textshu");
+//					if(txt.value.length > 140) {
+//						mui.toast("评论字数控制在140字以内");
+//						return;
+//					} else if(txt.value.length == "") {
+//						mui.toast("评论失败，内容不能为空！");
+//						return;
+//					}
+//					var info = encodeURI(txt.value);
+//					new ArticleDAL().set_article_feedback_save(aid, mid, goodbad, info, function(data) {
+//						if(data.result != "success") {
+//							//console.log(JSON.stringify(data));
+//							mui.toast("评论失败");
+//						}
+//						document.getElementById("content").innerHTML = "";
+//						getNetData_list();
+//						mui.toast("评论成功");
+//					}, function(e) {});
+//					txt.value = "";
+//				});
+			}
+
+			function pageInit() {
+				var w = plus.webview.currentWebview();
+				aid = w.acticle_id;
+				artcle_title = w.acticle_title;
+				console.log(artcle_title)
+				mid = common.myStorage.getItem("userData").mid;
+				//获取评论列表数据
+				getNetData_list();
+			}
+
+			function getNetData_list() {
+				var noMsg = document.querySelector(".noMsg");
+				new ArticleDAL().get_article_feedback_list(aid, function(data) {
+					console.log(JSON.stringify(data));
+					document.querySelector(".article_title").innerHTML = artcle_title;
+					if(data.length == 0) {
+						mui.toast('快来踩楼吧！^_^');
+						document.querySelector(".feedback_num").innerHTML = "";
+						return;
+					}
+					document.querySelector(".feedback_num").innerHTML = "(" + data.length + ")";
+					if(data.length != 0) {
+						noMsg.style.display = "none";
+						for(var i in data) {
+							addList(data[i]);
+						}
+					}
+
+				}, function(e) {});
+			}
+
+			function addList(o) {
+				var content = document.getElementById("listMode").content;
+				var li = content.querySelector('div.directory');
+
+				//设置评论id
+				li.id = o.id;
+				//设置评论头像
+				li.querySelector('.userImg').src = o.face;
+				//设置评论这名字
+				li.querySelector('.writer').innerHTML = o.username;
+				//设置评论时间
+				var dtime = new Date(parseInt(o.dtime) * 1000);
+				li.querySelector('.pubdate').innerHTML = TimeDifference(dtime);
+				//设置评论内容 
+				li.querySelector('.directoryContent').innerHTML = o.msg;
+				//添加到页面
+				document.getElementById("content").appendChild(content.cloneNode(true));
+			}
+		</script>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">评论</h1>
+		</header>
+		<div class="mui-content">
+			<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="article_title"></div>
+					<div class="article_header">
+						<div class="new_feed_back">最新评论<span class="feedback_num"></span></div>
+					</div>
+					<div id="content" class="mui-table-view">
+					</div>
+					<div class="noMsg"><img src="../../img/noMsg.png" style="width: 100%;" height="100%" /> </div>
+				</div>
+			</div>
+		</div>
+		<template id="listMode">
+			<div class="directory">
+				<a href="javascript:;">
+					<img class="userImg" src="../../img/1.jpg">
+					<div class="directoryAll">
+						<div class="info">
+							<span class="writer" id="writer">评论者</span>
+							<span class="pubdate" id="pubdate">发布时间</span>
+						</div>
+						<p class="directoryContent" style="height: 100%;">内容</p>
+					</div>
+				</a>
+			</div>
+		</template>
+
+		<!--<div id="bar" class="mui-bar mui-bar-tab">
+			<span class="mui-pull-left" style="width: 30%;">
+				<div class="mui-input-row mui-checkbox mui-left">
+					<p style="margin-top: 15%; margin-left: 30%;"> 使用匿名</p>
+					<input id="box" name="checkbox" value="0" type="checkbox" checked="checked" style="margin-top: 8%; margin-left: -15%;">
+				</div>
+			</span>
+			<input id="textshu" type="text" contenteditable="true" class="mui-input-clear" />
+			<button id="btn" class="mui-btn mui-btn-primary">
+				发表
+			</button>
+		</div>-->
+	</body>
+	<script type="text/javascript" src="../../js/immersed.js"></script>
+
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Itool/ios.js"></script>
+		<script type="text/javascript" src="../../js/Itool/android.js"></script>
+		<script type="text/javascript" src="../../js/Config/Config.js"></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../../js/Config/WebService.js"></script>
+		<script type="text/javascript" src="../../js/Api/UserDal.js"></script>
+		<script type="text/javascript" src="../../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../../js/Itool/OpenW.js" ></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/regist.css" />
+
+		<style>
+			body {
+				background: #fff;
+			}
+			
+			.mui-content {
+				background-color: white;
+				margin-top: 80px;
+			}
+			
+			#nextBtn {
+				background-color: #6495ED !important;
+				color: white;
+				border: 0px solid #000;
+				height: 50px;
+				line-height: 12px;
+				transition: .3s linear;
+				margin-top: 20px;
+				width: 95%;
+				margin-left: 2.5%;
+			}
+			
+			#nextBtn:active {
+				-webkit-filter: brightness(80%);
+			}
+		</style>
+		<script type="text/javascript"> 
+			var uname = null;
+			var tel = null;
+			mui.init();
+			mui.plusReady(function(){
+				pageInit();
+			});
+			
+			function pageInit(){	
+				document.getElementById("nextBtn").addEventListener("tap",function(){
+					var uname = document.getElementById("user").value.trim() ;
+					var tel = document.getElementById("tel").value.trim();
+					if(user == "" || tel == "") {
+						mui.toast("用户名或者手机号码不能为空");
+						return;
+					}
+					
+					new UserDAL().inspect_user(uname,tel,function(data){
+						console.log(JSON.stringify(data));
+						switch (data.msg){
+							case 'success':
+								mui.toast("请认真填写密码");
+								goNextPage();
+								break;
+							case 'failed' :
+								mui.toast("用户名不存在");
+							case 'isNo' :
+								mui.toast("手机号码不正确");
+							default:
+								break;
+						}
+					});
+					
+					function goNextPage(){
+						var arr = {
+							path :"",
+							id: "getNewPws",
+							styles: {},
+							extras:{
+								"uname" :uname,
+								"tel" :tel
+							}
+						};
+						openWebViews(arr.path,arr.id,arr.styles,1,arr.extras);
+					}
+				})
+			}
+		</script>
+	</head>
+
+	<body>
+		<header style="background: #d74b28;" class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">找回密码</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<input id="user" type="text" class="mui-input-clear" value="tab521" placeholder="请输入用户名">
+				</div>
+				<div class="mui-input-row">
+					<input id="tel" type="tel" class="mui-input-clear" value="13698006449" placeholder="请输入手机号">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<button id="nextBtn" type="button" class="mui-btn mui-btn-success mui-btn-block">下一步</button>
+			</div>
+		</div>
+
+	</body>
+	<script type="text/javascript" src="../../js/immersed.js" ></script>
+</html>

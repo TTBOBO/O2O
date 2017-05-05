@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/Itool/androidBack.js"></script>
+		<script type="text/javascript" src="../js/Itool/WebViewUnity.js"></script>
+		<script type="text/javascript" src="../js/Itool/common.js"></script>
+		<script type="text/javascript" src="../js/Chat/IM.js"></script>
+		<script type="text/javascript" src="../js/Chat/MD5.js"></script>
+		<script type="text/javascript" src="../js/Chat/base64.js"></script>
+		<script type="text/javascript" src="../js/Chat/jquery-1.11.0.js"></script>
+		<script type="text/javascript" src="../js/Chat/justdo.js"></script>
+		<script type="text/javascript" src="../js/Api/ChatDal.js"></script>
+		<script type="text/javascript" src="../js/Itool/JsonTools.js"></script>
+		<script type="text/javascript" src="../js/Itool/touch-ripple.js" ></script>
+		<!--<script type="text/javascript" src="../js/immersed.js" ></script>-->
+		<link rel="stylesheet" href="../css/iconfont.css" />
+		<link rel="stylesheet" href="../css/main.css" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			nav {
+				box-shadow: 0 0 0 rgba(0, 0, 0, .85) !important;
+				height: 51px !important;
+			}
+			
+			.mui-bar-nav {
+				box-shadow: 0 0px 0px #ccc;
+				background-color: white;
+			}
+			.mui-bar-tab .mui-tab-item .center_bar{
+				margin-bottom: 6px;
+				padding-top: 10px;
+				width: 45px;
+				height: 45px;
+				background-color:  #f73905;
+				border-radius: 50%;
+				color: #fff;
+				}
+				
+
+			.mui-bar-nav ~ .mui-content .mui-pull-top-pocket{
+	           		top: 75px !important;
+	        }
+	        .Lager{
+	        	animation: lager .3s ease-in;
+	        }
+	        
+	        @keyframes lager{
+	        	0%{transform: scale(1);}
+	        	50%{transform: scale(1.2);}
+	        	100%{transform: scale(1);}
+	        }
+		</style>
+		<script type="text/javascript" charset="UTF-8">
+			var ws = null;
+			var className = null;
+			//当前激活选项
+			var activeTab = "mainInterfaceRoom.html";
+			mui.init({
+				gestureConfig: {
+					tap: true, //默认为true
+					doubletap: true, //默认为false
+					longtap: true, //默认为false
+					swipe: true, //默认为true
+					drag: true, //默认为true
+					hold: false, //默认为false，不监听
+					release: false //默认为false，不监听
+				}
+			});
+			mui.plusReady(function() {
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+				//页面初始化
+				pageInit();
+				/*页面加载完成发生*/
+				pageOnload();
+				//请求网络数据以便判断一致性并渲染文字资料
+				getNetData();
+				//自定义事件模拟点击个人中心我的收藏
+				var personpage = plus.webview.getWebviewById('personaCenterRoom1');
+				mui.fire(personpage, 'spread');
+				touch_btn();
+			});
+			
+			
+			
+			
+			//自定义事件，模拟点击“首页选项卡”
+			window.addEventListener('goActive', function() {
+				var defaultTab = document.getElementById("mainInterfaceRoom.html");
+				//模拟首页点击
+				mui.trigger(defaultTab, 'tap');
+				//切换选项卡高亮
+				var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+				if (defaultTab !== current) {
+					current.classList.remove('mui-active');
+					defaultTab.classList.add('mui-active');
+				}
+				plus.webview.getWebviewById('mainInterfaceRoom.html').reload(false);
+				var wz = plus.webview.getWebviewById('article/articleListRoom2.html');
+				//var wd = plus.webview.getWebviewById('ask/askListdataRoom.html');
+				wz && wz.reload();
+				//wd && wd.reload();
+				
+				pageOnload();
+				getNetData();
+				
+				
+			});
+			
+			function touch_btn(){	
+				new TouchRipple('.btnOne', {
+			        color: 'rgba(0,0,0,0.2)',
+			        time: 300,
+			        size: null
+			    })
+				new TouchRipple('.btnTwo', {
+			        color: 'rgba(0,0,0,0.2)',
+			        time: 300,
+			        size: null
+			    })
+				new TouchRipple('.btnThree', {
+			        color: 'rgba(0,0,0,0.2)',
+			       	time: 300,
+			        size: null
+			    })
+				new TouchRipple('.btnFour', {
+			        color: 'rgba(0,0,0,0.2)',
+			        time: 300,
+			        size: null
+			    })
+			}
+			//页面初始化
+			function pageInit() {
+				ws = plus.webview.currentWebview();
+				//菜单初始化
+				menuInit();
+				//默认打开第一个tab页
+				changePage(document.getElementById('mainInterfaceRoom.html'));
+			}
+			/*页面加载完成发生*/
+			function pageOnload() {
+				userInfo = common.myStorage.getItem("userData");
+				//console.log(JSON.stringify(userInfo));
+			};
+			//请求网络数据以便判断一致性并渲染文字资料
+			function getNetData() {
+				if (userInfo) {
+					IM.init();
+					IM.DO_login(userInfo.mid);
+					IM._onMsgReceiveCallback = function(obj) {
+						//console.log(JSON.stringify(obj));
+						var chatMsg = new ChatModel();
+						chatMsg.version = obj.version;
+						chatMsg.chat_FROM = obj.msgSender;
+						chatMsg.chat_TO = obj.msgReceiver;
+						chatMsg.user_nikeName = obj.msgSender;
+						chatMsg.user_sex = "1";
+						chatMsg.user_photo = "";
+						chatMsg.content = obj.msgContent;
+						//console.log(obj.msgDateCreated);
+						chatMsg.times = obj.msgDateCreated;
+						chatMsg.lengths = 1;
+						chatMsg.chat_contenttype = "text";
+						var info = new ChatDal().getChatItme(obj.msgSender);
+						if (info) {
+							new ChatDal().updateChatItme(chatMsg, true);
+						} else {
+							new ChatDal().addChatItme(chatMsg, true);
+						}
+						var myconsultation = plus.webview.getWebviewById('myconsultation');
+						var imchat = plus.webview.getWebviewById('im-chat');
+						if (imchat) {
+							imchat && mui.fire(imchat, "page:change", {
+								"chatMsg": chatMsg
+							});
+						} else if (myconsultation) {
+							myconsultation && mui.fire(myconsultation, "page:change");
+						}
+					}
+				}
+			}
+			//菜单初始化
+			function menuInit() {
+				//tab页  切换
+				mui("nav").on('tap', 'a', function(e) {
+//					
+					// 获取图标对象 tab-bar 图标切换
+					var targetIcon=mui(this.children[0])[0];
+					// 初始化
+					mui('.mui-bar-tab .mui-tab-item i').each(function (index,item) {
+						var itemIcon = item.getAttribute('class');
+						if(itemIcon.indexOf('fill')){
+							console.log(this.className)
+							item.className = itemIcon.replace('fill','');
+						}
+						
+					});
+					// 设置当前的图标
+					targetIcon = targetIcon.className = targetIcon.getAttribute('class')+"fill";
+//					className = this.className;
+//					this.setAttribute("class",this.className + " Lager");
+//					console.log(this.className)
+//					setTimeout(function(){
+//						console.log(className)
+//						document.querySelector(this.className + " Lager").className = className;
+//					},0);
+					var that = this;
+//					document.querySelector(".icon-roundadd").style.display = "none";
+//					if(that.id == "article/articleListRoom2.html"){
+//						document.querySelector(".icon-roundadd").style.display = "block";
+//					}
+					//that.id == "consultation/consultationRoom.html" || 
+//					if (that.id == "car/userCarRoom.html") {
+//						//判断是否登录
+//						var userData = common.myStorage.getItem("userData");
+//						if (!userData || userData.length == 0) {
+//							e.stopPropagation();
+//							mui.toast("您是游客身份，请先登陆");
+//							mui.openWindow({
+//								//url: "other/loginUser.html",
+//								url: "other/login.html",
+//								id: "login",
+//								style: {},
+//								show: {
+//									aniShow: 'zoom-out',
+//									duration: 200,
+//								},
+//								waiting: {
+//									autoShow: true,
+//									title:'正在跳转到登录'
+//								}
+//							});
+//							return;
+//						}
+//					}
+					if (activeTab == that.id) {
+						return;
+					}
+					activeTab = that.id;
+					changePage(this);
+					
+				});
+				//发送消息
+				window.addEventListener('send:Msg', function(event) {
+					var info = event.detail.info;
+					var chatMsg = new ChatModel();
+					chatMsg.chat_FROM = info.chat_FROM;
+					chatMsg.chat_TO = info.chat_TO;
+					chatMsg.user_nikeName = info.chat_TO;
+					chatMsg.user_sex = "1";
+					chatMsg.user_photo = "";
+					chatMsg.content = info.content;
+					chatMsg.times = Math.round(new Date().getTime());
+					chatMsg.lengths = 0;
+					chatMsg.chat_contenttype = "text";
+					var infoTemp = new ChatDal().getChatItme(info.chat_TO);
+					if (infoTemp) {
+						new ChatDal().updateChatItme(chatMsg, false);
+					} else {
+						chatMsg.chat_FROM = info.chat_TO;
+						chatMsg.chat_TO = info.chat_FROM;
+						new ChatDal().addChatItme(chatMsg, true);
+					}
+					IM.DO_sendMsg(info.chat_TO, info.content);
+					var myconsultation = plus.webview.getWebviewById('myconsultation');
+					myconsultation && mui.fire(myconsultation, "page:change");
+				});
+			}
+
+			function changePage(e, top, bom) {
+				top = top || '0px';
+				bom = bom || '51px';
+				
+				//切换页面
+				pageShow(ws, e, top, bom);
+				//更换标题
+				changeTitle(e);
+			}
+
+			function changeTitle(e) {
+				document.querySelector("header>h1").innerHTML = e.innerText;
+				document.querySelector("header").setAttribute('data-pageid', e.id);
+			}
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-menu mui-icon iconfont icon-roundadd mui-pull-right" style="color: #000; font-size: 30px; "></a>
+			<h1 class="mui-title"></h1>
+		</header>
+		
+		<nav class="mui-bar mui-bar-tab">
+			<a id="mainInterfaceRoom.html" class="mui-tab-item mui-active btnOne">
+				<i class="mui-icon iconfont icon-shouyefill"></i>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a id="article/articleListRoom2.html" class="mui-tab-item btnTwo">
+				<i class="mui-icon iconfont icon-favor"></i>
+				<span class="mui-tab-label">秒券</span>
+			</a>
+			<a id="car/userCarRoom.html" class="mui-tab-item consultation btnThree">
+				<i class="mui-icon iconfont icon-cart"></i>
+				<span class="mui-tab-label">购物车</span>
+			</a>
+			<a id="personal/personRoom.html" class="mui-tab-item personal btnFour">
+				<i class="mui-icon iconfont icon-pengyou"></i>
+				<span class="mui-tab-label">个人中心</span>
+			</a>
+			<!--<a id="personal/personaCenterRoom.html" class="mui-tab-item personal">
+				<i class="mui-icon iconfont icon-pengyou"></i>
+				<span class="mui-tab-label">个人中心</span>
+			</a>-->
+		</nav>
+		
+	</body>
+</html>
